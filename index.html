@@ -1009,19 +1009,12 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .gd-st[data-st="sync"] i{background:var(--accent);animation:gdPulse 1s ease-in-out infinite}
 .gd-st[data-st="auth"] i,.gd-st[data-st="err"] i{background:var(--warn)}
 .tools .gd-warn{color:var(--warn);font-weight:600}
-.gd-cid{display:grid;gap:6px}
-.gd-cid label{font-size:13px;font-weight:650}
-.gd-cid input{flex:1 1 260px;min-width:0;padding:9px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--text);font-family:var(--tech);font-size:13px}
-.gd-cid input:focus{outline:none;border-color:var(--accent)}
+.gbtn{display:inline-flex;align-items:center;gap:12px;height:42px;padding:0 18px 0 12px;border-radius:999px;border:1px solid #dadce0;background:#fff;color:#1f1f1f;font-family:"Roboto","Figtree",system-ui,sans-serif;font-weight:600;font-size:14.5px;box-shadow:0 1px 2px rgba(60,64,67,.25);transition:box-shadow .2s,background .2s}
+.gbtn:hover{background:#f8f9fa;box-shadow:0 1px 3px rgba(60,64,67,.3),0 4px 10px rgba(60,64,67,.15)}
+.gbtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.gbtn .g-logo{width:20px;height:20px;flex:none}
+.tools .gd-note{font-size:12.5px}
 .gd .btn:disabled{opacity:.5;cursor:not-allowed}
-.gd-guide summary{cursor:pointer;font-weight:650;font-size:14px}
-.gd-guide ol{margin:10px 0 0;padding-left:22px;display:grid;gap:10px}
-.gd-guide li > b{display:block;font-size:14px}
-.gd-guide li span b{color:var(--text);font-weight:650}
-.gd-guide li span{display:block;color:var(--muted);font-size:13.5px;line-height:1.5}
-.gd-guide code{font-family:var(--tech);font-size:12.5px;background:var(--chip);padding:1px 6px;border-radius:6px;overflow-wrap:anywhere}
-.gd-guide a{color:var(--accent);font-weight:600}
-.tools .gd-origin{margin-top:10px}
 @media (max-width:640px){ .gd-h{grid-template-columns:auto minmax(0,1fr)} .gd-st{grid-column:2;justify-self:start} }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -1152,16 +1145,10 @@ const T = {
   catchA:(n,g)=>`Mark ${n}${g?` (${g})`:""} as owned`,owned:"Owned",markOwned:"I have it",fullOutfit:"Full outfit",setIcon:"Set icon",
   wiki:"Open wiki page",sources:"How to get",release:"Release",type:"Type",wear:"Wearable by",onlyF:"Manekina only",onlyM:"Manekin only",bothG:"Manekin & Manekina",
   close:"Close",details:n=>`View ${n}`,groupDone:n=>`${n} complete!`,tabDone:n=>`Every ${n.toLowerCase()} collected!`,
-  gdTitle:"Google Drive sync",gdText:"Connect your Google account: your collection and outfits are saved in Miliadex's private folder on your Drive and stay in sync on every device signed in with the same account. Outfit photos stay on each device.",
-  gdLocal:"Google sign-in doesn't work from a file opened on your computer: open Miliadex from its web address (see the guide below).",gdNeedId:"Paste your Google client ID first.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
+  gdTitle:"Google Drive sync",gdText:"Sign in to keep your collection and outfits in sync on all your devices. Miliadex only uses its own private folder on your Drive.",
+  gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},
-  gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdCid:"Google client ID",gdConnect:"Sign in with Google",gdGuideT:"Set-up guide (once, about 10 minutes)",gdOrigin:"Authorized JavaScript origin to enter:",
-  gdGuide:[["Put Miliadex online (free)",`The easiest is <b>GitHub Pages</b>: create an account on <a href="https://github.com/signup" target="_blank" rel="noopener">github.com</a>, create a <b>public</b> repository named <code>miliadex</code>, upload this file renamed <code>index.html</code>, then <b>Settings → Pages → Branch: main → Save</b>. After a minute it's live at <code>https://YOUR-NAME.github.io/miliadex/</code>.`],
-    ["Create a Google Cloud project",`On <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">console.cloud.google.com</a>, create a project (e.g. Miliadex), then in <b>APIs &amp; Services → Library</b> enable <b>Google Drive API</b>.`],
-    ["Consent screen",`In <b>Google Auth Platform</b> (or "OAuth consent screen"): audience <b>External</b>, app name Miliadex, your e-mail. Under <b>Audience → Test users</b>, add your own Gmail address.`],
-    ["Client ID",`<b>Clients → Create client → Web application</b>. Under <b>Authorized JavaScript origins</b>, add the address shown below (no path). Create, then copy the <b>Client ID</b> (ends with <code>.apps.googleusercontent.com</code>).`],
-    ["Connect each device",`Paste the client ID here and click <b>Sign in with Google</b>. Google will say the app isn't verified: click <b>Continue</b> (it's your own app). Do the same on your other devices with the same Google account: everything syncs by itself.`],
-    ["Bring your current checks",`Your checks are stored per address. Before switching, click <b>Download backup</b> here, then <b>Import a file</b> on the online page — or connect this device first so it uploads its collection.`]],
+  gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",
   bkTitle:"Save & backup",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
   saved:"Backup file downloaded",copied:"Code copied",imported:"Collection imported",invalid:"That isn't a Miliadex backup",cleared:"Collection cleared",
@@ -1202,16 +1189,10 @@ const T = {
   catchA:(n,g)=>`Marquer ${n}${g?` (${g})`:""} comme obtenu`,owned:"Obtenu",markOwned:"Je l'ai",fullOutfit:"Tenue complète",setIcon:"Icône du set",
   wiki:"Ouvrir la page du wiki",sources:"Obtention",release:"Sortie",type:"Type",wear:"Portable par",onlyF:"Manekina uniquement",onlyM:"Manekin uniquement",bothG:"Manekin et Manekina",
   close:"Fermer",details:n=>`Voir ${n}`,groupDone:n=>`${n} complété !`,tabDone:n=>`Tous les ${n.toLowerCase()} sont à toi !`,
-  gdTitle:"Synchro Google Drive",gdText:"Connecte ton compte Google : ta collection et tes tenues sont enregistrées dans le dossier privé de Miliadex sur ton Drive, et restent synchronisées sur tous les appareils connectés au même compte. Les photos de tenue restent sur chaque appareil.",
-  gdLocal:"La connexion Google ne marche pas depuis un fichier ouvert sur ton ordinateur : ouvre Miliadex depuis son adresse web (voir le guide ci-dessous).",gdNeedId:"Colle d'abord ton ID client Google.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
+  gdTitle:"Synchro Google Drive",gdText:"Connecte-toi pour synchroniser ta collection et tes tenues sur tous tes appareils. Miliadex n'utilise que son propre dossier privé sur ton Drive.",
+  gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},
-  gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdCid:"ID client Google",gdConnect:"Se connecter avec Google",gdGuideT:"Guide de mise en place (une seule fois, ~10 min)",gdOrigin:"Origine JavaScript autorisée à saisir :",
-  gdGuide:[["Mets Miliadex en ligne (gratuit)",`Le plus simple : <b>GitHub Pages</b>. Crée un compte sur <a href="https://github.com/signup" target="_blank" rel="noopener">github.com</a>, crée un dépôt <b>public</b> nommé <code>miliadex</code>, dépose ce fichier renommé <code>index.html</code>, puis <b>Settings → Pages → Branch : main → Save</b>. Une minute après, c'est en ligne sur <code>https://TON-PSEUDO.github.io/miliadex/</code>.`],
-    ["Crée un projet Google Cloud",`Sur <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">console.cloud.google.com</a>, crée un projet (ex. Miliadex), puis dans <b>API et services → Bibliothèque</b>, active <b>Google Drive API</b>.`],
-    ["Écran de consentement",`Dans <b>Google Auth Platform</b> (ou « Écran de consentement OAuth ») : audience <b>Externe</b>, nom Miliadex, ton e-mail. Dans <b>Audience → Utilisateurs test</b>, ajoute ta propre adresse Gmail.`],
-    ["ID client",`<b>Clients → Créer un client → Application Web</b>. Dans <b>Origines JavaScript autorisées</b>, ajoute l'adresse indiquée ci-dessous (sans chemin). Crée, puis copie l'<b>ID client</b> (finit par <code>.apps.googleusercontent.com</code>).`],
-    ["Connecte chaque appareil",`Colle l'ID client ici et clique <b>Se connecter avec Google</b>. Google indiquera que l'appli n'est pas validée : clique <b>Continuer</b> (c'est ta propre appli). Fais pareil sur tes autres appareils avec le même compte Google : tout se synchronise tout seul.`],
-    ["Récupère tes coches actuelles",`Tes coches sont enregistrées par adresse. Avant de changer, clique <b>Télécharger la sauvegarde</b> ici, puis <b>Importer un fichier</b> sur la page en ligne — ou connecte d'abord cet appareil pour qu'il envoie sa collection.`]],
+  gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",
   bkTitle:"Sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
   saved:"Fichier de sauvegarde téléchargé",copied:"Code copié",imported:"Collection importée",invalid:"Ce n'est pas une sauvegarde Miliadex",cleared:"Collection effacée",
@@ -2506,7 +2487,8 @@ async function gcPics(){
   for(const k of await PicDB.keys()) if(!keep.has(k)){ await PicDB.del(k); const im=PICR.get(k); if(im) URL.revokeObjectURL(im._url); PICR.delete(k); PICC.delete(k); }
 }
 function hydratePics(root){ (root||document).querySelectorAll("img[data-pic]").forEach(async im=>{ const p=await picImage(im.dataset.pic); if(p) im.src=p._url; else im.remove(); }); }
-const ICON_DRIVE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg>`, ICON_G="";
+const ICON_G=`<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
+const ICON_DRIVE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg>`;
 const ICON_CAM=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.4" r="3.6"/></svg>`;
 function picRow(){
   if(!look.pic) return `<button type="button" class="pic-add" data-act="pic-add">${ICON_CAM}<span><b>${esc(t("picAdd"))}</b><small>${esc(t("picHint"))}</small></span></button>`;
@@ -2913,8 +2895,9 @@ function afterGlide(box, fn){ const p=box.querySelector(":scope > .pill, :scope 
 
 /* ---------- Google Drive sync: the collection lives in Miliadex's own hidden folder (appDataFolder) of your Drive ---------- */
 const GD=(()=>{
+  const CID="829022926340-bmkm4oh3em30504uch7p0rvr2a4jvtsc.apps.googleusercontent.com";   // OAuth client of the Miliadex site (public by design, only usable from the site's own address)
   const KEY="miliadex-gdrive", TKEY="miliadex-gdtok", FILE="miliadex-sync.json", SCOPE="https://www.googleapis.com/auth/drive.appdata", API="https://www.googleapis.com";
-  let cfg={cid:"",on:false,fid:"",synced:0,at:0,email:""}; try{ Object.assign(cfg, JSON.parse(localStorage.getItem(KEY)||"{}")); }catch(e){}
+  let cfg={on:false,fid:"",synced:0,at:0}; try{ Object.assign(cfg, JSON.parse(localStorage.getItem(KEY)||"{}")); }catch(e){}
   let tok=null; try{ const x=JSON.parse(localStorage.getItem(TKEY)||"null"); if(x && x.exp>Date.now()) tok=x; }catch(e){}
   let status=cfg.on ? (tok?"idle":"auth") : "off", err="", busy=false, again=false, client=null, pushT=null, pollT=null, choice=null;
   const local = location.protocol==="file:";
@@ -2924,10 +2907,9 @@ const GD=(()=>{
   function loadGis(){ return new Promise((res,rej)=>{ if(window.google && google.accounts && google.accounts.oauth2) return res();
     const s=document.createElement("script"); s.src="https://accounts.google.com/gsi/client"; s.async=true; s.onload=()=>res(); s.onerror=()=>rej(new Error("gsi")); document.head.appendChild(s); }); }
   async function connect(){
-    if(local){ toast(t("gdLocal")); return; }
-    if(!cfg.cid){ toast(t("gdNeedId")); const i=$("gdCid"); if(i) i.focus(); return; }
+    if(local || !CID || CID.startsWith("/*")){ toast(t("gdLocal")); return; }
     try{ await loadGis(); }catch(e){ setStatus("err", t("gdGsiErr")); return; }
-    if(!client) client=google.accounts.oauth2.initTokenClient({client_id:cfg.cid, scope:SCOPE,
+    if(!client) client=google.accounts.oauth2.initTokenClient({client_id:CID, scope:SCOPE,
       callback:r=>{ if(r && r.access_token){ setTok({v:r.access_token, exp:Date.now()+(+r.expires_in||3600)*1000-60000}); cfg.on=true; saveCfg(); setStatus("idle"); sync(); } else setStatus(cfg.on?"auth":"off", t("gdDenied")); },
       error_callback:e=>{ setStatus(cfg.on?"auth":"off", e && e.type==="popup_closed" ? "" : t("gdDenied")); } });
     client.requestAccessToken({prompt: cfg.on ? "" : "consent"});
@@ -2983,18 +2965,15 @@ const GD=(()=>{
     const box=$("gd"), btn=$("gdBtn"); if(!box) return;
     const st = status==="ok" ? t("gdOk")(ago(cfg.at)) : t("gdSt")[status]||"";
     btn.hidden=!cfg.on; btn.dataset.st=status; btn.title=`Google Drive · ${st}${err?" · "+err:""}`; btn.setAttribute("aria-label", btn.title);
-    const guide=t("gdGuide").map(([h,p])=>`<li><b>${esc(h)}</b><span>${p}</span></li>`).join("");
+    const can=!local && CID && !CID.startsWith("/*");
     box.innerHTML=`<div class="gd-h"><span class="gd-ic" aria-hidden="true">${ICON_DRIVE}</span><div><h3>${esc(t("gdTitle"))}</h3><p>${esc(t("gdText"))}</p></div>${cfg.on?`<span class="gd-st" data-st="${status}"><i></i>${esc(st)}</span>`:""}</div>
-      ${local?`<p class="gd-warn">${esc(t("gdLocal"))}</p>`:""}
       ${err?`<p class="gd-warn">${esc(err)}</p>`:""}
-      ${cfg.on ? `<div class="row">${status==="auth"?`<button class="btn" type="button" data-gd="connect">${esc(t("gdReconnect"))}</button>`:`<button class="btn" type="button" data-gd="sync"${status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}<button class="btn ghost" type="button" data-gd="off">${esc(t("gdDisconnect"))}</button></div>`
-        : `<div class="gd-cid"><label for="gdCid">${esc(t("gdCid"))}</label><div class="row"><input id="gdCid" type="text" spellcheck="false" autocomplete="off" placeholder="123456789-abc….apps.googleusercontent.com" value="${esc(cfg.cid)}"><button class="btn" type="button" data-gd="connect"${local?" disabled":""}>${ICON_G} ${esc(t("gdConnect"))}</button></div></div>`}
-      <details class="gd-guide"${!cfg.cid&&!cfg.on?" open":""}><summary>${esc(t("gdGuideT"))}</summary><ol>${guide}</ol><p class="gd-origin">${esc(t("gdOrigin"))} <code>${esc(local?"https://TON-PSEUDO.github.io":location.origin)}</code></p></details>`;
+      ${cfg.on ? `<div class="row">${status==="auth"?`<button class="gbtn" type="button" data-gd="connect">${ICON_G}<span>${esc(t("gdReconnect"))}</span></button>`:`<button class="btn" type="button" data-gd="sync"${status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}<button class="btn ghost" type="button" data-gd="off">${esc(t("gdDisconnect"))}</button></div>`
+        : `<div class="row"><button class="gbtn" type="button" data-gd="connect"${can?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${can?"":`<p class="gd-note">${esc(t("gdLocal"))}</p>`}`}`;
   }
   $("gd").addEventListener("click", e=>{ const b=e.target.closest("[data-gd]"); if(!b) return; const a=b.dataset.gd;
-    if(a==="connect"){ const i=$("gdCid"); if(i){ const v=i.value.trim(); if(v!==cfg.cid){ cfg.cid=v; client=null; saveCfg(); } } connect(); }
+    if(a==="connect") connect();
     else if(a==="sync") sync(); else if(a==="off") disconnect(); });
-  $("gd").addEventListener("change", e=>{ if(e.target.id==="gdCid"){ cfg.cid=e.target.value.trim(); client=null; saveCfg(); } });
   $("gdBtn").addEventListener("click", ()=>{ if(status==="auth") connect(); else if(status!=="sync") sync(); });
   function init(){ render(); if(cfg.on){ poll(); if(tok) sync(); } }
   return {init, soon, render};
