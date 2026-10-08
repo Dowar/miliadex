@@ -1014,6 +1014,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .gbtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
 .gbtn .g-logo{width:20px;height:20px;flex:none}
 .tools .gd-note{font-size:12.5px}
+.gd-note a{color:var(--accent);font-weight:600}
 .gd .btn:disabled{opacity:.5;cursor:not-allowed}
 @media (max-width:640px){ .gd-h{grid-template-columns:auto minmax(0,1fr)} .gd-st{grid-column:2;justify-self:start} }
 @media (prefers-reduced-motion:reduce){
@@ -1148,7 +1149,7 @@ const T = {
   gdTitle:"Google Drive sync",gdText:"Sign in to keep your collection and outfits in sync on all your devices. Miliadex only uses its own private folder on your Drive.",
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},
-  gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",
+  gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
   bkTitle:"Save & backup",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
   saved:"Backup file downloaded",copied:"Code copied",imported:"Collection imported",invalid:"That isn't a Miliadex backup",cleared:"Collection cleared",
@@ -1192,7 +1193,7 @@ const T = {
   gdTitle:"Synchro Google Drive",gdText:"Connecte-toi pour synchroniser ta collection et tes tenues sur tous tes appareils. Miliadex n'utilise que son propre dossier privé sur ton Drive.",
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},
-  gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",
+  gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
   bkTitle:"Sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
   saved:"Fichier de sauvegarde téléchargé",copied:"Code copié",imported:"Collection importée",invalid:"Ce n'est pas une sauvegarde Miliadex",cleared:"Collection effacée",
@@ -2969,7 +2970,8 @@ const GD=(()=>{
     box.innerHTML=`<div class="gd-h"><span class="gd-ic" aria-hidden="true">${ICON_DRIVE}</span><div><h3>${esc(t("gdTitle"))}</h3><p>${esc(t("gdText"))}</p></div>${cfg.on?`<span class="gd-st" data-st="${status}"><i></i>${esc(st)}</span>`:""}</div>
       ${err?`<p class="gd-warn">${esc(err)}</p>`:""}
       ${cfg.on ? `<div class="row">${status==="auth"?`<button class="gbtn" type="button" data-gd="connect">${ICON_G}<span>${esc(t("gdReconnect"))}</span></button>`:`<button class="btn" type="button" data-gd="sync"${status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}<button class="btn ghost" type="button" data-gd="off">${esc(t("gdDisconnect"))}</button></div>`
-        : `<div class="row"><button class="gbtn" type="button" data-gd="connect"${can?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${can?"":`<p class="gd-note">${esc(t("gdLocal"))}</p>`}`}`;
+        : `<div class="row"><button class="gbtn" type="button" data-gd="connect"${can?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${can?"":`<p class="gd-note">${esc(t("gdLocal"))}</p>`}`}
+      <p class="gd-note"><a href="privacy.html" target="_blank" rel="noopener">${esc(t("gdPriv"))}</a></p>`;
   }
   $("gd").addEventListener("click", e=>{ const b=e.target.closest("[data-gd]"); if(!b) return; const a=b.dataset.gd;
     if(a==="connect") connect();
