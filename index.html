@@ -1205,7 +1205,8 @@ const T = {
 const VER = {"6.1":["Luna II","6.1"],"6.2":["Luna III","6.2"],"6.3":["Luna IV","6.3"],"6.4":["Luna V","6.4"],"6.5":["Luna VI","6.5"],"6.6":["Luna VII","6.6"],"6.7":["Luna VIII","6.7"],"7.0":["Version 7.0",""],"7.1":["Version 7.1",""],"+":["",""]};
 const VORDER = Object.keys(VER);
 const SRC_ORDER = ["ode","asc","std","pass","shop","evt","gift","wl","def","misc"];
-const CAT_ORDER = ["Headwear","Top","Bottom","Top;Bottom","Multi","Footwear","Earrings","Eye Accessory","Face Accessory","Neck Accessory","Back Accessory","Wrist Accessory","Leg Accessory","Pendant","Tail Accessory","Hairstyle","Skin Tone","Eye Shape","Iris","Eyebrows","Eye Makeup","Facial Makeup","Lipstick","Expression","Action","Effects"];
+// same order as the in-game wardrobe (one-piece outfits are multi-part outfits in the game)
+const CAT_ORDER = ["Multi","Top","Bottom","Footwear","Headwear","Wrist Accessory","Leg Accessory","Earrings","Eye Accessory","Face Accessory","Neck Accessory","Back Accessory","Pendant","Tail Accessory","Hairstyle","Eyebrows","Eye Shape","Iris","Eye Makeup","Lipstick","Facial Makeup","Skin Tone","Expression","Action","Effects"];
 
 /* ---------- data ---------- */
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -1222,6 +1223,7 @@ const SET_ITEMS = SETS.map(([en,fr,r,v,src,raw,wt,f,m,pf,pm,vfe,vme,vff,vmf,pr,v
   val: pr ? {f:pr[0]?[pr[0],pr[1]]:null, m:pr[2]?[pr[2],pr[3]]:null} : null, viv: vv||[0,0]}));
 const usedC = new Set();
 const COMP_ITEMS = COMP.map(([en,fr,q,g,ty,cat,src,raw,v,p,si,key,mc,np,pr,vv],i)=>{ let id="c-"+slug(key||en); while(usedC.has(id)) id+="-x"; usedC.add(id);
+  if(cat==="Top;Bottom"){ cat="Multi"; mc=mc||"Top;Bottom"; }
   return {kind:"comp",id,en,fr:fr||en,r:q,g,ty,cat,src:src.split(","),raw,v,img:p,wt:key||en,wiki:np===1?WIKI+"wiki/Miliastra_Shop":np===2?WIKI+"fr/wiki/"+encodeURIComponent(fr.replace(/ /g,"_")):"",no:i+1,set:si>=0?SET_ITEMS[si]:null,mc:mc||"",val:pr||null,viv:vv||0}; });
 // Event Ode banners: the 4★ sets of a banner come for free while pulling for its 5★
 const FREE_WITH = new Map();
@@ -1253,6 +1255,7 @@ const blankF = () => ({sets:{src:[],r:[],v:[],st:[]}, comp:{cat:[],mem:[],src:[]
 let ui={tab:"sets",lang:"en",g:"both",sort:"cat",dir:1,f:blankF()};
 try{ const u=JSON.parse(localStorage.getItem(LSUI)||"null"); if(u){ const f=u.f||{}; ui=Object.assign(ui,u); ui.f=blankF(); for(const tb of ["sets","comp"]) for(const k of Object.keys(ui.f[tb])) if(f[tb] && Array.isArray(f[tb][k])) ui.f[tb][k]=f[tb][k]; } }catch(e){}
 if(typeof ui.sub!=="string") ui.sub="";
+if(ui.sub==="Top;Bottom") ui.sub="Multi";
 if(ui.f.comp.cat.length){ if(!ui.sub && ui.f.comp.cat.length===1) ui.sub=ui.f.comp.cat[0]; ui.f.comp.cat=[]; }
 let q="";
 const saveUI=()=>{ try{ localStorage.setItem(LSUI,JSON.stringify(ui)); }catch(e){} };
