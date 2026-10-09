@@ -715,6 +715,9 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 #outfits{display:none;padding-top:14px}
 .tab-outfits #outfits{display:block}
 .tab-outfits .toolbar,.tab-outfits .active,.tab-outfits .body,.tab-outfits .fbtn{display:none!important}
+#showcase{display:none;padding-top:14px}
+.tab-show #showcase{display:block}
+.tab-show .toolbar,.tab-show .active,.tab-show .body,.tab-show .fbtn{display:none!important}
 .builder{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:16px;display:grid;grid-template-columns:minmax(280px,380px) minmax(0,1fr);gap:20px;align-items:start}
 .b-preview{position:sticky;top:12px;display:grid;gap:10px}
 @media (max-width:1000px){ .builder{grid-template-columns:minmax(0,1fr)} .b-preview{position:static;width:100%;max-width:420px;margin:0 auto} }
@@ -1149,6 +1152,166 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .lk-imp .lk-img{grid-column:1/-1;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-style:dashed}
 .lk-imp .lk-img svg{width:19px;height:19px}
 .lk-imp.drag{outline:2px dashed var(--accent);outline-offset:4px;border-radius:14px}
+/* ---------- Outfits Showcase ---------- */
+.sh-hero{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:20px;border-radius:22px;padding:26px 28px;color:#f3efff;background:radial-gradient(120% 150% at 0% 0%,#4a35a0 0%,#271c62 45%,#140d33 100%);box-shadow:0 14px 40px rgba(20,10,60,.25),inset 0 1px 0 rgba(255,255,255,.14)}
+.sh-sky{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.sh-sky .aur{opacity:.42}
+.sh-ht{flex:1;min-width:0}
+.sh-kick{font-family:var(--tech);font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#b9adf5}
+.sh-hero h2{margin:4px 0 8px;font-family:var(--serif);font-weight:650;font-size:clamp(26px,3.4vw,38px);line-height:1.08;background:linear-gradient(92deg,#fff2c9,#ffc36b 35%,#f0b8ff 68%,#9fe6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sh-hero h2 small{display:inline-block;vertical-align:middle;margin-left:4px;font-family:var(--tech);font-size:14px;font-weight:700;-webkit-text-fill-color:#e4ddff;color:#e4ddff;padding:3px 11px;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+.sh-hero h2 small:empty{display:none}
+.sh-hero p{margin:0;max-width:62ch;color:#d6ceff;font-size:14.5px}
+.sh-deco{flex:none;position:relative;width:156px;height:112px;margin-right:6px}
+.sh-deco i{position:absolute;width:66px;height:82px;border-radius:12px;border:1px solid rgba(255,255,255,.32);background:linear-gradient(160deg,rgba(255,255,255,.24),rgba(255,255,255,.04));box-shadow:0 12px 26px rgba(5,2,20,.45);animation:shFloat 6s ease-in-out infinite}
+.sh-deco i:nth-child(1){left:0;top:20px;transform:rotate(-12deg)}
+.sh-deco i:nth-child(2){left:45px;top:2px;z-index:1;background:linear-gradient(160deg,rgba(255,210,122,.55),rgba(197,140,255,.25));animation-delay:-2s}
+.sh-deco i:nth-child(3){left:90px;top:22px;transform:rotate(13deg);animation-delay:-4s}
+@keyframes shFloat{50%{translate:0 -6px}}
+.sh-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 16px}
+.sh-tools .sh-q{flex:1 1 240px;max-width:420px}
+.sh-tools .seg{background:var(--chip);--seg-on:var(--accent)}
+.sh-tools .seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.sh-mine{position:relative;display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border-radius:12px;border:2px solid var(--line);background:var(--card);font-weight:600;font-size:14px;cursor:pointer;user-select:none}
+.sh-mine input{position:absolute;opacity:0;pointer-events:none}
+.sh-mine .tg{width:36px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}
+.sh-mine .tg::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sh-mine input:checked + .tg{background:var(--ok)}
+.sh-mine input:checked + .tg::after{transform:translateX(14px)}
+.sh-mine input:focus-visible + .tg{outline:2px solid var(--accent);outline-offset:2px}
+.sh-sort select{font:inherit;font-weight:600;font-size:14px;padding:9px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--text)}
+.sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.sh-grid.has-spot{grid-auto-flow:dense}
+@media (min-width:900px){ .sh-grid.has-spot .sh-card.spot{grid-column:span 2;grid-row:span 2} .spot .sh-bot b{font-size:28px} .spot .sh-meta{font-size:14px} }
+.sh-card{position:relative;display:block;aspect-ratio:1/1;border:0;padding:0;border-radius:20px;overflow:hidden;cursor:pointer;background:#1d1550;color:#fff;text-align:left;font:inherit;
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;
+  box-shadow:0 10px 26px rgba(20,10,60,.22),inset 0 0 0 1px rgba(255,255,255,.08);animation:shIn .6s cubic-bezier(.2,.8,.2,1) var(--d,0ms) backwards}
+.sh-card[data-sh]:hover,.sh-card[data-sh]:focus-visible{--ty:-6px;box-shadow:0 22px 44px rgba(40,20,110,.38),0 0 0 2px color-mix(in srgb,var(--accent) 75%,transparent);outline:none}
+@keyframes shIn{from{opacity:0;transform:translateY(18px) scale(.97)}}
+.sh-img{position:absolute;inset:0;background:linear-gradient(110deg,#241a55 30%,#3a2b80 50%,#241a55 70%);background-size:220% 100%;animation:shSk 1.4s linear infinite}
+.sh-img.ok{animation:none;background:#140d33}
+.sh-img img{width:100%;height:100%;object-fit:cover;object-position:center bottom;opacity:0;transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.sh-img.ok img{opacity:1}
+.sh-img.bad img{display:none}
+.sh-card.raw .sh-img img{object-position:center}
+.sh-card:hover .sh-img img{transform:scale(1.045)}
+@keyframes shSk{to{background-position:-120% 0}}
+.sh-glare{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.32),transparent 46%);opacity:0;transition:opacity .3s;mix-blend-mode:soft-light}
+.sh-card:hover .sh-glare{opacity:1}
+.sh-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
+.sh-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700;background:rgba(12,8,32,.58);border:1px solid rgba(255,255,255,.25);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.sh-chip.ic{padding:4px 7px}
+.sh-chip svg{width:15px;height:15px}
+.sh-bot{position:absolute;left:0;right:0;bottom:0;display:grid;gap:6px;padding:48px 14px 13px;background:linear-gradient(transparent,rgba(10,6,28,.9) 58%);pointer-events:none}
+.sh-bot b{font-family:var(--serif);font-weight:650;font-size:18px;line-height:1.15;text-shadow:0 1px 8px rgba(0,0,0,.55);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.sh-meta{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:600;color:#e4ddff}
+.sh-own{display:inline-flex;align-items:center;gap:6px}
+.sh-own i{width:16px;height:16px;border-radius:50%;background:conic-gradient(#7ef0c4 calc(var(--p) * 360deg),rgba(255,255,255,.24) 0);-webkit-mask:radial-gradient(circle,transparent 4.5px,#000 5px);mask:radial-gradient(circle,transparent 4.5px,#000 5px)}
+.sh-own.full{color:#ffe08a}
+.sh-own.full i{background:#ffd27a}
+.sh-st{color:#ffd27a}
+.sh-meta.sk i{display:block;height:10px;width:72px;border-radius:6px;background:rgba(255,255,255,.2);animation:shPulse 1.2s ease-in-out infinite}
+.sh-meta.sk i + i{width:38px}
+@keyframes shPulse{50%{opacity:.4}}
+.sh-card.sk{cursor:default}
+.sh-grid.msg{display:block}
+.sh-msg{display:grid;justify-items:center;gap:12px;text-align:center;padding:48px 16px;border:2px dashed var(--line);border-radius:20px;color:var(--muted)}
+.sh-msg b{color:var(--text);font-size:16px;font-weight:600}
+.sh-msg-ic{font-size:30px;color:var(--accent)}
+.sh-grid .sh-msg.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* showcase viewer */
+#shv{width:min(1200px,calc(100% - 24px));height:calc(100dvh - 24px);max-width:none;max-height:none;padding:0;border-radius:26px;background:#0f0a26;color:#f3efff;overflow:hidden;color-scheme:dark;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+#shv[open]{display:grid;grid-template-columns:minmax(0,1fr) 390px;grid-template-rows:minmax(0,1fr);animation:vpopen .5s cubic-bezier(.2,.9,.2,1)}
+#shv::backdrop{background:rgba(6,3,18,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sv-stage{position:relative;min-height:0;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);place-items:center;padding:22px;overflow:hidden;isolation:isolate;touch-action:pan-y}
+.sv-stage::before{content:"";position:absolute;inset:-60px;z-index:-1;background:var(--bgimg) center/cover;filter:blur(42px) saturate(1.3) brightness(.5);transform:scale(1.1)}
+.sv-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.55);animation:svIn .45s cubic-bezier(.2,.8,.2,1);user-select:none;-webkit-user-drag:none}
+.sv-img.in-r{animation-name:svR}
+.sv-img.in-l{animation-name:svL}
+@keyframes svIn{from{opacity:0;transform:scale(.96)}}
+@keyframes svR{from{opacity:0;transform:translateX(46px)}}
+@keyframes svL{from{opacity:0;transform:translateX(-46px)}}
+.sv-nav{position:absolute;top:50%;width:46px;height:46px;margin-top:-23px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(12,8,32,.5);color:#fff;display:grid;place-items:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:transform .2s,background .2s}
+.sv-nav:hover{background:rgba(255,255,255,.18);transform:scale(1.08)}
+.sv-nav svg{width:22px;height:22px}
+.sv-nav.prev{left:16px}
+.sv-nav.next{right:16px}
+.sv-count{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-family:var(--tech);font-size:13px;font-weight:700;padding:4px 12px;border-radius:99px;background:rgba(12,8,32,.55);border:1px solid rgba(255,255,255,.2)}
+.sv-x{display:none}
+.sv-side{min-height:0;overflow:auto;padding:16px 20px 22px;background:linear-gradient(180deg,#221a52,#140d33);border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain;scrollbar-color:rgba(255,255,255,.25) transparent}
+.sv-top{display:flex;align-items:center;gap:10px}
+.sv-top .dx,.sv-x{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.3)}
+.sv-side h2{margin:0;font-family:var(--serif);font-weight:650;font-size:28px;line-height:1.12;overflow-wrap:anywhere}
+.sv-body{display:grid;gap:14px}
+.sv-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sv-chips span{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16)}
+.sv-chips svg{width:15px;height:15px}
+.sv-own{display:grid;gap:6px;font-size:13.5px;font-weight:600;color:#cfc6ff}
+.sv-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.sv-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#5fd3ff,#7ef0c4);transform-origin:left;animation:scGrow 1s cubic-bezier(.2,.9,.2,1) both}
+.sv-own.full{color:#ffe08a}
+.sv-own.full .sv-bar i{background:linear-gradient(90deg,#d9a24f,#ffe08a)}
+.sv-act{display:grid;gap:8px}
+.sv-act .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#9c85ff;color:#140f2a}
+.sv-act .btn.ghost{background:rgba(255,255,255,.06);color:#fff;border:2px solid rgba(255,255,255,.26)}
+.sv-act .btn:disabled{opacity:.8;cursor:default;border-color:rgba(126,240,196,.6);color:#7ef0c4}
+.sv-act .btn svg{width:17px;height:17px}
+.sv-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sv-side h3{margin:4px 0 0;font-family:var(--tech);font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#b9adf5}
+.sv-pcs{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sv-pcs li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 10px 6px 6px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.sv-pcs .th{width:44px;height:44px;border-radius:10px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,var(--rb,#5b479c),var(--ra,#2a2150))}
+.sv-pcs .th img{width:100%;height:100%;object-fit:contain}
+.sv-pcs .th svg{width:70%;height:70%}
+.sv-pcs .tx{min-width:0;display:grid}
+.sv-pcs b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sv-pcs small{font-size:11.5px;color:#a49dc8}
+.sv-pcs .ok{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#0f2b20;border:1.5px solid rgba(255,255,255,.22)}
+.sv-pcs li.own .ok{background:#7ef0c4;border-color:#7ef0c4}
+.sv-note{margin:0;font-size:13px;color:#a49dc8}
+.sv-sk i{display:block;height:14px;border-radius:7px;background:rgba(255,255,255,.12);margin-bottom:10px;animation:shPulse 1.2s ease-in-out infinite}
+.sv-sk i:nth-child(2){width:70%}
+.sv-sk i:nth-child(3){width:48%}
+@media (max-width:860px){
+  #shv{width:100%;height:100dvh;max-height:100dvh;margin:0;border-radius:0}
+  #shv[open]{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,56dvh) minmax(0,1fr)}
+  .sv-stage{padding:12px 12px 40px}
+  .sv-side{border-left:0;border-top:1px solid rgba(255,255,255,.1);padding:14px 16px 20px}
+  .sv-side .sv-top .dx{display:none}
+  .sv-x{display:grid;position:absolute;top:10px;right:10px;margin:0}
+  .sv-nav{width:40px;height:40px;margin-top:-20px}
+  .sv-nav.prev{left:8px}
+  .sv-nav.next{right:8px}
+  .sv-count{bottom:10px}
+  .sv-side h2{font-size:24px}
+}
+/* four tabs: two by two on phones */
+@media (max-width:560px){
+  .tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .tab{width:auto;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding:8px 12px}
+  .tab b{font-size:15px;max-width:100%}
+  .tab span{font-size:11.5px}
+  .sh-hero{padding:18px 18px 20px}
+  .sh-deco{display:none}
+  .sh-hero p{font-size:13.5px}
+  .sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .sh-card{border-radius:16px}
+  .sh-bot{padding:36px 10px 10px;gap:4px}
+  .sh-bot b{font-size:14.5px}
+  .sh-meta{font-size:11px;gap:6px}
+  .sh-own i{width:13px;height:13px;-webkit-mask:radial-gradient(circle,transparent 3.5px,#000 4px);mask:radial-gradient(circle,transparent 3.5px,#000 4px)}
+  .sh-top{top:8px;left:8px;right:8px}
+  .sh-chip{font-size:11px;padding:3px 8px}
+  .sh-tools{gap:8px}
+  .sh-tools .sh-q{flex-basis:100%;max-width:none}
+  .sh-tools .seg{flex-basis:100%}
+  .sh-tools .seg button{flex:1}
+  .sh-mine,.sh-sort{flex:1 1 0;min-width:0;font-size:13px}
+  .sh-mine{padding:7px 8px 7px 6px;gap:6px}
+  .sh-mine > span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sh-sort select{width:100%;font-size:13px;padding:9px 8px}
+}
+@media (prefers-reduced-motion:reduce){ .sh-card,.sh-img,.sh-deco i,.sv-img,.sv-bar i{animation:none!important} .sh-card{transform:none!important} }
 </style>
 </head>
 <body>
@@ -1185,6 +1348,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
       <button class="tab" role="tab" id="tab-sets" data-tab="sets"><b></b><span></span></button>
       <button class="tab" role="tab" id="tab-comp" data-tab="comp"><b></b><span></span></button>
       <button class="tab" role="tab" id="tab-outfits" data-tab="outfits"><b></b><span></span></button>
+      <button class="tab" role="tab" id="tab-show" data-tab="show"><b></b><span></span></button>
     </div>
     <div class="toolbar" id="toolbar">
       <label class="search"><span class="sr" id="qlbl"></span>
@@ -1207,6 +1371,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
     </div>
 
     <section id="outfits" aria-labelledby="tab-outfits"></section>
+    <section id="showcase" aria-labelledby="tab-show"></section>
 
     <section class="tools" aria-labelledby="bkTitle">
       <h2 id="bkTitle"></h2>
@@ -1234,6 +1399,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 <dialog id="val" aria-labelledby="vpTitle"></dialog>
 <dialog id="bgd" aria-labelledby="bgTitle"></dialog>
 <dialog id="shc" aria-labelledby="scTitle"></dialog>
+<dialog id="shv" aria-labelledby="svTitle"></dialog>
 <input type="file" id="picFile" accept="image/*" hidden>
 <input type="file" id="lookImgFile" accept="image/png" hidden>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
@@ -1249,7 +1415,7 @@ const ODEB=[["Candlelit Revelry",["Fervent Fighter","Mystic Forest","Sonic Ruins
 /* ---------- i18n ---------- */
 const T = {
  en:{sub:"Miliastra Wonderland collection tracker",sets:"Sets",comp:"Cosmetics",search:"Search a set or cosmetic…",both:"Both",f:"Manekina",m:"Manekin",
-  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ★ ${s}`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded · open it again in the Miliadex to edit this outfit",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device: it isn't in share links or backups, only inside the image you download (which reopens the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
+  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ★ ${s}`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded · open it again in the Miliadex to edit this outfit",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device: it isn't in share links or backups, only inside the image you download (which reopens the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
   saveLook:"Save outfit",updateLook:"Update outfit",share:"Share link",copyCode:"Copy code",clear:"Clear",myLooks:"My outfits",noLooks:"No saved outfits yet. Build one above, then press “Save outfit”.",
   ownedOf:(a,b)=>`${a}/${b} pieces owned`,pick:n=>`Choose: ${n}`,pickSet:"Choose a set",equip:"Equip",equipped:"Equipped",addPiece:"Add",none:"Remove",ownedOnly:"Owned only",searchPh:"Search…",included:"Included",
   sharedT:"Outfit shared with you",saveShared:"Save to my outfits",dismiss:"Dismiss",linkCopied:"Link copied",lookSaved:"Outfit saved",lookDeleted:"Outfit deleted",del:"Delete",
@@ -1284,7 +1450,12 @@ const T = {
   gdTitle:"Google Drive sync",gdText:"Sign in to keep your collection and outfits in sync on all your devices. Miliadex only uses its own private folder on your Drive.",
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
-  imgImp:"Import with image",imgTip:"Open an image downloaded from the Miliadex, or drop it here",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image doesn't carry a Miliadex outfit (only images downloaded from the Miliadex do, as the original file)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
+  imgImp:"Import with image",showT:"Outfits Showcase",shKick:"Miliadex gallery",shSub:"Outfits made with the Miliadex. Open one to remix it, keep it in My Outfits or download it.",shSearch:"Search an outfit or a piece",shAll:"All",shMine:"I own every piece",
+  shSort:"Sort",shSorts:{repo:"Showcase order",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
+  shFail:"The showcase couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
+  shEdit:"Edit in My Outfits",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
+  shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't in the showcase anymore.",
+  imgTip:"Open an image downloaded from the Miliadex, or drop it here",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image doesn't carry a Miliadex outfit (only images downloaded from the Miliadex do, as the original file)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
   scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
@@ -1296,7 +1467,7 @@ const T = {
   typeN:{o:"Outfit",k:"Makeup & hair",i:"Interactions"},
   catN:{"Hairstyle":"Hairstyles","Headwear":"Headwear","Top":"Tops","Bottom":"Bottoms","Top;Bottom":"One-piece outfits","Multi":"Multi-part outfits","Eye Accessory":"Eyewear","Face Accessory":"Face accessories","Tail Accessory":"Tails","Footwear":"Footwear","Earrings":"Earrings","Neck Accessory":"Neck accessories","Back Accessory":"Back accessories","Wrist Accessory":"Wrist accessories","Leg Accessory":"Leg accessories","Pendant":"Pendants","Skin Tone":"Skin tones","Eye Shape":"Eye shapes","Iris":"Irises","Eyebrows":"Eyebrows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lipstick","Expression":"Expressions","Action":"Actions","Effects":"Effects"}},
  fr:{sub:"Toutes les tenues de Miliastra Wonderland",sets:"Sets",comp:"Cosmétiques",search:"Chercher un set ou un cosmétique…",both:"Les deux",f:"Manekina",m:"Manekin",
-  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ★ ${s}`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée · rouvre-la dans le Miliadex pour modifier la tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil : elle n'est ni dans les liens de partage ni dans les sauvegardes, seulement dans l'image que tu télécharges (qui rouvre la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
+  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ★ ${s}`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée · rouvre-la dans le Miliadex pour modifier la tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil : elle n'est ni dans les liens de partage ni dans les sauvegardes, seulement dans l'image que tu télécharges (qui rouvre la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
   saveLook:"Enregistrer la tenue",updateLook:"Mettre à jour",share:"Partager le lien",copyCode:"Copier le code",clear:"Vider",myLooks:"Mes tenues",noLooks:"Aucune tenue enregistrée. Compose-en une ci-dessus, puis « Enregistrer la tenue ».",
   ownedOf:(a,b)=>`${a}/${b} pièces obtenues`,pick:n=>`Choisir : ${n}`,pickSet:"Choisir un set",equip:"Équiper",equipped:"Équipé",addPiece:"Ajouter",none:"Retirer",ownedOnly:"Obtenus uniquement",searchPh:"Chercher…",included:"Inclus",
   sharedT:"Tenue partagée avec toi",saveShared:"Ajouter à mes tenues",dismiss:"Fermer",linkCopied:"Lien copié",lookSaved:"Tenue enregistrée",lookDeleted:"Tenue supprimée",del:"Supprimer",
@@ -1331,7 +1502,12 @@ const T = {
   gdTitle:"Synchro Google Drive",gdText:"Connecte-toi pour synchroniser ta collection et tes tenues sur tous tes appareils. Miliadex n'utilise que son propre dossier privé sur ton Drive.",
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
-  imgImp:"Importer avec une image",imgTip:"Ouvre une image téléchargée depuis le Miliadex, ou dépose-la ici",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image ne contient pas de tenue Miliadex (seules les images téléchargées depuis le Miliadex en ont, en fichier d'origine)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
+  imgImp:"Importer avec une image",showT:"Vitrine de tenues",shKick:"Galerie Miliadex",shSub:"Des tenues créées avec le Miliadex. Ouvre-en une pour la modifier, la garder dans Mes tenues ou la télécharger.",shSearch:"Chercher une tenue ou une pièce",shAll:"Toutes",shMine:"Je possède tout",
+  shSort:"Trier",shSorts:{repo:"Ordre de la vitrine",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
+  shFail:"La vitrine n'a pas pu être chargée pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
+  shEdit:"Modifier dans Mes tenues",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
+  shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus dans la vitrine.",
+  imgTip:"Ouvre une image téléchargée depuis le Miliadex, ou dépose-la ici",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image ne contient pas de tenue Miliadex (seules les images téléchargées depuis le Miliadex en ont, en fichier d'origine)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
   scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
@@ -1398,6 +1574,7 @@ const BYID = new Map(); ALL.sets.concat(ALL.comp).forEach(it=>BYID.set(it.id,it)
 const blankF = () => ({sets:{src:[],r:[],v:[],st:[]}, comp:{cat:[],mem:[],src:[],r:[],v:[],st:[]}});
 let ui={tab:"sets",lang:"en",g:"both",sort:"cat",dir:1,f:blankF()};
 try{ const u=JSON.parse(localStorage.getItem(LSUI)||"null"); if(u){ const f=u.f||{}; ui=Object.assign(ui,u); ui.f=blankF(); for(const tb of ["sets","comp"]) for(const k of Object.keys(ui.f[tb])) if(f[tb] && Array.isArray(f[tb][k])) ui.f[tb][k]=f[tb][k]; } }catch(e){}
+if(!["sets","comp","outfits","show"].includes(ui.tab)) ui.tab="sets";
 if(typeof ui.sub!=="string") ui.sub="";
 if(ui.sub==="Top;Bottom") ui.sub="Multi";
 if(ui.f.comp.cat.length){ if(!ui.sub && ui.f.comp.cat.length===1) ui.sub=ui.f.comp.cat[0]; ui.f.comp.cat=[]; }
@@ -1562,6 +1739,7 @@ function pass(it, skip){
   if(skip!=="st" && F.st.length){ const c=complete(it); if(!((F.st.includes("own")&&c)||(F.st.includes("miss")&&!c))) return false; }
   return true;
 }
+const isList = () => ui.tab==="sets" || ui.tab==="comp";   // the two catalog tabs (My Outfits and the Showcase have their own pages)
 const visible = () => ALL[ui.tab].filter(it=>pass(it));
 
 /* ---------- header, tabs, toolbar ---------- */
@@ -1618,7 +1796,7 @@ function renderWorth(){
 }
 function renderHeader(){
   renderWorth();
-  const ht = ui.tab==="outfits" ? "comp" : ui.tab;   // the Outfits tab mirrors the Cosmetics header
+  const ht = isList() ? ui.tab : "comp";   // My Outfits and the Showcase mirror the Cosmetics header
   const list=tabList(ht); const [sg,st]=score();
   const [got,tot] = tally(list); const pct=tot?got/tot:0;
   const ring=$("ring"); if(!ring.firstChild) ring.innerHTML=RING;
@@ -1647,6 +1825,7 @@ function renderHeader(){
     upd.push([el.querySelector(".na"),"dash",`${(2*Math.PI*17*p).toFixed(2)} 120`]); });
   requestAnimationFrame(()=>upd.forEach(([el,k,v])=>{ if(k==="width") el.style.width=v; else el.setAttribute("stroke-dasharray",v); }));
   $("tab-outfits").querySelector("b").textContent=t("outfits"); $("tab-outfits").querySelector("span").textContent=(state.looks||[]).length; $("tab-outfits").setAttribute("aria-selected", ui.tab==="outfits");
+  $("tab-show").querySelector("b").textContent=t("showT"); $("tab-show").querySelector("span").textContent=SHOW.items?SHOW.items.length:"✦"; $("tab-show").setAttribute("aria-selected", ui.tab==="show");
   $("rankInfo").setAttribute("aria-label", t("infoBtn")); $("rankInfo").title=t("infoBtn");
   for(const tab of ["sets","comp"]){
     const el=$("tab-"+tab), [g2,t2]=tally(tabList(tab));
@@ -1719,7 +1898,7 @@ function fitSubtabs(){
 }
 if(window.ResizeObserver) new ResizeObserver(()=>fitSubtabs()).observe($("subtabs"));
 function renderFilters(){
-  if(ui.tab==="outfits") return;
+  if(!isList()) return;
   renderSubtabs();
   const F=ui.f[ui.tab];
   let html=`<div class="fg"><h3>${esc(t("sortL"))}</h3><div class="chips" role="group" aria-label="${esc(t("sortL"))}">`+[["cat",t("sortCat")],["rar",t("sortRar")],["val",t("sortVal")],["name",t("sortName")],["miss",t("sortMiss")]].map(([v,l])=>`<button type="button" class="chip" data-sort="${v}" aria-pressed="${ui.sort===v}">${esc(l)}</button>`).join("")+`<button type="button" class="chip" data-dir="1" aria-pressed="${ui.dir<0}">⇅ ${esc(t("reverse"))}</button></div></div>`;
@@ -1820,7 +1999,7 @@ function ghead(g){
   return `<div class="ghead"><h2>${esc(g.title)}${g.small?`<small>${esc(g.small)}</small>`:""}</h2><div class="gprog"><span>${got}/${tot}</span><div class="bar"><i style="width:${tot?got/tot*100:0}%"></i></div></div></div>`;
 }
 function renderList(){
-  if(ui.tab==="outfits") return;
+  if(!isList()) return;
   const list=visible();
   const box=$("list"); box.className = ui.tab==="comp" ? "comp" : "";
   if(!list.length){ const elsewhere = ui.tab==="comp" && ui.sub ? ALL.comp.filter(it=>pass(it,"sub")).length : 0;
@@ -1851,9 +2030,10 @@ function renderList(){
   if(queue.length) requestAnimationFrame(step);
 }
 let renderToken=0, blockObs=null, revObs=null, listCols=0;
-let rsT=null; window.addEventListener("resize", ()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ if(ui.tab==="outfits" || !listCols) return; const g=$("list").querySelector(".blk"); if(!g) return;
+let rsT=null; window.addEventListener("resize", ()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ if(!isList() || !listCols) return; const g=$("list").querySelector(".blk"); if(!g) return;
   const c=getComputedStyle(g).gridTemplateColumns.split(" ").filter(Boolean).length; if(c!==listCols) renderList(); },220); });
-function renderTab(){ const o=ui.tab==="outfits"; document.body.classList.toggle("tab-outfits",o); if(o) renderOutfits(); else { renderFilters(); renderList(); } }
+function renderTab(){ const o=ui.tab==="outfits", sh=ui.tab==="show"; document.body.classList.toggle("tab-outfits",o); document.body.classList.toggle("tab-show",sh);
+  if(o) renderOutfits(); else if(sh) renderShow(); else { renderFilters(); renderList(); } }
 function renderAll(){ renderChrome(); renderHeader(); renderTab(); }
 
 /* ---------- catching ---------- */
@@ -2153,7 +2333,7 @@ $("tabs").addEventListener("click", e=>{ const b=e.target.closest("[data-tab]");
   $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x===b));
   afterPaint(()=>{ renderHeader(); renderTab(); const top=$("tabs").getBoundingClientRect().top+scrollY-6; if(scrollY>top) window.scrollTo({top}); }); });
 $("constel").addEventListener("click", e=>{ const n=e.target.closest(".node"); if(!n) return; const v=n.dataset.v;
-  if(ui.tab==="outfits"){ ui.tab="comp"; saveUI(); renderHeader(); renderTab(); }
+  if(!isList()){ ui.tab="comp"; saveUI(); renderHeader(); renderTab(); }
   if(ui.tab==="sets" && ui.sort==="cat" && !ui.f.sets.v.length){ const sec=document.querySelector(`.group[data-group="v:${CSS.escape(v)}"]`); if(sec){ sec.scrollIntoView({behavior:reduce()?"auto":"smooth",block:"start"}); return; } }
   toggleFilter("v", v); $("tabs").scrollIntoView({behavior:reduce()?"auto":"smooth",block:"start"}); });
 $("lang").addEventListener("click", e=>{ const b=e.target.closest("[data-lang]"); if(!b || ui.lang===b.dataset.lang) return; ui.lang=b.dataset.lang; saveUI();
@@ -2475,17 +2655,20 @@ async function lookPng(png, L){
   return PNGX.add(png,[PNGX.text("Title",name), PNGX.text("Software","Miliadex.com"),
     PNGX.text("Description",`${name} · Miliadex outfit · https://miliadex.com/#look=${meta.look}`), PNGX.chunk("mlDx",PNGX.cat([head,js,...parts]))]);
 }
-async function lookFromImage(file){
-  const d=await PNGX.find(file,"mlDx"); if(!d || d.length<9 || String.fromCharCode(...d.subarray(0,4))!=="MLDX" || d[4]!==1) return null;
+async function readOutfitPng(blob){
+  const d=await PNGX.find(blob,"mlDx"); if(!d || d.length<9 || String.fromCharCode(...d.subarray(0,4))!=="MLDX" || d[4]!==1) return null;
   const n=new DataView(d.buffer,d.byteOffset,d.byteLength).getUint32(5), meta=JSON.parse(new TextDecoder().decode(d.subarray(9,9+n)));
   const L=parseLook(meta.look); if(!L) return null;
   const bl={}; let p=9+n; for(const x of meta.b||[]){ bl[x.k]=new Blob([d.slice(p,p+x.n)],{type:x.t}); p+=x.n; }
-  let pic=null;
-  if(bl.cut){ const pm=meta.pic||{}, id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-    await PicDB.put({id, src:bl.src||bl.cut, cut:bl.cut, crop:bl.src?pm.crop:null, auto:!!pm.auto, w:pm.w||0, h:pm.h||0, t:Date.now()});
-    pic={id, on:pm.on!==false}; }
-  return {L,pic};
+  return {L, pm:meta.pic||{}, bl};
 }
+async function storeOutfitPic(r){
+  if(!r || !r.bl.cut) return null;
+  const pm=r.pm||{}, id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  await PicDB.put({id, src:r.bl.src||r.bl.cut, cut:r.bl.cut, crop:r.bl.src?pm.crop:null, auto:!!pm.auto, w:pm.w||0, h:pm.h||0, t:Date.now()});
+  return {id, on:pm.on!==false};
+}
+async function lookFromImage(file){ const r=await readOutfitPng(file); return r ? {L:r.L, pic:await storeOutfitPic(r)} : null; }
 async function openLookImage(file){
   let r=null; try{ r=await lookFromImage(file); }catch(e){ console.warn("Miliadex: unreadable outfit image", e); }
   if(!r) return false;
@@ -2595,6 +2778,190 @@ function readHash(){
   const L=parseLook(mm[1]); if(!L){ toast(t("badLook")); return false; }
   shared=L; look={id:null,n:L.n,g:L.g,i:L.i.slice()}; saveDraft(); ui.tab="outfits"; return true;
 }
+/* ---------- Outfits Showcase: outfit images from the repo's showcase/ folder (listed through the GitHub API, served by the site itself) ---------- */
+const SHOW_REPO="Dowar/miliadex", SHOW_DIR="showcase", SHOW_KEY="miliadex-showcase", SHOW_TTL=10*60e3;
+const SHOW={items:null, state:"idle", f:{q:"",g:"",mine:false,sort:"repo"}, view:[], vi:0, pending:null, tok:0};
+try{ const c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); if(c && Array.isArray(c.list)) SHOW.items=c.list.map((x,i)=>({name:x.name,sha:x.sha,size:x.size,i})); }catch(e){}
+const showUrl = it => SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,8):"");
+const showName = it => (it.meta && it.meta.L.n) || it.name.replace(/\.[a-z0-9]+$/i,"").replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
+const showByName = n => (SHOW.items||[]).find(x=>x.name===n);
+function showStats(m){ const its=lookItems(m.L); return {n:its.length, own:its.filter(it=>has(it,"x")).length, stars:its.reduce((a,it)=>a+(it.r||0),0), its}; }
+const showPct = it => { if(!it.meta) return -1; const s=showStats(it.meta); return s.n ? s.own/s.n : 0; };
+const sameIds = (a,b) => a.length===b.length && a.every(x=>b.includes(x));
+const showSaved = m => (state.looks||[]).some(L=>L.n===m.L.n && L.g===m.L.g && sameIds(L.i,m.L.i));
+function showSet(list){
+  const old=new Map((SHOW.items||[]).map(x=>[x.name,x]));
+  SHOW.items=list.map((x,i)=>{ const o=old.get(x.name); return o && o.sha===x.sha ? Object.assign(o,{i}) : {name:x.name,sha:x.sha,size:x.size,i}; });
+}
+async function showLoad(force){
+  let c=null; try{ c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); }catch(e){}
+  const fresh = c && Array.isArray(c.list) && Date.now()-c.t<SHOW_TTL;
+  if(fresh && !force){ showSet(c.list); SHOW.state="ok"; showLoaded(); return; }
+  SHOW.state = SHOW.items ? "ok" : "loading"; if(SHOW.state==="loading" && ui.tab==="show") renderShowGrid();
+  try{
+    const r=await fetch(`https://api.github.com/repos/${SHOW_REPO}/contents/${SHOW_DIR}`,{headers:{Accept:"application/vnd.github+json"}});
+    let list=[];
+    if(r.ok) list=(await r.json()).filter(x=>x && x.type==="file" && /\.(png|jpe?g|webp|gif|avif)$/i.test(x.name)).map(x=>({name:x.name,sha:x.sha||"",size:x.size||0}));
+    else if(r.status!==404) throw new Error("GitHub API "+r.status);   // 404: no showcase folder yet
+    try{ localStorage.setItem(SHOW_KEY,JSON.stringify({t:Date.now(),list})); }catch(e){}
+    showSet(list); SHOW.state="ok";
+  }catch(e){ console.warn("Miliadex: showcase list unavailable", e); if(c && Array.isArray(c.list)){ showSet(c.list); SHOW.state="ok"; } else SHOW.state="fail"; }
+  showLoaded();
+}
+function showLoaded(){
+  const sp=$("tab-show") && $("tab-show").querySelector("span"); if(sp) sp.textContent=SHOW.items?SHOW.items.length:"✦";
+  if(ui.tab==="show") renderShowGrid();
+  (SHOW.items||[]).forEach(it=>showMeta(it));   // read every outfit in the background: filters and cards fill in as they arrive
+  if(SHOW.pending){ const n=SHOW.pending; SHOW.pending=null; if(showByName(n)) openShowView(n); else toast(t("shGone")); }
+}
+// each image is read once for the outfit it carries (pieces, name, in-game screenshot)
+let showQ=[], showRun=0;
+function showMeta(it){
+  if(it.meta!==undefined) return Promise.resolve(it.meta);
+  if(it._mp) return it._mp;
+  return it._mp=new Promise(res=>{ showQ.push(async()=>{ let m=null;
+      try{ const r=await fetch(showUrl(it)); if(r.ok) m=await readOutfitPng(await r.blob()); }catch(e){}
+      it.meta=m; it._mp=null; res(m); showArrived(it); }); showPump(); });
+}
+function showPump(){ while(showRun<3 && showQ.length){ const job=showQ.shift(); showRun++; job().finally(()=>{ showRun--; showPump(); }); } }
+let showRT=0;
+function showArrived(it){
+  if(ui.tab==="show"){ const F=SHOW.f;
+    if(F.q || F.g || F.mine || F.sort!=="repo"){ clearTimeout(showRT); showRT=setTimeout(renderShowGrid,180); }
+    else { const el=$("showcase").querySelector(`.sh-card[data-sh="${CSS.escape(it.name)}"]`); if(el) el.outerHTML=showCard(it,+el.dataset.k); } }
+  const d=$("shv"); if(d.open && SHOW.view[SHOW.vi]===it.name) paintShowView(true);
+}
+function showList(){
+  const F=SHOW.f, q=F.q.trim().toLowerCase();
+  const L=(SHOW.items||[]).filter(it=>{ const m=it.meta;
+    if((F.g || F.mine) && !m) return false;
+    if(F.g && m.L.g!==F.g) return false;
+    if(F.mine){ const s=showStats(m); if(!s.n || s.own<s.n) return false; }
+    if(q){ const hay=[showName(it), ...(m?lookItems(m.L).flatMap(x=>[x.en,x.fr]):[])].join(" ").toLowerCase(); if(!hay.includes(q)) return false; }
+    return true; });
+  if(F.sort==="name") L.sort((a,b)=>showName(a).localeCompare(showName(b), ui.lang));
+  else if(F.sort==="own") L.sort((a,b)=>showPct(b)-showPct(a) || a.i-b.i);
+  return L;
+}
+function showCard(it,k){
+  const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot;
+  const own = st ? `<span class="sh-own${st.n&&st.own===st.n?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-st">★ ${st.stars}</span>` : "";
+  return `<button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}" data-sh="${esc(it.name)}" data-k="${k}" style="--d:${Math.min(k,14)*45}ms" aria-label="${esc(title)}">
+    <span class="sh-img"><img src="${esc(showUrl(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span>
+    <span class="sh-glare" aria-hidden="true"></span>
+    <span class="sh-top">${m?`<span class="sh-chip">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>`:""}${m&&m.bl.cut?`<span class="sh-chip ic" title="${esc(t("shPhoto"))}">${ICON_CAM}</span>`:""}</span>
+    <span class="sh-bot"><b>${esc(title)}</b>${st?`<span class="sh-meta">${own}</span>`:m===undefined?`<span class="sh-meta sk" aria-hidden="true"><i></i><i></i></span>`:""}</span>
+  </button>`;
+}
+function renderShow(){
+  const box=$("showcase"), key=ui.lang;
+  if(box.dataset.key!==key){ box.dataset.key=key; const F=SHOW.f;
+    box.innerHTML=`<header class="sh-hero"><div class="sh-sky" aria-hidden="true"><i class="aur a1"></i><i class="aur a2"></i><i class="aur a3"></i><i class="starfield"></i><i class="vp-shoot" style="top:12%;left:88%"></i></div>
+        <div class="sh-ht"><span class="sh-kick">${esc(t("shKick"))}</span><h2>${esc(t("showT"))} <small id="shCount"></small></h2><p>${esc(t("shSub"))}</p></div>
+        <div class="sh-deco" aria-hidden="true"><i></i><i></i><i></i></div></header>
+      <div class="sh-tools">
+        <label class="search sh-q"><span class="sr">${esc(t("shSearch"))}</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6"/><path d="M13 13l5 5" stroke-linecap="round"/></svg><input id="shQ" type="search" autocomplete="off" placeholder="${esc(t("shSearch"))}" value="${esc(F.q)}"></label>
+        <div class="seg sh-g" role="group" aria-label="${esc(t("wear"))}">${[["",t("shAll")],["f","♀ "+t("f")],["m","♂ "+t("m")]].map(([v,l])=>`<button type="button" data-shg="${v}" aria-pressed="${F.g===v}">${esc(l)}</button>`).join("")}</div>
+        <label class="sh-mine"><input type="checkbox" id="shMine"${F.mine?" checked":""}><span class="tg" aria-hidden="true"></span><span>${esc(t("shMine"))}</span></label>
+        <label class="sh-sort"><span class="sr">${esc(t("shSort"))}</span><select id="shSort">${Object.entries(t("shSorts")).map(([v,l])=>`<option value="${v}"${F.sort===v?" selected":""}>${esc(l)}</option>`).join("")}</select></label>
+      </div>
+      <div class="sh-grid" id="shGrid"></div>`; }
+  if(SHOW.state==="idle" || (SHOW.state==="ok" && !SHOW.loadedOnce)){ SHOW.loadedOnce=true; showLoad(); }
+  renderShowGrid();
+}
+function renderShowGrid(){
+  const g=$("shGrid"); if(!g) return; const F=SHOW.f, cnt=$("shCount");
+  if(cnt) cnt.textContent = SHOW.items ? SHOW.items.length : "";
+  if(!SHOW.items && SHOW.state!=="fail"){ g.className="sh-grid"; g.innerHTML=Array.from({length:6},(_,k)=>`<span class="sh-card sk" style="--d:${k*60}ms"><span class="sh-img"></span></span>`).join("")+`<p class="sh-msg sr">${esc(t("shLoading"))}</p>`; return; }
+  if(SHOW.state==="fail" && !SHOW.items){ g.className="sh-grid msg"; g.innerHTML=`<div class="sh-msg"><b>${esc(t("shFail"))}</b><button type="button" class="btn" data-shretry>${esc(t("shRetry"))}</button></div>`; return; }
+  if(!SHOW.items.length){ g.className="sh-grid msg"; g.innerHTML=`<div class="sh-msg"><span class="sh-msg-ic" aria-hidden="true">✦</span><b>${esc(t("shEmpty"))}</b></div>`; return; }
+  const list=showList(); SHOW.spot = !F.q && !F.g && !F.mine && F.sort==="repo" && list.length>=4;
+  g.className="sh-grid"+(SHOW.spot?" has-spot":"");
+  g.innerHTML = list.length ? list.map((it,k)=>showCard(it,k)).join("") : `<div class="sh-msg"><b>${esc(t("shNone"))}</b></div>`;
+}
+/* viewer */
+function openShowView(name){
+  let list=showList(); if(!list.some(x=>x.name===name)) list=SHOW.items||[];
+  const i=list.findIndex(x=>x.name===name); if(i<0){ toast(t("shGone")); return; }
+  SHOW.view=list.map(x=>x.name); SHOW.vi=i; paintShowView();
+  const d=$("shv"); if(!d.open){ d.showModal ? d.showModal() : d.setAttribute("open",""); }
+}
+function paintShowView(quiet){
+  const d=$("shv"), it=showByName(SHOW.view[SHOW.vi]); if(!it) return;
+  const m=it.meta, st=m?showStats(m):null, title=showName(it), n=SHOW.view.length, url=showUrl(it);
+  if(m===undefined) showMeta(it);
+  const pcs = st ? st.its.slice().sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0])).map(x=>{ const o=has(x,"x"), sl=slotsOf(x)[0];
+      return `<li class="${o?"own":""} r${x.r}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span><span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)} · ${"★".repeat(x.r||0)}</small></span><span class="ok" aria-label="${o?"✓":""}">${o?"✓":""}</span></li>`; }).join("") : "";
+  const saved = m && showSaved(m);
+  const acts = m ? `<button type="button" class="btn sv-main" data-sv="edit">${ICON_EDIT} ${esc(t("shEdit"))}</button>
+      <button type="button" class="btn ghost" data-sv="save"${saved?" disabled":""}>${saved?"✓ "+esc(t("shSaved")):ICON_PLUS+" "+esc(t("shSave"))}</button>
+      <div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button></div>`
+    : `<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button></div>`;
+  const side = m===undefined ? `<div class="sv-sk" aria-hidden="true"><i></i><i></i><i></i></div>` : `
+      <div class="sv-chips">${m?`<span>${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span><span>★ ${st.stars}</span><span>${esc(t("shPieces")(st.n))}</span>${m.bl.cut?`<span>${ICON_CAM} ${esc(t("shPhoto"))}</span>`:""}`:""}</div>
+      ${m?`<div class="sv-own${st.n&&st.own===st.n?" full":""}"><div class="sv-bar"><i style="width:${st.n?st.own/st.n*100:0}%"></i></div><span>${esc(st.n&&st.own===st.n?t("shAllOwned"):t("shOwned")(st.own,st.n))}</span></div>`:`<p class="sv-note">${esc(t("shNoData"))}</p>`}
+      <div class="sv-act">${acts}</div>
+      ${pcs?`<h3>${esc(t("shPiecesT"))}</h3><ul class="sv-pcs">${pcs}</ul>`:""}`;
+  const stageKey=it.name;
+  if(quiet && d.dataset.k===stageKey){ const s=d.querySelector(".sv-body"); if(s){ s.innerHTML=side; $("svTitle").textContent=title; const im=d.querySelector(".sv-img"); if(im) im.alt=title; return; } }
+  d.dataset.k=stageKey;
+  d.innerHTML=`<div class="sv-stage" style="--bgimg:url('${url.replace(/'/g,"%27")}')">
+      <img class="sv-img" src="${esc(url)}" alt="${esc(title)}">
+      ${n>1?`<button type="button" class="sv-nav prev" data-sv="prev" aria-label="${esc(t("shPrev"))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="sv-nav next" data-sv="next" aria-label="${esc(t("shNext"))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span class="sv-count">${SHOW.vi+1} / ${n}</span>`:""}
+      <button type="button" class="dx sv-x" data-close aria-label="${esc(t("close"))}">✕</button>
+    </div>
+    <aside class="sv-side"><div class="sv-top"><span class="vp-kick">${esc(t("showT"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
+      <h2 id="svTitle">${esc(title)}</h2><div class="sv-body">${side}</div></aside>`;
+}
+function showStep(k){ const n=SHOW.view.length; if(n<2) return; SHOW.vi=(SHOW.vi+k+n)%n; paintShowView(); const im=$("shv").querySelector(".sv-img"); if(im) im.classList.add(k>0?"in-r":"in-l"); }
+async function showAct(a){
+  const it=showByName(SHOW.view[SHOW.vi]); if(!it) return;
+  if(a==="prev") return showStep(-1);
+  if(a==="next") return showStep(1);
+  if(a==="link") return copyTxt(location.href.split("#")[0]+"#show="+encodeURIComponent(it.name), t("linkCopied"));
+  if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
+  const m=await showMeta(it); if(!m) return;
+  if(a==="save"){ if(showSaved(m)) return; const pic=await storeOutfitPic(m); state.looks=state.looks||[];
+    const L={id:Date.now().toString(36), n:(m.L.n||showName(it)).slice(0,60), g:m.L.g, i:m.L.i.slice(), t:Date.now()}; if(pic){ L.pic=pic.id; L.picOn=pic.on; }
+    state.looks.push(L); save(); renderHeader(); paintShowView(true); toast("✓ "+t("shAdded"));
+    const b=$("shv").querySelector('[data-sv="save"]'); if(b) confetti(36, b); return; }
+  if(a==="edit"){ const pic=await storeOutfitPic(m);
+    shared=null; look={id:null,n:m.L.n||showName(it),g:m.L.g,i:m.L.i.slice(),pic:pic?pic.id:null,picOn:pic?pic.on:true}; saveDraft();
+    const d=$("shv"); if(d.open) d.close ? d.close() : d.removeAttribute("open");
+    ui.tab="outfits"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="outfits"));
+    renderHeader(); renderTab(); window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); toast("✓ "+t("shOpened")); }
+}
+$("showcase").addEventListener("click", e=>{
+  const c=e.target.closest(".sh-card[data-sh]"); if(c){ openShowView(c.dataset.sh); return; }
+  const g=e.target.closest("[data-shg]"); if(g){ SHOW.f.g=g.dataset.shg; $("showcase").querySelectorAll("[data-shg]").forEach(x=>x.setAttribute("aria-pressed", x===g)); renderShowGrid(); return; }
+  if(e.target.closest("[data-shretry]")){ SHOW.state="loading"; renderShowGrid(); showLoad(true); }
+});
+$("showcase").addEventListener("input", e=>{ if(e.target.id==="shQ"){ SHOW.f.q=e.target.value; clearTimeout(showRT); showRT=setTimeout(renderShowGrid,120); } });
+$("showcase").addEventListener("change", e=>{ if(e.target.id==="shMine"){ SHOW.f.mine=e.target.checked; renderShowGrid(); } else if(e.target.id==="shSort"){ SHOW.f.sort=e.target.value; renderShowGrid(); } });
+// cards lean toward the pointer and catch the light
+let shTiltEl=null, shTiltRAF=0;
+$("showcase").addEventListener("pointermove", e=>{ if(e.pointerType!=="mouse" || reduce()) return; const c=e.target.closest(".sh-card[data-sh]");
+  if(shTiltEl && shTiltEl!==c){ shTiltEl.style.removeProperty("--rx"); shTiltEl.style.removeProperty("--ry"); }
+  shTiltEl=c; if(!c) return; const r=c.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+  cancelAnimationFrame(shTiltRAF); shTiltRAF=requestAnimationFrame(()=>{ c.style.setProperty("--rx",((.5-y)*7).toFixed(2)+"deg"); c.style.setProperty("--ry",((x-.5)*9).toFixed(2)+"deg"); c.style.setProperty("--mx",(x*100).toFixed(1)+"%"); c.style.setProperty("--my",(y*100).toFixed(1)+"%"); }); });
+$("showcase").addEventListener("pointerleave", ()=>{ if(shTiltEl){ shTiltEl.style.removeProperty("--rx"); shTiltEl.style.removeProperty("--ry"); shTiltEl=null; } }, true);
+$("shv").addEventListener("click", e=>{ const d=$("shv");
+  if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
+  const b=e.target.closest("[data-sv]"); if(b && !b.disabled) showAct(b.dataset.sv); });
+$("shv").addEventListener("keydown", e=>{ if(e.key==="ArrowLeft"){ e.preventDefault(); showStep(-1); } else if(e.key==="ArrowRight"){ e.preventDefault(); showStep(1); } });
+let svX=null;
+$("shv").addEventListener("pointerdown", e=>{ if(e.target.closest(".sv-stage") && !e.target.closest("button")) svX=[e.clientX,e.clientY]; });
+$("shv").addEventListener("pointerup", e=>{ if(!svX) return; const dx=e.clientX-svX[0], dy=e.clientY-svX[1]; svX=null; if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.3) showStep(dx<0?1:-1); });
+function readShowHash(){
+  const mm=location.hash.match(/show=([^&]+)/); if(!mm) return false;
+  try{ history.replaceState(null,"",location.href.split("#")[0]); }catch(e){}
+  let n=""; try{ n=decodeURIComponent(mm[1]); }catch(e){ return false; }
+  ui.tab="show"; SHOW.pending=n; if(SHOW.state==="ok" && showByName(n)){ SHOW.pending=null; setTimeout(()=>openShowView(n),60); }
+  return true;
+}
+
 /* ---------- header details fold ---------- */
 function hxSet(open, anim){
   const hx=$("hx"), b=$("hxBtn"); ui.hx=!!open;
@@ -2883,7 +3250,7 @@ $("outfits").addEventListener("change", e=>{ if(e.target.id==="picOn"){ look.pic
 $("outfits").addEventListener("dragover", e=>{ const pv=e.target.closest("#lkPrev"); if(!pv || !e.dataTransfer || ![...e.dataTransfer.types].includes("Files")) return; e.preventDefault(); pv.classList.add("drag"); });
 $("outfits").addEventListener("dragleave", e=>{ const pv=e.target.closest("#lkPrev"); if(pv && !pv.contains(e.relatedTarget)) pv.classList.remove("drag"); });
 $("outfits").addEventListener("drop", e=>{ const pv=e.target.closest("#lkPrev"); if(!pv) return; e.preventDefault(); pv.classList.remove("drag"); const f=e.dataTransfer && [...e.dataTransfer.files].find(x=>/^image\//.test(x.type)); if(f) takeFile(f); else toast(t("picBad")); });
-window.addEventListener("hashchange", ()=>{ if(readHash()){ saveUI(); renderHeader(); renderTab(); } else readCol(); });
+window.addEventListener("hashchange", ()=>{ if(readHash() || readShowHash()){ saveUI(); renderHeader(); renderTab(); } else readCol(); });
 
 
 /* ---------- in-game screenshot: storage ---------- */
@@ -2916,6 +3283,7 @@ async function gcPics(){
 function hydratePics(root){ (root||document).querySelectorAll("img[data-pic]").forEach(async im=>{ const p=await picImage(im.dataset.pic); if(p) im.src=p._url; else im.remove(); }); }
 const ICON_G=`<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
 const ICON_DRIVE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg>`;
+const ICON_EDIT=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z"/><path d="M11.5 5.5l3 3"/></svg>`;
 const ICON_IMG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/></svg>`;
 const ICON_CAM=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.4" r="3.6"/></svg>`;
 function picRow(){
@@ -3325,7 +3693,7 @@ function syncPill(box, sel, cls){
 }
 function syncPills(){ document.querySelectorAll(".seg").forEach(sg=>syncPill(sg,'button[aria-pressed="true"]',"pill")); syncPill($("tabs"),'.tab[aria-selected="true"]',"tab-ind"); }
 const pillMO=new MutationObserver(()=>syncPills());
-["lang","gender","tabs","outfits","cut"].forEach(id=>{ const el=$(id); if(el) pillMO.observe(el,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-pressed","aria-selected"]}); });
+["lang","gender","tabs","outfits","cut","showcase"].forEach(id=>{ const el=$(id); if(el) pillMO.observe(el,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-pressed","aria-selected"]}); });
 let pillRz=0; window.addEventListener("resize", ()=>{ cancelAnimationFrame(pillRz); pillRz=requestAnimationFrame(syncPills); });
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(syncPills);
 // let the pill start gliding before the heavier re-render of the list
@@ -3517,7 +3885,7 @@ const GD=(()=>{
 })();
 gdHook=()=>GD.soon(); gdRender=()=>GD.render();
 
-readHash(); renderAll(); applyBg(); syncPills(); GD.init(); readCol();
+readShowHash(); readHash(); renderAll(); applyBg(); syncPills(); GD.init(); readCol();
 // start the ambient loops once the first render has settled
 window.addEventListener("load", ()=>{ const go=()=>document.body.classList.add("ready"); (window.requestIdleCallback ? requestIdleCallback(go,{timeout:2500}) : setTimeout(go,1200)); });
 })();
