@@ -1280,7 +1280,7 @@ const T = {
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
   hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
-  scName:"Your name on the card (optional)",scNamePh:"Traveler",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
+  scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
   bkTitle:"Save & backup",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
@@ -1327,7 +1327,7 @@ const T = {
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
   hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
-  scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
+  scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
   bkTitle:"Sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
@@ -2628,12 +2628,15 @@ function shCard(st,name){
     <div class="sc-top"><h3>${esc(t("scTop"))}</h3><div class="sc-ths">${thumbs}</div></div>
     <div class="sc-foot"><span>MILIADEX</span><span>${esc(t("scWear")(st.g))}</span></div></article>`;
 }
+const ICON_CHAT=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 3.5h12A1.5 1.5 0 0 1 17.5 5v7.5A1.5 1.5 0 0 1 16 14H9.5l-4 3.2V14H4a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z"/><path d="M6.5 7.5h7M6.5 10.5h4.5" stroke-linecap="round"/></svg>`;
 const colUrl = code => location.href.split("#")[0] + "#col=" + code;
 let shReady=null, shTok=0;
 async function shPrepare(){
   const tok=++shTok, code=await SHARE.make(state.owned, ui.g, ui.shName);
   if(tok!==shTok) return shReady;
-  return shReady={url:colUrl(code)};
+  const url=colUrl(code), nm=SHARE.clean(ui.shName).replace(/[\\\[\]]/g,"\\$&");
+  // Discord masked link: the message shows "Miliadex - Name Profile" instead of the long link
+  return shReady={url, md:`[${nm?`Miliadex - ${nm} Profile`:"Miliadex Profile"}](${url})`};
 }
 function openShare(theirs){
   const d=$("shc"), mine=!theirs, name = mine ? SHARE.clean(ui.shName) : theirs.name;
@@ -2641,7 +2644,7 @@ function openShare(theirs){
   let foot;
   if(mine){ shReady=null; shPrepare();
     foot=`<label class="sc-name"><span>${esc(t("scName"))}</span><input id="scName" type="text" maxlength="24" autocomplete="nickname" spellcheck="false" placeholder="${esc(t("scNamePh"))}" value="${esc(name)}"></label>
-      <div class="sc-act"><button type="button" class="btn" data-sc="link">${ICON_LINK} ${esc(t("scLink"))}</button></div>
+      <div class="sc-act"><button type="button" class="btn" data-sc="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button><button type="button" class="btn ghost" data-sc="link">${ICON_LINK} ${esc(t("scLink"))}</button></div>
       <p class="sc-note">${esc(t("scNote"))}</p>`; }
   else { const me=collStats(state.owned, ui.g), any=me.got>0;
     foot=`${any?`<p class="sc-vs">${esc(t("scYou")(me.lv, pctTxt(me), fmtN(me.vg)))}</p>`:""}<div class="sc-act"><button type="button" class="btn" data-close>${esc(t(any?"scMine":"scStart"))}</button></div>`; }
@@ -2655,8 +2658,8 @@ $("shc").addEventListener("click", async e=>{ const d=$("shc");
   if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
   const b=e.target.closest("[data-sc]"); if(!b) return;
   const r=shReady||await shPrepare(); if(!r) return;
-  const txt=r.url;
-  try{ await navigator.clipboard.writeText(txt); toast("✓ "+t("linkCopied")); }
+  const dc=b.dataset.sc==="discord", txt=dc?r.md:r.url;
+  try{ await navigator.clipboard.writeText(txt); toast("✓ "+t(dc?"scCopiedD":"linkCopied")); }
   catch(err){ // no clipboard access: show the text ready to copy by hand
     let ta=d.querySelector(".sc-raw"); if(!ta){ ta=document.createElement("textarea"); ta.className="sc-raw"; ta.readOnly=true; ta.rows=4; d.querySelector(".sc-act").after(ta); }
     ta.value=txt; ta.focus(); ta.select(); }
