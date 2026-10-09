@@ -2840,29 +2840,42 @@ function readHash(){
 const SHOW_REPO="Dowar/miliadex", SHOW_DIR="showcase", SHOW_KEY="miliadex-showcase", SHOW_TTL=10*60e3;
 const SHOW={items:null, state:"idle", f:{q:"",g:"",mine:false,sort:"repo"}, view:[], vi:0, pending:null, tok:0};
 try{ const c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); if(c && Array.isArray(c.list)) SHOW.items=c.list.map((x,i)=>({name:x.name,sha:x.sha,size:x.size,i})); }catch(e){}
-const showUrl = it => SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,8):"");
+const showUrl = it => SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,10):"");   // the original file (carries the full outfit)
+const showThumb = it => it.thumb ? SHOW_DIR+"/"+it.thumb.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
+const showView = it => it.view ? SHOW_DIR+"/"+it.view.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
 const showName = it => (it.meta && it.meta.L.n) || it.name.replace(/\.[a-z0-9]+$/i,"").replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
 const showByName = n => (SHOW.items||[]).find(x=>x.name===n);
 function showStats(m){ const its=lookItems(m.L); return {n:its.length, own:its.filter(it=>has(it,"x")).length, viv:lookViv(its), its}; }
 const showPct = it => { if(!it.meta) return -1; const s=showStats(it.meta); return s.n ? s.own/s.n : 0; };
 const sameIds = (a,b) => a.length===b.length && a.every(x=>b.includes(x));
 const showSaved = m => (state.looks||[]).some(L=>L.n===m.L.n && L.g===m.L.g && sameIds(L.i,m.L.i));
+// outfit data: from the index the build writes (light), or read from the image itself (full: pieces + in-game screenshot)
+const metaLite = x => { const L=x.look && parseLook(x.look); return L ? {L, pic:!!x.pic, full:null} : null; };
+const metaFull = r => r ? {L:r.L, pic:!!r.bl.cut, full:r} : null;
 function showSet(list){
   const old=new Map((SHOW.items||[]).map(x=>[x.name,x]));
-  SHOW.items=list.map((x,i)=>{ const o=old.get(x.name); return o && o.sha===x.sha ? Object.assign(o,{i}) : {name:x.name,sha:x.sha,size:x.size,i}; });
+  SHOW.items=list.map((x,i)=>{ const o=old.get(x.name); if(o && o.sha===x.sha) return Object.assign(o,{i});
+    const it={name:x.name,sha:x.sha,size:x.size,i,thumb:x.thumb||"",view:x.view||""};
+    if(x.indexed) it.meta=metaLite(x);   // the build already read this image
+    return it; });
 }
 async function showLoad(force){
+  SHOW.state = SHOW.items ? "ok" : "loading"; if(SHOW.state==="loading" && ui.tab==="show") renderShowGrid();
+  // 1) the index written at deploy time (same site, no rate limit, with thumbnails)
+  try{ const r=await fetch(SHOW_DIR+"/index.json",{cache:"no-cache"});
+    if(r.ok && /json/.test(r.headers.get("content-type")||"")){ const j=await r.json();
+      if(j && Array.isArray(j.items)){ showSet(j.items.filter(x=>x && x.file).map(x=>({name:x.file,sha:x.v||"",size:x.size||0,thumb:x.thumb,view:x.view,look:x.look,pic:x.pic,indexed:true}))); SHOW.state="ok"; SHOW.src="index"; showLoaded(); return; } } }catch(e){}
+  // 2) fallback: list the repo folder through the GitHub API (kept 10 minutes per browser: the API allows 60 calls an hour)
   let c=null; try{ c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); }catch(e){}
   const fresh = c && Array.isArray(c.list) && Date.now()-c.t<SHOW_TTL;
   if(fresh && !force){ showSet(c.list); SHOW.state="ok"; showLoaded(); return; }
-  SHOW.state = SHOW.items ? "ok" : "loading"; if(SHOW.state==="loading" && ui.tab==="show") renderShowGrid();
   try{
     const r=await fetch(`https://api.github.com/repos/${SHOW_REPO}/contents/${SHOW_DIR}`,{headers:{Accept:"application/vnd.github+json"}});
     let list=[];
     if(r.ok) list=(await r.json()).filter(x=>x && x.type==="file" && /\.(png|jpe?g|webp|gif|avif)$/i.test(x.name)).map(x=>({name:x.name,sha:x.sha||"",size:x.size||0}));
     else if(r.status!==404) throw new Error("GitHub API "+r.status);   // 404: no showcase folder yet
     try{ localStorage.setItem(SHOW_KEY,JSON.stringify({t:Date.now(),list})); }catch(e){}
-    showSet(list); SHOW.state="ok";
+    showSet(list); SHOW.state="ok"; SHOW.src="api";
   }catch(e){ console.warn("Miliadex: showcase list unavailable", e); if(c && Array.isArray(c.list)){ showSet(c.list); SHOW.state="ok"; } else SHOW.state="fail"; }
   showLoaded();
 }
@@ -2874,13 +2887,15 @@ function showLoaded(){
 }
 // each image is read once for the outfit it carries (pieces, name, in-game screenshot)
 let showQ=[], showRun=0;
+const showRead = async it => { try{ const r=await fetch(showUrl(it)); if(r.ok) return await readOutfitPng(await r.blob()); }catch(e){} return null; };
 function showMeta(it){
   if(it.meta!==undefined) return Promise.resolve(it.meta);
   if(it._mp) return it._mp;
-  return it._mp=new Promise(res=>{ showQ.push(async()=>{ let m=null;
-      try{ const r=await fetch(showUrl(it)); if(r.ok) m=await readOutfitPng(await r.blob()); }catch(e){}
+  return it._mp=new Promise(res=>{ showQ.push(async()=>{ const m=metaFull(await showRead(it));
       it.meta=m; it._mp=null; res(m); showArrived(it); }); showPump(); });
 }
+// the whole outfit (with its in-game screenshot) is only downloaded when it's kept or edited
+async function showFull(it){ const m=await showMeta(it); if(!m) return null; if(!m.full){ m.full=await showRead(it); if(m.full) m.pic=!!m.full.bl.cut; } return m.full; }
 function showPump(){ while(showRun<3 && showQ.length){ const job=showQ.shift(); showRun++; job().finally(()=>{ showRun--; showPump(); }); } }
 let showRT=0;
 function showArrived(it){
@@ -2903,12 +2918,12 @@ function showList(){
 }
 function showCard(it,k){
   const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot, full=st && st.n && st.own===st.n;
-  const tags = m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.bl.cut?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "";
+  const tags = m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.pic?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "";
   const vv = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
   const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-bar" aria-hidden="true"><i style="width:${st.n?(st.own/st.n*100).toFixed(1):0}%"></i></span>`
     : m===undefined ? `<span class="sh-sk" aria-hidden="true"><i></i><i></i></span>` : "";
   return `<button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" style="--d:${Math.min(k,14)*45}ms" aria-label="${esc(title)}">
-    <span class="sh-frame"><span class="sh-img"><img src="${esc(showUrl(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span><span class="sh-glare" aria-hidden="true"></span></span>
+    <span class="sh-frame"><span class="sh-img"><img src="${esc(spot?showView(it):showThumb(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span><span class="sh-glare" aria-hidden="true"></span></span>
     <span class="sh-info"><b class="sh-name">${esc(title)}</b>${tags||vv?`<span class="sh-l2"><span class="sh-tags">${tags}</span>${vv}</span>`:""}${meta?`<span class="sh-meta">${meta}</span>`:""}</span>
   </button>`;
 }
@@ -2953,7 +2968,7 @@ function vwItem(){
   if(VW.src==="mine"){ const L=(state.looks||[]).find(x=>x.id===k); if(!L) return null;
     return {kind:"mine", key:"m:"+L.id, title:(L.n||"").trim()||t("untitled"), L, ready:true, pic:!!L.pic, url:mineUrl(L)}; }
   const it=showByName(k); if(!it) return null; const m=it.meta; if(m===undefined) showMeta(it);
-  return {kind:"show", key:"s:"+it.name, it, m, title:showName(it), L:m?m.L:null, ready:m!==undefined, pic:!!(m&&m.bl.cut), url:showUrl(it)};
+  return {kind:"show", key:"s:"+it.name, it, m, title:showName(it), L:m?m.L:null, ready:m!==undefined, pic:!!(m&&m.pic), url:showView(it)};
 }
 function openShowView(name){
   let list=showList(); if(!list.some(x=>x.name===name)) list=SHOW.items||[];
@@ -3011,11 +3026,11 @@ async function showAct(a){
   if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
   const m=await showMeta(it); if(!m) return;
   if(a==="gcode"){ const r=gameCode(m.L); if(!r){ toast(t("gameNone")); return; } return copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
-  if(a==="save"){ if(showSaved(m)) return; const pic=await storeOutfitPic(m); state.looks=state.looks||[];
+  if(a==="save"){ if(showSaved(m)) return; const pic=await storeOutfitPic(await showFull(it)); state.looks=state.looks||[];
     const L={id:Date.now().toString(36), n:(m.L.n||showName(it)).slice(0,60), g:m.L.g, i:m.L.i.slice(), t:Date.now()}; if(pic){ L.pic=pic.id; L.picOn=pic.on; }
     state.looks.push(L); save(); renderHeader(); paintView(true); toast("✓ "+t("shAdded"));
     const b=$("shv").querySelector('[data-sv="save"]'); if(b) confetti(36, b); return; }
-  if(a==="edit"){ const pic=await storeOutfitPic(m);
+  if(a==="edit"){ const pic=await storeOutfitPic(await showFull(it));
     shared=null; look={id:null,n:m.L.n||showName(it),g:m.L.g,i:m.L.i.slice(),pic:pic?pic.id:null,picOn:pic?pic.on:true}; saveDraft();
     closeV(); goBuilder(); toast("✓ "+t("shOpened")); }
 }
