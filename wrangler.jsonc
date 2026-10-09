@@ -1,12 +1,16 @@
 {
-  // Miliadex on Cloudflare Workers: static files only (no server code yet).
-  // Workers Builds runs tools/build.py, which puts the site in dist/ with the showcase thumbnails, then deploys dist/.
+  // Miliadex on Cloudflare Workers.
+  // Workers Builds runs tools/build.py (site + showcase thumbnails in dist/, catalog for the Worker), then deploys.
   "name": "miliadex",
+  "main": "worker/index.js",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     // serve files at their exact address (oauth.html stays oauth.html, as registered with Google); anything else gets index.html
     "html_handling": "none",
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+    // only share links run code (rich previews); everything else is served as plain static files
+    "run_worker_first": ["/c/*", "/o/*", "/s/*"]
   }
 }

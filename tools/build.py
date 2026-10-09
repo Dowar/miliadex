@@ -7,15 +7,18 @@ Copies the site from the repository root into dist/ and prepares the Outfits Sho
   dist/showcase/_v/*.webp    lighter full images for the detail page (~150-250 KB)
 The original PNGs are published untouched: they are what Download / Edit / Add to My Outfits read.
 Runs without Pillow too (no thumbnails then: the site falls back to the original images).
+
+It also writes worker/embed-data.json: the catalog read from index.html, which the Worker (worker/index.js)
+uses to describe share links in Discord previews. It is rebuilt at every deploy, so it always matches the site.
 """
-import base64, hashlib, json, os, shutil, struct, sys, time
+import base64, hashlib, json, os, re, shutil, struct, sys, time
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DIST = os.path.join(ROOT, "dist")
 SHOW = "showcase"
 SKIP = {".git", ".github", ".gitignore", ".gitattributes", "dist", "tools", "node_modules", ".wrangler",
         "wrangler.jsonc", "wrangler.json", "wrangler.toml", "package.json", "package-lock.json",
-        "CNAME", "README.md", "readme.md", ".DS_Store", "Thumbs.db"}
+        "CNAME", "README.md", "readme.md", ".DS_Store", "Thumbs.db", "worker"}
 IMG_EXT = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif")
 THUMB, VIEW_W = 480, 1080
 
@@ -118,8 +121,89 @@ def showcase():
     return len(items)
 
 
+ALL_SLOTS = ["Hairstyle", "Headwear", "Top", "Bottom", "Footwear", "Earrings", "Eye Accessory", "Face Accessory", "Neck Accessory",
+             "Back Accessory", "Wrist Accessory", "Leg Accessory", "Pendant 1", "Pendant 2", "Tail Accessory",
+             "Skin Tone", "Eye Shape", "Iris", "Eyebrows", "Eye Makeup", "Facial Makeup", "Lipstick"]
+
+
+def js_value(src, name):
+    """The JSON literal assigned to `const NAME =` in the page (SETS, COMP, ODEB, SHX, VER)."""
+    m = re.search(r"\bconst\s+" + name + r"\s*=\s*", src)
+    if not m:
+        raise ValueError(name + " not found")
+    return json.JSONDecoder().raw_decode(src, m.end())[0]
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+
+def first_slot(cat, mc):
+    """First outfit slot of a cosmetic (slotsOf in index.html), "" when it can't be worn in an outfit."""
+    if cat == "Multi":
+        if mc == "All":
+            return "Headwear"
+        for x in (mc or "").split(";"):
+            x = x.strip()
+            x = "Pendant 1" if x.startswith("Pendant") else x
+            if x in ALL_SLOTS:
+                return x
+        return "Top"
+    if cat == "Pendant":
+        return "Pendant 1"
+    return cat if cat in ALL_SLOTS else ""
+
+
+def embed_data():
+    """Catalog for the share-link Worker, in the same shape the site builds from its data (SET_ITEMS / COMP_ITEMS)."""
+    out = os.path.join(ROOT, "worker", "embed-data.json")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    try:
+        src = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
+        SETS, COMP, ODEB, SHX = (js_value(src, k) for k in ("SETS", "COMP", "ODEB", "SHX"))
+        vorder = list(js_value(src, "VER").keys())
+        vi = lambda v: vorder.index(v) if v in vorder else -1
+        free = {}
+        for five, fours in ODEB:
+            F = next((i for i, r in enumerate(SETS) if r[0] == five), None)
+            if F is None:
+                continue
+            for n in fours:
+                k = next((i for i, r in enumerate(SETS) if r[0] == n), None)
+                if k is not None:
+                    free.setdefault(k, []).append(F)
+        sets = []
+        for i, r in enumerate(SETS):
+            r = list(r) + [None] * (17 - len(r))
+            en, fr, rar, v, f, m, pr, vv = r[0], r[1], r[2], r[3], r[7], r[8], r[15], r[16] or [0, 0]
+            pr = pr or [0, "", 0, ""]
+            sets.append([en, fr or en, rar, vi(v), f or "", m or "", pr[0] or 0, pr[1] or "", pr[2] or 0, pr[3] or "",
+                         vv[0] or 0, vv[1] or 0, SHX[0][i] if isinstance(SHX, list) else None, free.get(i, [])])
+        comp, used = [], set()
+        for j, r in enumerate(COMP):
+            r = list(r) + [None] * (16 - len(r))
+            en, fr, q, g, ty, cat, s_, raw, v, p, si, key, mc, np_, pr, vv = r
+            cid = "c-" + slug(key or en)
+            while cid in used:
+                cid += "-x"
+            used.add(cid)
+            if cat == "Top;Bottom":
+                cat, mc = "Multi", mc or "Top;Bottom"
+            comp.append([cid[2:], en, fr or en, q, g, si if isinstance(si, int) and si >= 0 else -1, vv or 0,
+                         (pr[0] or 0) if pr else 0, (pr[1] or "") if pr else "", p or "",
+                         SHX[1][j] if isinstance(SHX, list) else None, first_slot(cat, mc), vi(v)])
+        data = {"v": vorder, "s": sets, "c": comp}
+        print(f"build: share previews ready ({len(sets)} sets, {len(comp)} cosmetics)")
+    except Exception as e:  # previews fall back to plain links; the site itself is unaffected
+        data = {"v": [], "s": [], "c": []}
+        print(f"build: share previews without catalog ({e})", file=sys.stderr)
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))
+
+
 if __name__ == "__main__":
     copy_site()
+    embed_data()
     n = showcase()
     total = sum(len(fs) for _, _, fs in os.walk(DIST))
     print(f"build: dist/ ready, {total} files, {n} showcase images")
