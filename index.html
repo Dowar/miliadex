@@ -1145,6 +1145,9 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .hx-in{min-height:0;overflow:hidden;margin:0 -14px;padding:0 14px}
 .top .hero-stats{margin-top:0;padding-top:12px;border-top:0}
 @media (prefers-reduced-motion:reduce){ .hx,.hx-btn svg{transition:none} }
+.lk-imp .lk-img{flex:none;display:inline-grid;place-items:center;padding:8px 10px}
+.lk-imp .lk-img svg{width:19px;height:19px}
+.lk-imp.drag{outline:2px dashed var(--accent);outline-offset:4px;border-radius:14px}
 </style>
 </head>
 <body>
@@ -1231,6 +1234,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 <dialog id="bgd" aria-labelledby="bgTitle"></dialog>
 <dialog id="shc" aria-labelledby="scTitle"></dialog>
 <input type="file" id="picFile" accept="image/*" hidden>
+<input type="file" id="lookImgFile" accept="image/png" hidden>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 
@@ -1244,12 +1248,12 @@ const ODEB=[["Candlelit Revelry",["Fervent Fighter","Mystic Forest","Sonic Ruins
 /* ---------- i18n ---------- */
 const T = {
  en:{sub:"Miliastra Wonderland collection tracker",sets:"Sets",comp:"Cosmetics",search:"Search a set or cosmetic…",both:"Both",f:"Manekina",m:"Manekin",
-  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ★ ${s}`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device: it isn't included in share links or backups.",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
+  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ★ ${s}`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded · open it again in the Miliadex to edit this outfit",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device: it isn't in share links or backups, only inside the image you download (which reopens the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
   saveLook:"Save outfit",updateLook:"Update outfit",share:"Share link",copyCode:"Copy code",clear:"Clear",myLooks:"My outfits",noLooks:"No saved outfits yet. Build one above, then press “Save outfit”.",
   ownedOf:(a,b)=>`${a}/${b} pieces owned`,pick:n=>`Choose: ${n}`,pickSet:"Choose a set",equip:"Equip",equipped:"Equipped",addPiece:"Add",none:"Remove",ownedOnly:"Owned only",searchPh:"Search…",included:"Included",
   sharedT:"Outfit shared with you",saveShared:"Save to my outfits",dismiss:"Dismiss",linkCopied:"Link copied",lookSaved:"Outfit saved",lookDeleted:"Outfit deleted",del:"Delete",
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
-  importLook:"Open a code",importPh:"Miliadex code, in-game code or link",badLook:"That isn't an outfit code",gameCode:"In-game code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an in-game code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
+  importLook:"Open a code",importPh:"Miliadex code, In-game Sharing Code, link or image",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
   viaSet:n=>`Owned with the set ${n}`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
@@ -1279,24 +1283,24 @@ const T = {
   gdTitle:"Google Drive sync",gdText:"Sign in to keep your collection and outfits in sync on all your devices. Miliadex only uses its own private folder on your Drive.",
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
-  hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
+  imgImp:"Open an outfit image",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image doesn't carry a Miliadex outfit (only images downloaded from the Miliadex do, as the original file)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
   scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
   bkTitle:"Save & backup",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
   saved:"Backup file downloaded",copied:"Code copied",imported:"Collection imported",invalid:"That isn't a Miliadex backup",cleared:"Collection cleared",
-  credits:"Images and data from the Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Fan-made tool for personal use.",
+  credits:"Images and data from the Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Free fan-made tool for every Traveler.",
   srcN:{ode:"Event Ode",asc:"Ascension",std:"Standard Ode",pass:"Miliastra Pass",shop:"Miliastra Shop",evt:"Events",gift:"Gift box",wl:"Wonderland activities",def:"Default",misc:"Unknown"},
   typeN:{o:"Outfit",k:"Makeup & hair",i:"Interactions"},
   catN:{"Hairstyle":"Hairstyles","Headwear":"Headwear","Top":"Tops","Bottom":"Bottoms","Top;Bottom":"One-piece outfits","Multi":"Multi-part outfits","Eye Accessory":"Eyewear","Face Accessory":"Face accessories","Tail Accessory":"Tails","Footwear":"Footwear","Earrings":"Earrings","Neck Accessory":"Neck accessories","Back Accessory":"Back accessories","Wrist Accessory":"Wrist accessories","Leg Accessory":"Leg accessories","Pendant":"Pendants","Skin Tone":"Skin tones","Eye Shape":"Eye shapes","Iris":"Irises","Eyebrows":"Eyebrows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lipstick","Expression":"Expressions","Action":"Actions","Effects":"Effects"}},
  fr:{sub:"Toutes les tenues de Miliastra Wonderland",sets:"Sets",comp:"Cosmétiques",search:"Chercher un set ou un cosmétique…",both:"Les deux",f:"Manekina",m:"Manekin",
-  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ★ ${s}`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil : elle n'est pas incluse dans les liens de partage ni dans les sauvegardes.",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
+  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ★ ${s}`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée · rouvre-la dans le Miliadex pour modifier la tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil : elle n'est ni dans les liens de partage ni dans les sauvegardes, seulement dans l'image que tu télécharges (qui rouvre la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
   saveLook:"Enregistrer la tenue",updateLook:"Mettre à jour",share:"Partager le lien",copyCode:"Copier le code",clear:"Vider",myLooks:"Mes tenues",noLooks:"Aucune tenue enregistrée. Compose-en une ci-dessus, puis « Enregistrer la tenue ».",
   ownedOf:(a,b)=>`${a}/${b} pièces obtenues`,pick:n=>`Choisir : ${n}`,pickSet:"Choisir un set",equip:"Équiper",equipped:"Équipé",addPiece:"Ajouter",none:"Retirer",ownedOnly:"Obtenus uniquement",searchPh:"Chercher…",included:"Inclus",
   sharedT:"Tenue partagée avec toi",saveShared:"Ajouter à mes tenues",dismiss:"Fermer",linkCopied:"Lien copié",lookSaved:"Tenue enregistrée",lookDeleted:"Tenue supprimée",del:"Supprimer",
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
-  importLook:"Ouvrir un code",importPh:"Code Miliadex, code du jeu ou lien",badLook:"Ce n'est pas un code de tenue",gameCode:"Code du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
+  importLook:"Ouvrir un code",importPh:"Code Miliadex, code de partage du jeu, lien ou image",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
   viaSet:n=>`Obtenu avec le set ${n}`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
@@ -1326,14 +1330,14 @@ const T = {
   gdTitle:"Synchro Google Drive",gdText:"Connecte-toi pour synchroniser ta collection et tes tenues sur tous tes appareils. Miliadex n'utilise que son propre dossier privé sur ton Drive.",
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
-  hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
+  imgImp:"Ouvrir une image de tenue",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image ne contient pas de tenue Miliadex (seules les images téléchargées depuis le Miliadex en ont, en fichier d'origine)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
   scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
   bkTitle:"Sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
   saved:"Fichier de sauvegarde téléchargé",copied:"Code copié",imported:"Collection importée",invalid:"Ce n'est pas une sauvegarde Miliadex",cleared:"Collection effacée",
-  credits:"Images et données du Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Outil de fan à usage personnel.",
+  credits:"Images et données du Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Outil de fan gratuit, pour tous les Voyageurs.",
   srcN:{ode:"Ode événement",asc:"Ascension",std:"Ode standard",pass:"Miliastra Pass",shop:"Boutique Miliastra",evt:"Événements",gift:"Coffret cadeau",wl:"Activités Wonderland",def:"Par défaut",misc:"Inconnue"},
   typeN:{o:"Tenue",k:"Maquillage & coiffure",i:"Interactions"},
   catN:{"Hairstyle":"Coiffures","Headwear":"Couvre-chefs","Top":"Hauts","Bottom":"Bas","Top;Bottom":"Tenues une pièce","Multi":"Tenues multi-pièces","Eye Accessory":"Lunettes","Face Accessory":"Accessoires de visage","Tail Accessory":"Queues","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Neck Accessory":"Accessoires de cou","Back Accessory":"Accessoires de dos","Wrist Accessory":"Accessoires de poignet","Leg Accessory":"Accessoires de jambe","Pendant":"Pendentifs","Skin Tone":"Teints","Eye Shape":"Formes des yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fards à paupières","Facial Makeup":"Maquillage","Lipstick":"Rouges à lèvres","Expression":"Expressions","Action":"Actions","Effects":"Effets"}}
@@ -2271,7 +2275,7 @@ function renderOutfits(){
       ${location.protocol==="file:"?`<p class="b-note">${esc(t("localNote"))}</p>`:""}
     </div>`;
   const looks=state.looks||[];
-  $("lkList").innerHTML = `<div class="lk-head"><h2>${esc(t("myLooks"))} <small>${looks.length}</small></h2><form class="lk-imp" id="lkImp"><input id="lkCode" autocomplete="off" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importLook"))}"><button class="btn ghost" type="submit">${esc(t("importLook"))}</button></form></div>
+  $("lkList").innerHTML = `<div class="lk-head"><h2>${esc(t("myLooks"))} <small>${looks.length}</small></h2><form class="lk-imp" id="lkImp"><input id="lkCode" autocomplete="off" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importLook"))}"><button class="btn ghost" type="submit">${esc(t("importLook"))}</button><button type="button" class="btn ghost lk-img" data-act="imgImp" title="${esc(t("imgImp"))}" aria-label="${esc(t("imgImp"))}">${ICON_IMG}</button></form></div>
     <div class="looks">${looks.length ? looks.slice().reverse().map(lookCard).join("") : `<p class="empty-l">${esc(t("noLooks"))}</p>`}</div>`;
   hydratePics(box);
   scheduleDraw();
@@ -2406,7 +2410,9 @@ function paintLook(ctx, main, small, imgOf, mainSlot, pic){
   }
   // footer
   ctx.strokeStyle="rgba(255,255,255,.12)"; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(64,H-86); ctx.lineTo(W-64,H-86); ctx.stroke();
-  ctx.font='600 22px Figtree, system-ui, sans-serif'; ctx.fillStyle="#cfc6ff"; ctx.fillText("Miliastra Wonderland",64,H-44);
+  ctx.font='700 25px "Chakra Petch", sans-serif'; ctx.fillStyle="#fff"; if("letterSpacing" in ctx) ctx.letterSpacing="2px";
+  ctx.fillText("miliadex.com",64,H-43); const mw=ctx.measureText("miliadex.com").width; if("letterSpacing" in ctx) ctx.letterSpacing="0px";
+  ctx.font='500 19px Figtree, system-ui, sans-serif'; ctx.fillStyle="rgba(207,198,255,.7)"; ctx.fillText("· Miliastra Wonderland",64+mw+12,H-44);
   ctx.font='500 16px Figtree, system-ui, sans-serif'; ctx.fillStyle="rgba(207,198,255,.65)"; ctx.textAlign="right"; ctx.fillText(t("cvCredit"),W-64,H-46); ctx.textAlign="left";
 }
 async function drawLook(){
@@ -2432,11 +2438,63 @@ async function drawLook(){
 }
 async function downloadLook(){
   await drawLook();
-  const cv=$("lkCv");
-  try{ cv.toBlob(b=>{ if(!b){ toast(t("dlFail")); return; }
-      const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=(slug(look.n||"")||"miliadex-outfit")+".png";
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast("✓ "+t("dlDone")); },"image/png"); }
-  catch(e){ toast(t("dlFail")); }
+  const png=await toBlobP($("lkCv"),"image/png"); if(!png){ toast(t("dlFail")); return; }
+  let out=png; try{ out=await lookPng(png, look); }catch(e){ console.warn("Miliadex: outfit data not added to the image", e); }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(out); a.download=(slug(look.n||"")||"miliadex-outfit")+".png";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast("✓ "+t("dlDone"));
+}
+/* outfit images carry their outfit: extra PNG chunks (the pieces, the in-game screenshot and its framing) that the Miliadex reads back */
+const PNGX=(()=>{
+  const CT=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; CT[n]=c>>>0; }
+  const crc=b=>{ let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=CT[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; };
+  const SIG=[137,80,78,71,13,10,26,10], te=new TextEncoder();
+  const cat=parts=>{ const o=new Uint8Array(parts.reduce((a,p)=>a+p.length,0)); let k=0; for(const p of parts){ o.set(p,k); k+=p.length; } return o; };
+  function chunk(type,data){ const body=cat([te.encode(type),data]), o=new Uint8Array(data.length+12), dv=new DataView(o.buffer);
+    dv.setUint32(0,data.length); o.set(body,4); dv.setUint32(data.length+8,crc(body)); return o; }
+  // iTXt: keyword \0 · no compression · no language · no translated keyword · UTF-8 text
+  const text=(k,v)=>chunk("iTXt",cat([te.encode(k),new Uint8Array(5),te.encode(v)]));
+  const bytes=async x=>new Uint8Array(await x.arrayBuffer());
+  const isPng=b=>b.length>8 && SIG.every((x,i)=>b[i]===x);
+  function* chunks(b){ const dv=new DataView(b.buffer,b.byteOffset,b.byteLength); let p=8;
+    while(p+12<=b.length){ const n=dv.getUint32(p); if(p+12+n>b.length) return; yield {ty:String.fromCharCode(...b.subarray(p+4,p+8)),data:b.subarray(p+8,p+8+n),at:p}; p+=12+n; } }
+  async function add(blob,list){ const b=await bytes(blob); if(!isPng(b)) return blob; let end=-1; for(const c of chunks(b)) if(c.ty==="IEND") end=c.at;
+    return end<0 ? blob : new Blob([b.subarray(0,end),...list,b.subarray(end)],{type:"image/png"}); }
+  async function find(blob,type){ const b=await bytes(blob); if(!isPng(b)) return null; for(const c of chunks(b)) if(c.ty===type) return c.data; return null; }
+  return {chunk,text,add,find,cat,bytes};
+})();
+// "mlDx" chunk: "MLDX" · version 1 · JSON length (u32) · JSON {look, pic, b:[{k,t,n}]} · the picture files listed in b, back to back
+async function lookPng(png, L){
+  const meta={look:lookCode(L), b:[]}, parts=[], rec=L.pic ? await PicDB.get(L.pic) : null;
+  if(rec && rec.cut){ meta.pic={crop:rec.crop||null, auto:!!rec.auto, w:rec.w||0, h:rec.h||0, on:L.picOn!==false};
+    for(const [k,bl] of [["cut",rec.cut],["src",rec.src]]){ if(!bl || (k==="src" && bl.size>4e6)) continue;
+      const by=await PNGX.bytes(bl); meta.b.push({k,t:bl.type||"image/jpeg",n:by.length}); parts.push(by); } }
+  const js=new TextEncoder().encode(JSON.stringify(meta)), head=new Uint8Array(9);
+  head.set([77,76,68,88,1]); new DataView(head.buffer).setUint32(5,js.length);
+  const name=(L.n||"").trim()||t("untitled");
+  return PNGX.add(png,[PNGX.text("Title",name), PNGX.text("Software","Miliadex.com"),
+    PNGX.text("Description",`${name} · Miliadex outfit · https://miliadex.com/#look=${meta.look}`), PNGX.chunk("mlDx",PNGX.cat([head,js,...parts]))]);
+}
+async function lookFromImage(file){
+  const d=await PNGX.find(file,"mlDx"); if(!d || d.length<9 || String.fromCharCode(...d.subarray(0,4))!=="MLDX" || d[4]!==1) return null;
+  const n=new DataView(d.buffer,d.byteOffset,d.byteLength).getUint32(5), meta=JSON.parse(new TextDecoder().decode(d.subarray(9,9+n)));
+  const L=parseLook(meta.look); if(!L) return null;
+  const bl={}; let p=9+n; for(const x of meta.b||[]){ bl[x.k]=new Blob([d.slice(p,p+x.n)],{type:x.t}); p+=x.n; }
+  let pic=null;
+  if(bl.cut){ const pm=meta.pic||{}, id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    await PicDB.put({id, src:bl.src||bl.cut, cut:bl.cut, crop:bl.src?pm.crop:null, auto:!!pm.auto, w:pm.w||0, h:pm.h||0, t:Date.now()});
+    pic={id, on:pm.on!==false}; }
+  return {L,pic};
+}
+async function openLookImage(file){
+  let r=null; try{ r=await lookFromImage(file); }catch(e){ console.warn("Miliadex: unreadable outfit image", e); }
+  if(!r) return false;
+  const {L,pic}=r;
+  shared=Object.assign({},L,pic?{pic:pic.id,picOn:pic.on}:{});
+  look={id:null,n:L.n,g:L.g,i:L.i.slice(),pic:pic?pic.id:null,picOn:pic?pic.on:true}; saveDraft();
+  if(ui.tab!=="outfits"){ ui.tab="outfits"; saveUI(); renderHeader(); renderTab(); } else renderOutfits();
+  toast("✓ "+t("imgIn")(!!pic));
+  window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"});
+  return true;
 }
 
 /* codes & links */
@@ -2519,7 +2577,7 @@ function lookFromGame(txt){
   return {id:null, n:t("gameLook")(r.name).slice(0,60), g, i:its.filter(it=>canWear(it,g) && slotsOf(it).length).map(it=>it.id), game:{n:its.length, miss}};
 }
 // look → in-game code
-const GC_OUT={name:"Miliadex", uid:0, slots:false};
+const GC_OUT={name:"Miliadex.com", uid:0, slots:false};   // shown in game as the player sharing the plan
 function gameCode(L){
   const ids=[]; let skip=0;
   for(const it of lookItems(L)){ const x=gidOf(it,L.g); if(x && !ids.includes(x)) ids.push(x); else if(!x) skip++; }
@@ -2815,6 +2873,7 @@ $("outfits").addEventListener("click", e=>{
   else if(act==="surprise") surprise();
   else if(act==="clear"){ look.i=[]; look.p2=false; saveDraft(); renderOutfits(); }
   else if(act==="download") downloadLook();
+  else if(act==="imgImp") $("lookImgFile").click();
   else if(act==="pic-add") $("picFile").click();
   else if(act==="pic-edit") editPic();
   else if(act==="pic-del"){ look.pic=null; saveDraft(); renderOutfits(); gcPics(); }
@@ -2856,6 +2915,7 @@ async function gcPics(){
 function hydratePics(root){ (root||document).querySelectorAll("img[data-pic]").forEach(async im=>{ const p=await picImage(im.dataset.pic); if(p) im.src=p._url; else im.remove(); }); }
 const ICON_G=`<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
 const ICON_DRIVE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg>`;
+const ICON_IMG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/></svg>`;
 const ICON_CAM=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.4" r="3.6"/></svg>`;
 function picRow(){
   if(!look.pic) return `<button type="button" class="pic-add" data-act="pic-add">${ICON_CAM}<span><b>${esc(t("picAdd"))}</b><small>${esc(t("picHint"))}</small></span></button>`;
@@ -2876,6 +2936,7 @@ async function blobToCanvas(blob, maxSide){
 }
 async function takeFile(file){
   if(!file || !/^image\//.test(file.type||"")){ toast(t("picBad")); return; }
+  if(!CR.on && /png/i.test(file.type) && await openLookImage(file)) return;
   const c=await blobToCanvas(file, 2048); if(!c){ toast(t("picBad")); return; }
   openCut(c, null);
 }
@@ -2971,7 +3032,10 @@ function crMove(e){
     CR.r={x:a.dx>0?a.ax:a.ax-w, y:a.dy>0?a.ay:a.ay-h, w, h}; crDraw(); }
 }
 function crUp(e){ CR.ptrs.delete(e.pointerId); if(CR.act && CR.act.type==="pinch" && CR.ptrs.size>=1){ CR.act=null; return; } CR.act=null; crMove(e); }
-function crWheel(e){ e.preventDefault(); if(CR.busy) return; crScale(Math.exp(Math.max(-120,Math.min(120,e.deltaY))*0.0018)); }
+function crWheel(e){ e.preventDefault(); if(CR.busy) return;
+  const raw=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX;   // Shift+wheel turns into a sideways scroll in some browsers
+  const dy=raw*(e.deltaMode===1?33:e.deltaMode===2?400:1), k=e.shiftKey?0.0001:0.0004;
+  crScale(Math.exp(Math.max(-150,Math.min(150,dy))*k)); }
 
 /* automatic background removal: open-source in-browser model, loaded only when used */
 let BGLIB=null;
@@ -3020,6 +3084,11 @@ $("cut").addEventListener("click", e=>{
 $("cut").addEventListener("change", e=>{ if(e.target.id==="autoCut"){ CR.auto=e.target.checked; try{ localStorage.setItem(AUTO_KEY,CR.auto?"1":"0"); }catch(_){} } });
 $("cut").addEventListener("cancel", e=>{ if(CR.busy) e.preventDefault(); });
 $("cut").addEventListener("close", ()=>{ CR.on=false; if(crRO){ crRO.disconnect(); crRO=null; } });
+$("lookImgFile").addEventListener("change", async e=>{ const f=e.target.files && e.target.files[0]; e.target.value=""; if(f && !(await openLookImage(f))) toast(t("imgNone")); });
+$("outfits").addEventListener("dragover", e=>{ const f=e.target.closest(".lk-imp"); if(!f || !e.dataTransfer || ![...e.dataTransfer.types].includes("Files")) return; e.preventDefault(); f.classList.add("drag"); });
+$("outfits").addEventListener("dragleave", e=>{ const f=e.target.closest(".lk-imp"); if(f && !f.contains(e.relatedTarget)) f.classList.remove("drag"); });
+$("outfits").addEventListener("drop", async e=>{ const f=e.target.closest(".lk-imp"); if(!f) return; e.preventDefault(); f.classList.remove("drag");
+  const file=e.dataTransfer && [...e.dataTransfer.files].find(x=>/^image\//.test(x.type)); if(file && !(await openLookImage(file))) toast(t("imgNone")); });
 $("picFile").addEventListener("change", e=>{ const f=e.target.files && e.target.files[0]; e.target.value=""; if(f) takeFile(f); });
 document.addEventListener("paste", e=>{
   if(!(CR.on || ui.tab==="outfits") || $("pick").open || CR.busy) return;
