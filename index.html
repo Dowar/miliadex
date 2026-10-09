@@ -832,7 +832,8 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 @keyframes deal{from{transform:translateY(14px) rotate(-3deg) scale(.92);opacity:0}}
 .b-foot{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px}
 .b-sum{font-size:14px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
-.stars-sum{color:#d9a24f;font-family:var(--tech);font-weight:700}
+.stars-sum{display:inline-flex;align-items:center;gap:4px;vertical-align:middle;color:var(--accent);font-family:var(--tech);font-weight:700}
+.stars-sum .vvi{width:18px;height:18px}
 .btn svg{width:15px;height:15px;vertical-align:-3px}
 .btn.light{background:#fff;color:#2a2150}
 .b-note{margin:0;font-size:12.5px;color:var(--muted);max-width:78ch}
@@ -1179,39 +1180,58 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sh-mine input:checked + .tg{background:var(--ok)}
 .sh-mine input:checked + .tg::after{transform:translateX(14px)}
 .sh-mine input:focus-visible + .tg{outline:2px solid var(--accent);outline-offset:2px}
-.sh-sort select{font:inherit;font-weight:600;font-size:14px;padding:9px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--text)}
+.sh-sort{position:relative;display:inline-flex}
+.sh-sort select{-webkit-appearance:none;appearance:none;font:inherit;font-weight:600;font-size:14px;padding:9px 36px 9px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;transition:border-color .2s}
+.sh-sort select:hover,.sh-sort select:focus-visible{border-color:var(--accent);outline:none}
+.sh-sort::after{content:"";position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.sh-sort select option{background:var(--card);color:var(--text)}
 .sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
 .sh-grid.has-spot{grid-auto-flow:dense}
-@media (min-width:900px){ .sh-grid.has-spot .sh-card.spot{grid-column:span 2;grid-row:span 2} .spot .sh-bot b{font-size:28px} .spot .sh-meta{font-size:14px} }
-.sh-card{position:relative;display:block;aspect-ratio:1/1;border:0;padding:0;border-radius:20px;overflow:hidden;cursor:pointer;background:#1d1550;color:#fff;text-align:left;font:inherit;
-  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;
-  box-shadow:0 10px 26px rgba(20,10,60,.22),inset 0 0 0 1px rgba(255,255,255,.08);animation:shIn .6s cubic-bezier(.2,.8,.2,1) var(--d,0ms) backwards}
-.sh-card[data-sh]:hover,.sh-card[data-sh]:focus-visible{--ty:-6px;box-shadow:0 22px 44px rgba(40,20,110,.38),0 0 0 2px color-mix(in srgb,var(--accent) 75%,transparent);outline:none}
+@media (min-width:900px){ .sh-grid.has-spot .sh-card.spot{grid-column:span 2;grid-row:span 2} .sh-card.spot .sh-frame{aspect-ratio:auto;flex:1 1 auto;min-height:0} .sh-card.spot .sh-info{flex:none;padding:14px 10px 8px} .spot .sh-name{font-size:26px} .spot .sh-meta{font-size:14px} }
+.sh-grid{grid-auto-rows:1fr}
+.sh-card{position:relative;display:flex;flex-direction:column;gap:0;border:0;padding:7px;border-radius:22px;cursor:pointer;color:#f3efff;text-align:left;font:inherit;isolation:isolate;
+  background:linear-gradient(165deg,#2a2063 0%,#1a1342 55%,#120c30 100%);
+  box-shadow:0 10px 26px rgba(20,10,60,.22),inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.07);
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;animation:shIn .6s cubic-bezier(.2,.8,.2,1) var(--d,0ms) backwards}
+.sh-card::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;padding:1.5px;background:linear-gradient(135deg,#ffe08a,#c58cff 45%,#5fd3ff);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);opacity:0;transition:opacity .35s}
+.sh-card[data-sh]:hover,.sh-card[data-sh]:focus-visible{--ty:-6px;box-shadow:0 24px 46px rgba(40,20,110,.4),0 0 30px rgba(197,140,255,.25),inset 0 1px 0 rgba(255,255,255,.14);outline:none}
+.sh-card[data-sh]:hover::before,.sh-card[data-sh]:focus-visible::before{opacity:1}
+.sh-card.full::after{content:"✦";position:absolute;top:14px;right:16px;z-index:2;font-size:15px;color:#ffe08a;text-shadow:0 0 10px rgba(255,210,122,.9);pointer-events:none}
 @keyframes shIn{from{opacity:0;transform:translateY(18px) scale(.97)}}
+.sh-frame{position:relative;display:block;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#140d33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
 .sh-img{position:absolute;inset:0;background:linear-gradient(110deg,#241a55 30%,#3a2b80 50%,#241a55 70%);background-size:220% 100%;animation:shSk 1.4s linear infinite}
 .sh-img.ok{animation:none;background:#140d33}
 .sh-img img{width:100%;height:100%;object-fit:cover;object-position:center bottom;opacity:0;transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
 .sh-img.ok img{opacity:1}
 .sh-img.bad img{display:none}
 .sh-card.raw .sh-img img{object-position:center}
-.sh-card:hover .sh-img img{transform:scale(1.045)}
+.sh-card:hover .sh-img img{transform:scale(1.05)}
 @keyframes shSk{to{background-position:-120% 0}}
-.sh-glare{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.32),transparent 46%);opacity:0;transition:opacity .3s;mix-blend-mode:soft-light}
+.sh-glare{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.3),transparent 46%);opacity:0;transition:opacity .3s;mix-blend-mode:soft-light}
 .sh-card:hover .sh-glare{opacity:1}
-.sh-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
-.sh-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700;background:rgba(12,8,32,.58);border:1px solid rgba(255,255,255,.25);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.sh-chip.ic{padding:4px 7px}
-.sh-chip svg{width:15px;height:15px}
-.sh-bot{position:absolute;left:0;right:0;bottom:0;display:grid;gap:6px;padding:48px 14px 13px;background:linear-gradient(transparent,rgba(10,6,28,.9) 58%);pointer-events:none}
-.sh-bot b{font-family:var(--serif);font-weight:650;font-size:18px;line-height:1.15;text-shadow:0 1px 8px rgba(0,0,0,.55);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.sh-meta{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:600;color:#e4ddff}
+.sh-info{flex:1 1 auto;display:flex;flex-direction:column;gap:7px;padding:11px 7px 5px}
+.sh-l2{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.sh-name{min-width:0;font-family:var(--serif);font-weight:650;font-size:18px;line-height:1.15;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.sh-tags{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.sh-tag{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e4ddff}
+.sh-tag.g-f{color:#ffc2e3;border-color:rgba(255,160,210,.35);background:rgba(255,120,190,.1)}
+.sh-tag.g-m{color:#a8ecff;border-color:rgba(120,210,255,.35);background:rgba(90,190,255,.1)}
+.sh-tag.ic{padding:0 6px}
+.sh-tag svg{width:14px;height:14px}
+.sh-meta{margin-top:auto;display:flex;align-items:center;gap:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;font-weight:600;color:#cfc6ff}
+.sh-own{flex:none}
+.sh-bar{flex:1;min-width:24px;height:5px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.sh-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#5fd3ff,#7ef0c4)}
+.sh-card.full .sh-bar i{background:linear-gradient(90deg,#d9a24f,#ffe08a)}
 .sh-own{display:inline-flex;align-items:center;gap:6px}
-.sh-own i{width:16px;height:16px;border-radius:50%;background:conic-gradient(#7ef0c4 calc(var(--p) * 360deg),rgba(255,255,255,.24) 0);-webkit-mask:radial-gradient(circle,transparent 4.5px,#000 5px);mask:radial-gradient(circle,transparent 4.5px,#000 5px)}
+.sh-own i{width:16px;height:16px;border-radius:50%;background:conic-gradient(#7ef0c4 calc(var(--p) * 360deg),rgba(255,255,255,.2) 0);-webkit-mask:radial-gradient(circle,transparent 4.5px,#000 5px);mask:radial-gradient(circle,transparent 4.5px,#000 5px)}
 .sh-own.full{color:#ffe08a}
 .sh-own.full i{background:#ffd27a}
-.sh-st{color:#ffd27a}
-.sh-meta.sk i{display:block;height:10px;width:72px;border-radius:6px;background:rgba(255,255,255,.2);animation:shPulse 1.2s ease-in-out infinite}
-.sh-meta.sk i + i{width:38px}
+.sh-vv{display:inline-flex;align-items:center;gap:4px;font-family:var(--tech);font-weight:700;color:#e9e3ff}
+.sh-vv .vvi{width:17px;height:17px}
+.sh-sk{margin-top:auto;display:flex;gap:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+.sh-sk i{display:block;height:10px;width:72px;border-radius:6px;background:rgba(255,255,255,.18);animation:shPulse 1.2s ease-in-out infinite}
+.sh-sk i + i{width:38px}
 @keyframes shPulse{50%{opacity:.4}}
 .sh-card.sk{cursor:default}
 .sh-grid.msg{display:block}
@@ -1246,6 +1266,9 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sv-chips{display:flex;flex-wrap:wrap;gap:6px}
 .sv-chips span{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16)}
 .sv-chips svg{width:15px;height:15px}
+.sv-chips .vvi{width:16px;height:16px}
+.sv-wait{display:grid;place-items:center}
+.sv-wait .spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#c58cff;animation:spin 1s linear infinite}
 .sv-own{display:grid;gap:6px;font-size:13.5px;font-weight:600;color:#cfc6ff}
 .sv-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
 .sv-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#5fd3ff,#7ef0c4);transform-origin:left;animation:scGrow 1s cubic-bezier(.2,.9,.2,1) both}
@@ -1295,13 +1318,16 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   .sh-deco{display:none}
   .sh-hero p{font-size:13.5px}
   .sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .sh-card{border-radius:16px}
-  .sh-bot{padding:36px 10px 10px;gap:4px}
-  .sh-bot b{font-size:14.5px}
-  .sh-meta{font-size:11px;gap:6px}
+  .sh-card{border-radius:18px;padding:5px}
+  .sh-frame{border-radius:13px}
+  .sh-info{padding:8px 4px 3px;gap:5px}
+  .sh-l2{gap:4px}
+  .sh-bar{display:none}
+  .sh-name{font-size:15px}
+  .sh-tag{height:20px;font-size:10.5px;padding:0 7px}
+  .sh-meta{font-size:11px;gap:6px;padding-top:5px}
+  .sh-vv .vvi{width:14px;height:14px}
   .sh-own i{width:13px;height:13px;-webkit-mask:radial-gradient(circle,transparent 3.5px,#000 4px);mask:radial-gradient(circle,transparent 3.5px,#000 4px)}
-  .sh-top{top:8px;left:8px;right:8px}
-  .sh-chip{font-size:11px;padding:3px 8px}
   .sh-tools{gap:8px}
   .sh-tools .sh-q{flex-basis:100%;max-width:none}
   .sh-tools .seg{flex-basis:100%}
@@ -1312,6 +1338,19 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   .sh-sort select{width:100%;font-size:13px;padding:9px 8px}
 }
 @media (prefers-reduced-motion:reduce){ .sh-card,.sh-img,.sh-deco i,.sv-img,.sv-bar i{animation:none!important} .sh-card{transform:none!important} }
+/* save & backup: folded by default */
+.tools{gap:0}
+.tools-h{margin:0}
+.tools-tg{display:flex;align-items:center;gap:10px;width:100%;padding:2px 0;border:0;background:none;color:inherit;font:650 19px/1.2 var(--serif);text-align:left;cursor:pointer}
+.tools-tg small{margin-left:auto;font:500 13px var(--body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools-tg svg{flex:none;width:18px;height:18px;color:var(--muted);transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+.tools-tg[aria-expanded="true"] svg{transform:rotate(180deg)}
+.tools-tg:hover svg{color:var(--accent)}
+.tools-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1)}
+.tools-body.open{grid-template-rows:1fr}
+.tools-in{min-height:0;overflow:hidden;display:grid;gap:12px;margin:0 -6px;padding:0 6px}
+.tools-body.open .tools-in{padding-top:12px;padding-bottom:4px}
+@media (prefers-reduced-motion:reduce){ .tools-body,.tools-tg svg{transition:none} }
 </style>
 </head>
 <body>
@@ -1374,7 +1413,8 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
     <section id="showcase" aria-labelledby="tab-show"></section>
 
     <section class="tools" aria-labelledby="bkTitle">
-      <h2 id="bkTitle"></h2>
+      <h2 class="tools-h"><button type="button" class="tools-tg" id="bkTg" aria-expanded="false" aria-controls="bkBody"><span id="bkTitle"></span><small id="bkSum"></small><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6.2 8 10l4-3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h2>
+      <div class="tools-body" id="bkBody" inert><div class="tools-in">
       <p id="bkText"></p>
       <div class="row">
         <button class="btn" id="bkSave" type="button"></button>
@@ -1387,6 +1427,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
       <div class="gd" id="gd"></div>
       <div class="cache-row"><p id="cacheTxt"></p><button class="btn ghost" id="cacheBtn" type="button"></button></div>
       <input type="file" id="bkFile" accept="application/json,.json,.txt" hidden>
+      </div></div>
     </section>
     <p class="note" id="credits"></p>
   </main>
@@ -1415,7 +1456,7 @@ const ODEB=[["Candlelit Revelry",["Fervent Fighter","Mystic Forest","Sonic Ruins
 /* ---------- i18n ---------- */
 const T = {
  en:{sub:"Miliastra Wonderland collection tracker",sets:"Sets",comp:"Cosmetics",search:"Search a set or cosmetic…",both:"Both",f:"Manekina",m:"Manekin",
-  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ★ ${s}`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded · open it again in the Miliadex to edit this outfit",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device: it isn't in share links or backups, only inside the image you download (which reopens the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
+  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded · open it again in the Miliadex to edit this outfit",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device: it isn't in share links or backups, only inside the image you download (which reopens the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
   saveLook:"Save outfit",updateLook:"Update outfit",share:"Share link",copyCode:"Copy code",clear:"Clear",myLooks:"My outfits",noLooks:"No saved outfits yet. Build one above, then press “Save outfit”.",
   ownedOf:(a,b)=>`${a}/${b} pieces owned`,pick:n=>`Choose: ${n}`,pickSet:"Choose a set",equip:"Equip",equipped:"Equipped",addPiece:"Add",none:"Remove",ownedOnly:"Owned only",searchPh:"Search…",included:"Included",
   sharedT:"Outfit shared with you",saveShared:"Save to my outfits",dismiss:"Dismiss",linkCopied:"Link copied",lookSaved:"Outfit saved",lookDeleted:"Outfit deleted",del:"Delete",
@@ -1453,13 +1494,13 @@ const T = {
   imgImp:"Import with image",showT:"Outfits Showcase",shKick:"Miliadex gallery",shSub:"Outfits made with the Miliadex. Open one to remix it, keep it in My Outfits or download it.",shSearch:"Search an outfit or a piece",shAll:"All",shMine:"I own every piece",
   shSort:"Sort",shSorts:{repo:"Showcase order",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
   shFail:"The showcase couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
-  shEdit:"Edit in My Outfits",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
+  shEdit:"Edit in My Outfits",shEditMine:"Edit",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
   shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't in the showcase anymore.",
   imgTip:"Open an image downloaded from the Miliadex, or drop it here",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image doesn't carry a Miliadex outfit (only images downloaded from the Miliadex do, as the original file)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
   scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
-  bkTitle:"Save & backup",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
+  bkTitle:"Save & backup",bkSum:"Backup file · Google Drive sync",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
   saved:"Backup file downloaded",copied:"Code copied",imported:"Collection imported",invalid:"That isn't a Miliadex backup",cleared:"Collection cleared",
   credits:"Images and data from the Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Free fan-made tool for every Traveler.",
@@ -1467,7 +1508,7 @@ const T = {
   typeN:{o:"Outfit",k:"Makeup & hair",i:"Interactions"},
   catN:{"Hairstyle":"Hairstyles","Headwear":"Headwear","Top":"Tops","Bottom":"Bottoms","Top;Bottom":"One-piece outfits","Multi":"Multi-part outfits","Eye Accessory":"Eyewear","Face Accessory":"Face accessories","Tail Accessory":"Tails","Footwear":"Footwear","Earrings":"Earrings","Neck Accessory":"Neck accessories","Back Accessory":"Back accessories","Wrist Accessory":"Wrist accessories","Leg Accessory":"Leg accessories","Pendant":"Pendants","Skin Tone":"Skin tones","Eye Shape":"Eye shapes","Iris":"Irises","Eyebrows":"Eyebrows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lipstick","Expression":"Expressions","Action":"Actions","Effects":"Effects"}},
  fr:{sub:"Toutes les tenues de Miliastra Wonderland",sets:"Sets",comp:"Cosmétiques",search:"Chercher un set ou un cosmétique…",both:"Les deux",f:"Manekina",m:"Manekin",
-  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ★ ${s}`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée · rouvre-la dans le Miliadex pour modifier la tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil : elle n'est ni dans les liens de partage ni dans les sauvegardes, seulement dans l'image que tu télécharges (qui rouvre la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
+  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée · rouvre-la dans le Miliadex pour modifier la tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil : elle n'est ni dans les liens de partage ni dans les sauvegardes, seulement dans l'image que tu télécharges (qui rouvre la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
   saveLook:"Enregistrer la tenue",updateLook:"Mettre à jour",share:"Partager le lien",copyCode:"Copier le code",clear:"Vider",myLooks:"Mes tenues",noLooks:"Aucune tenue enregistrée. Compose-en une ci-dessus, puis « Enregistrer la tenue ».",
   ownedOf:(a,b)=>`${a}/${b} pièces obtenues`,pick:n=>`Choisir : ${n}`,pickSet:"Choisir un set",equip:"Équiper",equipped:"Équipé",addPiece:"Ajouter",none:"Retirer",ownedOnly:"Obtenus uniquement",searchPh:"Chercher…",included:"Inclus",
   sharedT:"Tenue partagée avec toi",saveShared:"Ajouter à mes tenues",dismiss:"Fermer",linkCopied:"Lien copié",lookSaved:"Tenue enregistrée",lookDeleted:"Tenue supprimée",del:"Supprimer",
@@ -1505,13 +1546,13 @@ const T = {
   imgImp:"Importer avec une image",showT:"Vitrine de tenues",shKick:"Galerie Miliadex",shSub:"Des tenues créées avec le Miliadex. Ouvre-en une pour la modifier, la garder dans Mes tenues ou la télécharger.",shSearch:"Chercher une tenue ou une pièce",shAll:"Toutes",shMine:"Je possède tout",
   shSort:"Trier",shSorts:{repo:"Ordre de la vitrine",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
   shFail:"La vitrine n'a pas pu être chargée pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
-  shEdit:"Modifier dans Mes tenues",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
+  shEdit:"Modifier dans Mes tenues",shEditMine:"Modifier",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
   shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus dans la vitrine.",
   imgTip:"Ouvre une image téléchargée depuis le Miliadex, ou dépose-la ici",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image ne contient pas de tenue Miliadex (seules les images téléchargées depuis le Miliadex en ont, en fichier d'origine)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
   scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
-  bkTitle:"Sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
+  bkTitle:"Sauvegarde",bkSum:"Fichier de sauvegarde · synchro Google Drive",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
   saved:"Fichier de sauvegarde téléchargé",copied:"Code copié",imported:"Collection importée",invalid:"Ce n'est pas une sauvegarde Miliadex",cleared:"Collection effacée",
   credits:"Images et données du Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Outil de fan gratuit, pour tous les Voyageurs.",
@@ -1840,7 +1881,7 @@ function countUp(el,from,to){
 function renderChrome(){
   document.documentElement.lang=ui.lang;
   $("lang").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===ui.lang));
-  $("q").placeholder=t("search"); $("qlbl").textContent=t("search"); $("bgBtn").title=t("bgBtn"); hxSet(ui.hx); $("shBtn").title=t("scBtn"); $("shBtn").setAttribute("aria-label",t("scBtn")); $("bgBtn").setAttribute("aria-label",t("bgBtn"));
+  $("q").placeholder=t("search"); $("qlbl").textContent=t("search"); $("bgBtn").title=t("bgBtn"); hxSet(ui.hx); bkSet(ui.bk); $("shBtn").title=t("scBtn"); $("shBtn").setAttribute("aria-label",t("scBtn")); $("bgBtn").setAttribute("aria-label",t("bgBtn"));
   $("gender").setAttribute("aria-label", t("wear"));
   const gl={both:t("both"),f:"♀ "+t("f"),m:"♂ "+t("m")};
   if(!$("gender").querySelector("[data-g]")) $("gender").innerHTML=Object.keys(gl).map(v=>`<button type="button" data-g="${v}"></button>`).join("");
@@ -2415,7 +2456,7 @@ function lookCard(L){
   const pics=[]; for(const s of ["Top","Bottom","Hairstyle","Footwear","Headwear"]) if(m[s] && m[s].primary && !pics.includes(m[s].it)) pics.push(m[s].it);
   for(const it of its) if(pics.length<4 && !pics.includes(it)) pics.push(it);
   const mos = L.pic ? `<span><img data-pic="${esc(L.pic)}" alt=""></span>` : pics.slice(0,4).map(it=>`<span class="r${it.r}">${it.img?imgTag(it.img,160,nm(it),it.id):""}</span>`).join("");
-  return `<article class="look"><button type="button" class="lk-open" data-load="${esc(L.id)}"><span class="mosaic ${L.pic?"n1 has-pic":"n"+Math.min(4,pics.length)}">${mos}</span>
+  return `<article class="look"><button type="button" class="lk-open" data-lview="${esc(L.id)}"><span class="mosaic ${L.pic?"n1 has-pic":"n"+Math.min(4,pics.length)}">${mos}</span>
     <span class="lk-meta"><b>${esc(L.n||t("untitled"))}</b><small>${L.g==="f"?"♀ "+esc(t("f")):"♂ "+esc(t("m"))} · ${esc(t("ownedOf")(own,its.length))}</small></span></button>
     <div class="lk-act"><button type="button" class="mini" data-lshare="${esc(L.id)}" aria-label="${esc(t("share"))}" title="${esc(t("share"))}">${ICON_LINK}</button><button type="button" class="mini danger" data-ldel="${esc(L.id)}" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div></article>`;
 }
@@ -2435,7 +2476,7 @@ function renderOutfits(){
       <div id="lkList"></div>`;
   }
   const m=slotMap(look), items=lookItems(look);
-  const owned=items.filter(it=>has(it,"x")).length, stars=items.reduce((a,it)=>a+(it.r||0),0);
+  const owned=items.filter(it=>has(it,"x")).length, stars=lookViv(items);
   $("lkPic").innerHTML=picRow();
   $("lkShared").innerHTML = shared ? `<div class="shared"><div><small>${esc(t("sharedT"))}</small><b>${esc(shared.n||t("untitled"))}</b></div><div class="row"><button type="button" class="btn light" data-act="saveShared">${esc(t("saveShared"))}</button><button type="button" class="btn ghost" data-act="dismiss">${esc(t("dismiss"))}</button></div></div>` : "";
   $("lkEdit").innerHTML = `<div class="b-head"><input id="lkName" type="text" maxlength="60" autocomplete="off" placeholder="${esc(t("namePh"))}" aria-label="${esc(t("namePh"))}" value="${esc(look.n)}">
@@ -2447,7 +2488,7 @@ function renderOutfits(){
       <details class="mk"${SLOT_MK.some(s=>m[s])?" open":""}><summary>${esc(t("makeupT"))}</summary><div class="slots acc">${SLOT_MK.map(s=>tile(s,m,false)).join("")}</div></details>
     </div>
     <div class="b-foot">
-      <div class="b-sum"><b>${esc(t("ownedOf")(owned,items.length))}</b>${stars?` <span class="stars-sum">★ ${stars}</span>`:""}</div>
+      <div class="b-sum"><b>${esc(t("ownedOf")(owned,items.length))}</b>${stars?` <span class="stars-sum" title="Vivid">${vivIcon()}${fmtN(stars)}</span>`:""}</div>
       <div class="row">
         <button type="button" class="btn" data-act="save">${esc(look.id?t("updateLook"):t("saveLook"))}</button>
         <button type="button" class="btn ghost" data-act="share">${ICON_LINK} ${esc(t("share"))}</button>
@@ -2548,7 +2589,7 @@ function paintPortrait(ctx,pic,main,small,imgOf,mainSlot,top,bot,W){
     for(let r=0;r<rowsS;r++){ const row=small.slice(r*per,(r+1)*per), tot=row.length*Ls+(row.length-1)*sg; let x=RX+(RW-tot)/2;
       for(const it of row){ drawTile(ctx,it,imgOf(it),x,y,Ls,false,""); x+=Ls+sg; } y+=Ls+sg; } }
 }
-function paintLook(ctx, main, small, imgOf, mainSlot, pic){
+function paintLook(ctx, main, small, imgOf, mainSlot, pic, L=look){
   const W=1080, H=1350;
   ctx.clearRect(0,0,W,H);
   const bg=ctx.createRadialGradient(0,0,0,0,0,1700); bg.addColorStop(0,"#4c369c"); bg.addColorStop(.42,"#271c58"); bg.addColorStop(1,"#110b28"); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
@@ -2559,13 +2600,13 @@ function paintLook(ctx, main, small, imgOf, mainSlot, pic){
   // header
   ctx.textBaseline="alphabetic"; ctx.fillStyle="#cfc6ff"; ctx.font='700 26px "Chakra Petch", sans-serif';
   if("letterSpacing" in ctx) ctx.letterSpacing="7px"; ctx.fillText("MILIADEX",64,84); if("letterSpacing" in ctx) ctx.letterSpacing="0px";
-  const gl=(look.g==="f"?"♀ ":"♂ ")+t(look.g).toUpperCase(); ctx.font='700 22px Figtree, system-ui, sans-serif'; const gw=ctx.measureText(gl).width+40;
+  const gl=(L.g==="f"?"♀ ":"♂ ")+t(L.g).toUpperCase(); ctx.font='700 22px Figtree, system-ui, sans-serif'; const gw=ctx.measureText(gl).width+40;
   ctx.fillStyle="rgba(255,255,255,.14)"; rrect(ctx,W-64-gw,52,gw,46,23); ctx.fill(); ctx.fillStyle="#fff"; ctx.fillText(gl,W-64-gw+20,83);
   ctx.font='650 66px Fraunces, Georgia, serif';
-  const title=(look.n||"").trim()||t("untitled"); const tl=wrapText(ctx,title,W-128,2);
+  const title=(L.n||"").trim()||t("untitled"); const tl=wrapText(ctx,title,W-128,2);
   const tg=ctx.createLinearGradient(64,0,W-64,0); tg.addColorStop(0,"#fff2c9"); tg.addColorStop(.35,"#ffc36b"); tg.addColorStop(.7,"#f0b8ff"); tg.addColorStop(1,"#9fe6ff"); ctx.fillStyle=tg;
   let y=180; tl.forEach(ln=>{ ctx.fillText(ln,64,y); y+=72; }); y-=72;
-  const all=main.concat(small), own=all.filter(it=>has(it,"x")).length, stars=all.reduce((a,it)=>a+(it.r||0),0);
+  const all=main.concat(small), own=all.filter(it=>has(it,"x")).length, stars=lookViv(all);
   ctx.font='500 25px Figtree, system-ui, sans-serif'; ctx.fillStyle="#d6ceff"; ctx.fillText(t("cvSub")(all.length,own,stars),64,y+48);
   y+=96;
   const footY=H-92;
@@ -2616,6 +2657,23 @@ async function drawLook(){
   const map=new Map(its.map((it,i)=>[it,imgs[i]]));
   paintLook(ctx, main, small, it=>map.get(it)||null, slotOf, pic);
   return true;
+}
+// an outfit's Vivid: standalone cosmetics count fully, a set piece brings its share of its set's rating
+function lookViv(its){ let v=0;
+  for(const it of its){ if(!it || it.kind!=="comp") continue;
+    if(it.set){ const g=it.g==="m"?"m":"f", n=(it.set.pieces||[]).filter(p=>p.g===it.g).length||1; v+=vivOf(it.set,g)/n; }
+    else v+=it.viv||0; }
+  return Math.round(v); }
+async function lookCanvas(L){
+  const order=it=>ALL_SLOTS.indexOf(slotsOf(it)[0]);
+  const its=lookItems(L).slice().sort((a,b)=>order(a)-order(b));
+  const main=its.filter(it=>SLOT_MAIN.includes(slotsOf(it)[0])).slice(0,5), small=its.filter(it=>!main.includes(it));
+  const urls=its.map(it=>it.img?wurl(it.img, main.includes(it)?600:200):"");
+  const [imgs,pic]=await Promise.all([Promise.all(urls.map(loadImg)), picImage(L.pic && L.picOn!==false ? L.pic : null)]);
+  try{ if(document.fonts && document.fonts.ready) await document.fonts.ready; }catch(e){}
+  const cv=mkCanvas(1080,1350), map=new Map(its.map((it,i)=>[it,imgs[i]]));
+  paintLook(cv.getContext("2d"), main, small, it=>map.get(it)||null, it=>slotsOf(it)[0], pic, L);
+  return cv;
 }
 async function downloadLook(){
   await drawLook();
@@ -2785,7 +2843,7 @@ try{ const c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); if(c && Array.i
 const showUrl = it => SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,8):"");
 const showName = it => (it.meta && it.meta.L.n) || it.name.replace(/\.[a-z0-9]+$/i,"").replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
 const showByName = n => (SHOW.items||[]).find(x=>x.name===n);
-function showStats(m){ const its=lookItems(m.L); return {n:its.length, own:its.filter(it=>has(it,"x")).length, stars:its.reduce((a,it)=>a+(it.r||0),0), its}; }
+function showStats(m){ const its=lookItems(m.L); return {n:its.length, own:its.filter(it=>has(it,"x")).length, viv:lookViv(its), its}; }
 const showPct = it => { if(!it.meta) return -1; const s=showStats(it.meta); return s.n ? s.own/s.n : 0; };
 const sameIds = (a,b) => a.length===b.length && a.every(x=>b.includes(x));
 const showSaved = m => (state.looks||[]).some(L=>L.n===m.L.n && L.g===m.L.g && sameIds(L.i,m.L.i));
@@ -2829,7 +2887,7 @@ function showArrived(it){
   if(ui.tab==="show"){ const F=SHOW.f;
     if(F.q || F.g || F.mine || F.sort!=="repo"){ clearTimeout(showRT); showRT=setTimeout(renderShowGrid,180); }
     else { const el=$("showcase").querySelector(`.sh-card[data-sh="${CSS.escape(it.name)}"]`); if(el) el.outerHTML=showCard(it,+el.dataset.k); } }
-  const d=$("shv"); if(d.open && SHOW.view[SHOW.vi]===it.name) paintShowView(true);
+  const d=$("shv"); if(d.open && VW.src==="show" && VW.keys[VW.i]===it.name) paintView(true);
 }
 function showList(){
   const F=SHOW.f, q=F.q.trim().toLowerCase();
@@ -2844,13 +2902,14 @@ function showList(){
   return L;
 }
 function showCard(it,k){
-  const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot;
-  const own = st ? `<span class="sh-own${st.n&&st.own===st.n?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-st">★ ${st.stars}</span>` : "";
-  return `<button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}" data-sh="${esc(it.name)}" data-k="${k}" style="--d:${Math.min(k,14)*45}ms" aria-label="${esc(title)}">
-    <span class="sh-img"><img src="${esc(showUrl(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span>
-    <span class="sh-glare" aria-hidden="true"></span>
-    <span class="sh-top">${m?`<span class="sh-chip">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>`:""}${m&&m.bl.cut?`<span class="sh-chip ic" title="${esc(t("shPhoto"))}">${ICON_CAM}</span>`:""}</span>
-    <span class="sh-bot"><b>${esc(title)}</b>${st?`<span class="sh-meta">${own}</span>`:m===undefined?`<span class="sh-meta sk" aria-hidden="true"><i></i><i></i></span>`:""}</span>
+  const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot, full=st && st.n && st.own===st.n;
+  const tags = m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.bl.cut?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "";
+  const vv = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
+  const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-bar" aria-hidden="true"><i style="width:${st.n?(st.own/st.n*100).toFixed(1):0}%"></i></span>`
+    : m===undefined ? `<span class="sh-sk" aria-hidden="true"><i></i><i></i></span>` : "";
+  return `<button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" style="--d:${Math.min(k,14)*45}ms" aria-label="${esc(title)}">
+    <span class="sh-frame"><span class="sh-img"><img src="${esc(showUrl(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span><span class="sh-glare" aria-hidden="true"></span></span>
+    <span class="sh-info"><b class="sh-name">${esc(title)}</b>${tags||vv?`<span class="sh-l2"><span class="sh-tags">${tags}</span>${vv}</span>`:""}${meta?`<span class="sh-meta">${meta}</span>`:""}</span>
   </button>`;
 }
 function renderShow(){
@@ -2872,66 +2931,93 @@ function renderShow(){
 function renderShowGrid(){
   const g=$("shGrid"); if(!g) return; const F=SHOW.f, cnt=$("shCount");
   if(cnt) cnt.textContent = SHOW.items ? SHOW.items.length : "";
-  if(!SHOW.items && SHOW.state!=="fail"){ g.className="sh-grid"; g.innerHTML=Array.from({length:6},(_,k)=>`<span class="sh-card sk" style="--d:${k*60}ms"><span class="sh-img"></span></span>`).join("")+`<p class="sh-msg sr">${esc(t("shLoading"))}</p>`; return; }
+  if(!SHOW.items && SHOW.state!=="fail"){ g.className="sh-grid"; g.innerHTML=Array.from({length:6},(_,k)=>`<span class="sh-card sk" style="--d:${k*60}ms"><span class="sh-frame"><span class="sh-img"></span></span><span class="sh-info"><span class="sh-sk"><i></i><i></i></span></span></span>`).join("")+`<p class="sh-msg sr">${esc(t("shLoading"))}</p>`; return; }
   if(SHOW.state==="fail" && !SHOW.items){ g.className="sh-grid msg"; g.innerHTML=`<div class="sh-msg"><b>${esc(t("shFail"))}</b><button type="button" class="btn" data-shretry>${esc(t("shRetry"))}</button></div>`; return; }
   if(!SHOW.items.length){ g.className="sh-grid msg"; g.innerHTML=`<div class="sh-msg"><span class="sh-msg-ic" aria-hidden="true">✦</span><b>${esc(t("shEmpty"))}</b></div>`; return; }
   const list=showList(); SHOW.spot = !F.q && !F.g && !F.mine && F.sort==="repo" && list.length>=4;
   g.className="sh-grid"+(SHOW.spot?" has-spot":"");
   g.innerHTML = list.length ? list.map((it,k)=>showCard(it,k)).join("") : `<div class="sh-msg"><b>${esc(t("shNone"))}</b></div>`;
 }
-/* viewer */
+/* viewer: one detail page for showcase images and saved outfits */
+const VW={src:"show", keys:[], i:0};
+const MINEIMG=new Map();   // saved outfit → rendered card image (object URL), keyed by id + last change
+function mineUrl(L){
+  const k=L.id+":"+(L.t||0), c=MINEIMG.get(k); if(c) return c.url||null;
+  const e={url:null}; MINEIMG.set(k,e);
+  lookCanvas(L).then(cv=>toBlobP(cv,"image/png")).then(b=>{ if(!b) return; e.url=URL.createObjectURL(b);
+    const d=$("shv"); if(d.open && VW.src==="mine" && VW.keys[VW.i]===L.id) paintView(); }).catch(()=>{});
+  return null;
+}
+function vwItem(){
+  const k=VW.keys[VW.i];
+  if(VW.src==="mine"){ const L=(state.looks||[]).find(x=>x.id===k); if(!L) return null;
+    return {kind:"mine", key:"m:"+L.id, title:(L.n||"").trim()||t("untitled"), L, ready:true, pic:!!L.pic, url:mineUrl(L)}; }
+  const it=showByName(k); if(!it) return null; const m=it.meta; if(m===undefined) showMeta(it);
+  return {kind:"show", key:"s:"+it.name, it, m, title:showName(it), L:m?m.L:null, ready:m!==undefined, pic:!!(m&&m.bl.cut), url:showUrl(it)};
+}
 function openShowView(name){
   let list=showList(); if(!list.some(x=>x.name===name)) list=SHOW.items||[];
   const i=list.findIndex(x=>x.name===name); if(i<0){ toast(t("shGone")); return; }
-  SHOW.view=list.map(x=>x.name); SHOW.vi=i; paintShowView();
-  const d=$("shv"); if(!d.open){ d.showModal ? d.showModal() : d.setAttribute("open",""); }
+  openView("show", list.map(x=>x.name), i);
 }
-function paintShowView(quiet){
-  const d=$("shv"), it=showByName(SHOW.view[SHOW.vi]); if(!it) return;
-  const m=it.meta, st=m?showStats(m):null, title=showName(it), n=SHOW.view.length, url=showUrl(it);
-  if(m===undefined) showMeta(it);
-  const pcs = st ? st.its.slice().sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0])).map(x=>{ const o=has(x,"x"), sl=slotsOf(x)[0];
-      return `<li class="${o?"own":""} r${x.r}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span><span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)} · ${"★".repeat(x.r||0)}</small></span><span class="ok" aria-label="${o?"✓":""}">${o?"✓":""}</span></li>`; }).join("") : "";
-  const saved = m && showSaved(m);
-  const acts = m ? `<button type="button" class="btn sv-main" data-sv="edit">${ICON_EDIT} ${esc(t("shEdit"))}</button>
-      <button type="button" class="btn ghost" data-sv="save"${saved?" disabled":""}>${saved?"✓ "+esc(t("shSaved")):ICON_PLUS+" "+esc(t("shSave"))}</button>
-      <div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button></div>`
-    : `<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button></div>`;
-  const side = m===undefined ? `<div class="sv-sk" aria-hidden="true"><i></i><i></i><i></i></div>` : `
-      <div class="sv-chips">${m?`<span>${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span><span>★ ${st.stars}</span><span>${esc(t("shPieces")(st.n))}</span>${m.bl.cut?`<span>${ICON_CAM} ${esc(t("shPhoto"))}</span>`:""}`:""}</div>
-      ${m?`<div class="sv-own${st.n&&st.own===st.n?" full":""}"><div class="sv-bar"><i style="width:${st.n?st.own/st.n*100:0}%"></i></div><span>${esc(st.n&&st.own===st.n?t("shAllOwned"):t("shOwned")(st.own,st.n))}</span></div>`:`<p class="sv-note">${esc(t("shNoData"))}</p>`}
+function openMineView(id){ const keys=(state.looks||[]).slice().reverse().map(L=>L.id), i=keys.indexOf(id); if(i>=0) openView("mine", keys, i); }
+function openView(src,keys,i){ VW.src=src; VW.keys=keys; VW.i=i; paintView(); const d=$("shv"); if(!d.open){ d.showModal ? d.showModal() : d.setAttribute("open",""); } }
+function paintView(quiet){
+  const d=$("shv"), v=vwItem(); if(!v){ if(d.open) d.close ? d.close() : d.removeAttribute("open"); return; }
+  const n=VW.keys.length, L=v.L, its=L?lookItems(L):[], own=its.filter(it=>has(it,"x")).length, viv=lookViv(its);
+  const pcs = its.slice().sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0])).map(x=>{ const o=has(x,"x"), sl=slotsOf(x)[0];
+      return `<li class="${o?"own":""} r${x.r}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span><span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)} · ${"★".repeat(x.r||0)}</small></span><span class="ok" aria-label="${o?"✓":""}">${o?"✓":""}</span></li>`; }).join("");
+  const mine=v.kind==="mine", saved=!mine && L && showSaved(v.m);
+  const linkRow=`<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button></div>`;
+  const acts = L ? `<button type="button" class="btn sv-main" data-sv="edit">${ICON_EDIT} ${esc(t(mine?"shEditMine":"shEdit"))}</button>
+      ${mine?"":`<button type="button" class="btn ghost" data-sv="save"${saved?" disabled":""}>${saved?"✓ "+esc(t("shSaved")):ICON_PLUS+" "+esc(t("shSave"))}</button>`}
+      <button type="button" class="btn ghost" data-sv="gcode" title="${esc(t("gameTip"))}">${ICON_PAD} ${esc(t("gameCode"))}</button>${linkRow}` : linkRow;
+  const side = !v.ready ? `<div class="sv-sk" aria-hidden="true"><i></i><i></i><i></i></div>` : `
+      <div class="sv-chips">${L?`<span>${L.g==="f"?"♀":"♂"} ${esc(t(L.g))}</span><span class="vv">${vivIcon()} ${fmtN(viv)} Vivid</span><span>${esc(t("shPieces")(its.length))}</span>${v.pic?`<span>${ICON_CAM} ${esc(t("shPhoto"))}</span>`:""}`:""}</div>
+      ${L?`<div class="sv-own${its.length&&own===its.length?" full":""}"><div class="sv-bar"><i style="width:${its.length?own/its.length*100:0}%"></i></div><span>${esc(its.length&&own===its.length?t("shAllOwned"):t("shOwned")(own,its.length))}</span></div>`:`<p class="sv-note">${esc(t("shNoData"))}</p>`}
       <div class="sv-act">${acts}</div>
       ${pcs?`<h3>${esc(t("shPiecesT"))}</h3><ul class="sv-pcs">${pcs}</ul>`:""}`;
-  const stageKey=it.name;
-  if(quiet && d.dataset.k===stageKey){ const s=d.querySelector(".sv-body"); if(s){ s.innerHTML=side; $("svTitle").textContent=title; const im=d.querySelector(".sv-img"); if(im) im.alt=title; return; } }
+  const stageKey=v.key+"|"+(v.url||"");
+  if(quiet && d.dataset.k===stageKey){ const s=d.querySelector(".sv-body"); if(s){ s.innerHTML=side; $("svTitle").textContent=v.title; return; } }
   d.dataset.k=stageKey;
-  d.innerHTML=`<div class="sv-stage" style="--bgimg:url('${url.replace(/'/g,"%27")}')">
-      <img class="sv-img" src="${esc(url)}" alt="${esc(title)}">
+  d.innerHTML=`<div class="sv-stage"${v.url?` style="--bgimg:url('${v.url.replace(/'/g,"%27")}')"`:""}>
+      ${v.url?`<img class="sv-img" src="${esc(v.url)}" alt="${esc(v.title)}">`:`<span class="sv-wait" aria-hidden="true"><span class="spin"></span></span>`}
       ${n>1?`<button type="button" class="sv-nav prev" data-sv="prev" aria-label="${esc(t("shPrev"))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="button" class="sv-nav next" data-sv="next" aria-label="${esc(t("shNext"))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <span class="sv-count">${SHOW.vi+1} / ${n}</span>`:""}
+      <span class="sv-count">${VW.i+1} / ${n}</span>`:""}
       <button type="button" class="dx sv-x" data-close aria-label="${esc(t("close"))}">✕</button>
     </div>
-    <aside class="sv-side"><div class="sv-top"><span class="vp-kick">${esc(t("showT"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
-      <h2 id="svTitle">${esc(title)}</h2><div class="sv-body">${side}</div></aside>`;
+    <aside class="sv-side"><div class="sv-top"><span class="vp-kick">${esc(t(mine?"outfits":"showT"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
+      <h2 id="svTitle">${esc(v.title)}</h2><div class="sv-body">${side}</div></aside>`;
 }
-function showStep(k){ const n=SHOW.view.length; if(n<2) return; SHOW.vi=(SHOW.vi+k+n)%n; paintShowView(); const im=$("shv").querySelector(".sv-img"); if(im) im.classList.add(k>0?"in-r":"in-l"); }
+function showStep(k){ const n=VW.keys.length; if(n<2) return; VW.i=(VW.i+k+n)%n; paintView(); const im=$("shv").querySelector(".sv-img"); if(im) im.classList.add(k>0?"in-r":"in-l"); }
+function loadSaved(L){ look={id:L.id,n:L.n,g:L.g,i:L.i.slice(),pic:L.pic||null,picOn:L.picOn!==false,p2:!!L.p2}; shared=null; saveDraft(); }
 async function showAct(a){
-  const it=showByName(SHOW.view[SHOW.vi]); if(!it) return;
+  const v=vwItem(); if(!v) return;
   if(a==="prev") return showStep(-1);
   if(a==="next") return showStep(1);
+  const closeV=()=>{ const d=$("shv"); if(d.open) d.close ? d.close() : d.removeAttribute("open"); };
+  const goBuilder=()=>{ ui.tab="outfits"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="outfits")); renderHeader(); renderTab();
+    window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); };
+  if(v.kind==="mine"){ const L=v.L;
+    if(a==="link") return copyTxt(lookUrl(L), t("linkCopied"));
+    if(a==="gcode"){ const r=gameCode(L); if(!r){ toast(t("gameNone")); return; } return copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
+    if(a==="dl"){ try{ const png=await toBlobP(await lookCanvas(L),"image/png"); let out=png; try{ out=await lookPng(png,L); }catch(e){}
+        const u=URL.createObjectURL(out), x=document.createElement("a"); x.href=u; x.download=(slug(L.n||"")||"miliadex-outfit")+".png"; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }
+      catch(e){ toast(t("dlFail")); } return; }
+    if(a==="edit"){ loadSaved(L); closeV(); goBuilder(); } return; }
+  const it=v.it;
   if(a==="link") return copyTxt(location.href.split("#")[0]+"#show="+encodeURIComponent(it.name), t("linkCopied"));
   if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
   const m=await showMeta(it); if(!m) return;
+  if(a==="gcode"){ const r=gameCode(m.L); if(!r){ toast(t("gameNone")); return; } return copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
   if(a==="save"){ if(showSaved(m)) return; const pic=await storeOutfitPic(m); state.looks=state.looks||[];
     const L={id:Date.now().toString(36), n:(m.L.n||showName(it)).slice(0,60), g:m.L.g, i:m.L.i.slice(), t:Date.now()}; if(pic){ L.pic=pic.id; L.picOn=pic.on; }
-    state.looks.push(L); save(); renderHeader(); paintShowView(true); toast("✓ "+t("shAdded"));
+    state.looks.push(L); save(); renderHeader(); paintView(true); toast("✓ "+t("shAdded"));
     const b=$("shv").querySelector('[data-sv="save"]'); if(b) confetti(36, b); return; }
   if(a==="edit"){ const pic=await storeOutfitPic(m);
     shared=null; look={id:null,n:m.L.n||showName(it),g:m.L.g,i:m.L.i.slice(),pic:pic?pic.id:null,picOn:pic?pic.on:true}; saveDraft();
-    const d=$("shv"); if(d.open) d.close ? d.close() : d.removeAttribute("open");
-    ui.tab="outfits"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="outfits"));
-    renderHeader(); renderTab(); window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); toast("✓ "+t("shOpened")); }
+    closeV(); goBuilder(); toast("✓ "+t("shOpened")); }
 }
 $("showcase").addEventListener("click", e=>{
   const c=e.target.closest(".sh-card[data-sh]"); if(c){ openShowView(c.dataset.sh); return; }
@@ -2962,6 +3048,10 @@ function readShowHash(){
   return true;
 }
 
+/* ---------- save & backup fold ---------- */
+function bkSet(open){ ui.bk=!!open; const b=$("bkBody"); b.classList.toggle("open",ui.bk); if(ui.bk) b.removeAttribute("inert"); else b.setAttribute("inert","");
+  $("bkTg").setAttribute("aria-expanded",ui.bk); $("bkSum").textContent=ui.bk?"":t("bkSum"); }
+$("bkTg").addEventListener("click", ()=>{ bkSet(!ui.bk); saveUI(); });
 /* ---------- header details fold ---------- */
 function hxSet(open, anim){
   const hx=$("hx"), b=$("hxBtn"); ui.hx=!!open;
@@ -3223,7 +3313,7 @@ $("outfits").addEventListener("click", e=>{
   const un=e.target.closest("[data-unslot]"); if(un){ unplace(un.dataset.unslot); saveDraft(); renderOutfits(); return; }
   const sl=e.target.closest("[data-slot]"); if(sl){ pickSlot(sl.dataset.slot); return; }
   const lg=e.target.closest("[data-lg]"); if(lg){ look.g=lg.dataset.lg; look.i=look.i.filter(id=>{ const o=BYID.get(id); return o && canWear(o,look.g); }); saveDraft(); renderOutfits(); return; }
-  const ld=e.target.closest("[data-load]"); if(ld){ const L=(state.looks||[]).find(x=>x.id===ld.dataset.load); if(L){ look={id:L.id,n:L.n,g:L.g,i:L.i.slice(),pic:L.pic||null,picOn:L.picOn!==false,p2:!!L.p2}; saveDraft(); renderOutfits(); window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); } return; }
+  const lv=e.target.closest("[data-lview]"); if(lv){ openMineView(lv.dataset.lview); return; }
   const ls=e.target.closest("[data-lshare]"); if(ls){ const L=(state.looks||[]).find(x=>x.id===ls.dataset.lshare); if(L) copyTxt(lookUrl(L), t("linkCopied")); return; }
   const dl=e.target.closest("[data-ldel]"); if(dl){
     if(dl.dataset.armed!=="1"){ dl.dataset.armed="1"; toast(t("bkArm")); clearTimeout(delT); delT=setTimeout(()=>{ dl.dataset.armed=""; },3000); return; }
