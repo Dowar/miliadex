@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Miliadex · Google</title>
+<style>
+  html,body{margin:0;height:100%;background:#140d2e;color:#ece8ff;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+  body{display:grid;place-items:center;padding:16px;box-sizing:border-box;text-align:center}
+  a{color:#b9a8ff}
+</style>
+</head>
+<body>
+<div><p id="m">Connexion à Google Drive…</p><p><a href="./">Retour au Miliadex</a></p></div>
+<script>
+(function(){
+  // Google sends the user back here with a one-time code: hand it to the Miliadex page that asked for it, then close
+  var q=new URLSearchParams(location.search), st=q.get("state")||"";
+  var r={code:q.get("code"),state:st,error:q.get("error"),t:Date.now()};
+  try{ localStorage.setItem("miliadex-oauth", JSON.stringify(r)); }catch(e){}
+  try{ var bc=new BroadcastChannel("miliadex-oauth"); bc.postMessage(r); bc.close(); }catch(e){}
+  var fr=(navigator.language||"").slice(0,2)!=="en";
+  document.getElementById("m").textContent = r.code ? (fr?"Connecté ✓ Tu peux fermer cette fenêtre.":"Signed in ✓ You can close this window.") : (fr?"Connexion annulée.":"Sign-in cancelled.");
+  if(st.charAt(0)==="r"){ location.replace("./"); return; }   // full-page sign-in: go back to the site
+  setTimeout(function(){ try{ window.close(); }catch(e){} }, 120);
+})();
+</script>
+</body>
+</html>

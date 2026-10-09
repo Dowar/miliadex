@@ -1148,7 +1148,7 @@ const T = {
   close:"Close",details:n=>`View ${n}`,groupDone:n=>`${n} complete!`,tabDone:n=>`Every ${n.toLowerCase()} collected!`,
   gdTitle:"Google Drive sync",gdText:"Sign in to keep your collection and outfits in sync on all your devices. Miliadex only uses its own private folder on your Drive.",
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
-  gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,
+  gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
   bkTitle:"Save & backup",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
@@ -1192,7 +1192,7 @@ const T = {
   close:"Fermer",details:n=>`Voir ${n}`,groupDone:n=>`${n} complété !`,tabDone:n=>`Tous les ${n.toLowerCase()} sont à toi !`,
   gdTitle:"Synchro Google Drive",gdText:"Connecte-toi pour synchroniser ta collection et tes tenues sur tous tes appareils. Miliadex n'utilise que son propre dossier privé sur ton Drive.",
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
-  gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,
+  gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
   bkTitle:"Sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
@@ -2995,6 +2995,45 @@ const GD=(()=>{
   let tok=null; try{ const x=JSON.parse(localStorage.getItem(TKEY)||"null"); if(x && x.exp>Date.now()) tok=x; }catch(e){}
   let status=cfg.on ? "idle" : "off", err="", busy=false, again=false, client=null, pushT=null, pollT=null, asking=false, lastAsk=0, failed=false;
   const local = location.protocol==="file:", usable = !local && CID && !CID.startsWith("/*");
+  // free Google Apps Script relay: swaps Google's one-time code for a long-lived grant, then renews access in the background (no popup, no click)
+  const RELAY="https://script.google.com/macros/s/AKfycbxIU86qU1KQWTo93x7yByx-p9Lp5twM-iMObDI0mzN29bKlsXjAM4E3uXYWlEMXpeU0/exec", RKEY="miliadex-gdrt", OKEY="miliadex-oauth", SKEY="miliadex-oauth-state";
+  const relayOn = usable && RELAY && !RELAY.startsWith("/*");
+  let rt=null; try{ rt=localStorage.getItem(RKEY)||null; }catch(e){}
+  const setRt=x=>{ rt=x; try{ x ? localStorage.setItem(RKEY,x) : localStorage.removeItem(RKEY); }catch(e){} };
+  const REDIR=()=>location.origin+location.pathname.replace(/[^/]*$/,"")+"oauth.html";
+  const relay=async body=>(await fetch(RELAY,{method:"POST",body:JSON.stringify(body)})).json();
+  let renewP=null, renewT=null;
+  function plan(){ clearTimeout(renewT); if(!rt || !tok) return; renewT=setTimeout(()=>{ refresh(); }, Math.max(10000, tok.exp-Date.now()-5*60000)); }
+  function refresh(){ if(!rt) return Promise.resolve(false);
+    return renewP || (renewP=(async()=>{ try{ const d=await relay({refresh_token:rt});
+        if(d && d.access_token){ setTok({v:d.access_token, exp:Date.now()+(+d.expires_in||3600)*1000-120000}); failed=false; plan(); return true; }
+        if(d && d.error==="invalid_grant"){ setRt(null); failed=true; setStatus("auth", t("gdExpired")); }
+        return false; }catch(e){ return false; } finally{ renewP=null; } })()); }
+  function connectRelay(){
+    const redirect = matchMedia("(pointer:coarse)").matches;
+    const mk=m=>m+Math.random().toString(36).slice(2)+Date.now().toString(36);
+    const url=st=>{ try{ localStorage.setItem(SKEY,st); }catch(e){}
+      const q=new URLSearchParams({client_id:CID, redirect_uri:REDIR(), response_type:"code", scope:SCOPE, access_type:"offline", prompt:"consent", include_granted_scopes:"true", state:st});
+      if(cfg.email) q.set("login_hint", cfg.email); return "https://accounts.google.com/o/oauth2/v2/auth?"+q; };
+    if(!redirect){ const w=window.open(url(mk("p")), "miliadex-google", "popup,width=520,height=680"); if(w) return; }
+    location.href=url(mk("r"));
+  }
+  function takeOAuth(r){
+    let want=null; try{ want=localStorage.getItem(SKEY); }catch(e){}
+    if(!r || !r.state || r.state!==want) return;
+    try{ localStorage.removeItem(SKEY); localStorage.removeItem(OKEY); }catch(e){}
+    if(r.error || !r.code){ setStatus(cfg.on?"auth":"off", r.error==="access_denied" ? t("gdDenied") : ""); return; }
+    exchange(r.code);
+  }
+  async function exchange(code){
+    setStatus("sync");
+    try{ const d=await relay({code, redirect_uri:REDIR()});
+      if(!d || !d.access_token) throw new Error((d&&d.error)||"token");
+      if(d.refresh_token) setRt(d.refresh_token);
+      setTok({v:d.access_token, exp:Date.now()+(+d.expires_in||3600)*1000-120000});
+      cfg.on=true; saveCfg(); failed=false; poll(); plan(); setStatus("idle"); whoami(); sync();
+    }catch(e){ failed=true; setStatus(cfg.on?"auth":"off", t("gdNet")); }
+  }
   const saveCfg=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(cfg)); }catch(e){} };
   const setTok=x=>{ tok=x; try{ x ? localStorage.setItem(TKEY, JSON.stringify(x)) : localStorage.removeItem(TKEY); }catch(e){} };
   const setStatus=(s,e)=>{ status=s; err=e||""; render(); };
@@ -3014,18 +3053,19 @@ const GD=(()=>{
   // explicit sign-in (button): consent the first time, then a popup that closes by itself
   async function connect(){
     if(!usable){ toast(t("gdLocal")); return; }
+    if(relayOn){ connectRelay(); return; }
     try{ await loadGis(); }catch(e){ setStatus("err", t("gdGsiErr")); return; }
     asking=true; lastAsk=Date.now(); ensureClient().requestAccessToken({prompt: cfg.on ? "" : "consent", hint:cfg.email||undefined});
   }
   // Google tokens last one hour: renew silently on the next click once it is about to expire (a click is needed for Google's popup to be allowed)
   function renew(){
-    if(!cfg.on || !usable || asking || (tok && tok.exp-Date.now()>5*60000)) return;
+    if(relayOn || !cfg.on || !usable || asking || (tok && tok.exp-Date.now()>5*60000)) return;
     if(Date.now()-lastAsk < (failed?120000:15000)) return;
     if(!(window.google && google.accounts && google.accounts.oauth2)){ loadGis().catch(()=>{}); return; }
     asking=true; lastAsk=Date.now(); ensureClient().requestAccessToken({prompt:"", hint:cfg.email||undefined});
   }
   document.addEventListener("click", e=>{ if(e.target.closest && e.target.closest("#gdBtn,[data-gd]")) return; renew(); });
-  function disconnect(){ const v=tok&&tok.v; setTok(null); cfg={on:false,fid:"",at:0,md5:"",lt:0,email:""}; saveCfg(); clearTimeout(pushT); clearInterval(pollT); client=null;
+  function disconnect(){ const v=tok&&tok.v; if(rt){ relay({revoke:rt}).catch(()=>{}); setRt(null); } clearTimeout(renewT); setTok(null); cfg={on:false,fid:"",at:0,md5:"",lt:0,email:""}; saveCfg(); clearTimeout(pushT); clearInterval(pollT); client=null;
     try{ if(v && window.google) google.accounts.oauth2.revoke(v, ()=>{}); }catch(e){} setStatus("off"); toast(t("gdOff")); }
   async function api(path, opt={}){
     if(!fresh()){ setTok(null); throw Object.assign(new Error("auth"),{auth:true}); }
@@ -3063,7 +3103,9 @@ const GD=(()=>{
   const part=o=>({owned:o.owned||{}, looks:o.looks||[], custom:o.custom||[]});
   async function sync(){
     if(!cfg.on) return; if(busy){ again=true; return; }
-    if(!fresh()){ setTok(null); setStatus(failed?"auth":"idle"); return; }
+    if(!fresh()){
+      if(relayOn && rt){ busy=true; const ok=await refresh(); busy=false; if(!ok){ if(!failed) setStatus("err", t("gdNet")); return; } }
+      else { setTok(null); setStatus(failed?"auth":"idle"); return; } }
     busy=true; setStatus("sync");
     try{
       let fid=await findFile(), meta=null;
@@ -3083,13 +3125,16 @@ const GD=(()=>{
       if(!R || canon(Object.assign(part(R),{mt:R.mt||{},ld:R.ld||{}}))!==canon(Object.assign(part(M),{mt:M.mt,ld:M.ld}))){ snap.t=Date.now(); cfg.md5=await upload(snap); }
       else cfg.md5=(meta&&meta.md5Checksum)||cfg.md5;
       cfg.lt=state.t||0; cfg.at=Date.now(); saveCfg(); busy=false; setStatus("ok");
-    }catch(e){ busy=false; if(e.auth){ failed=false; setStatus("idle"); } else setStatus("err", t("gdNet")); }
+    }catch(e){ busy=false;
+      if(e.auth){ if(relayOn && rt){ refresh().then(ok=>{ if(ok) sync(); else if(!failed) setStatus("err", t("gdNet")); }); } else { failed=false; setStatus("idle"); } }
+      else setStatus("err", t("gdNet")); }
     if(again){ again=false; sync(); }
   }
   const soon=()=>{ if(!cfg.on) return; clearTimeout(pushT); pushT=setTimeout(sync, 2500); };
-  function poll(){ clearInterval(pollT); pollT=setInterval(()=>{ if(cfg.on && fresh() && document.visibilityState==="visible") sync(); }, 45000); }
-  document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && cfg.on && fresh()) sync(); });
-  window.addEventListener("focus", ()=>{ if(cfg.on && fresh() && Date.now()-cfg.at>8000) sync(); });
+  const live=()=>cfg.on && (fresh() || (relayOn && !!rt));
+  function poll(){ clearInterval(pollT); pollT=setInterval(()=>{ if(live() && document.visibilityState==="visible") sync(); }, 45000); }
+  document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && live()) sync(); });
+  window.addEventListener("focus", ()=>{ if(live() && Date.now()-cfg.at>8000) sync(); });
   const ago=ms=>{ const sec=Math.round((Date.now()-ms)/1000); return sec<10 ? t("gdNow") : sec<60 ? t("gdSec")(sec) : sec<3600 ? t("gdMin")(Math.round(sec/60)) : new Date(ms).toLocaleString(ui.lang==="fr"?"fr-FR":"en-US",{hour:"2-digit",minute:"2-digit",day:"numeric",month:"short"}); };
   function render(){
     const box=$("gd"), btn=$("gdBtn"); if(!box) return;
@@ -3104,11 +3149,23 @@ const GD=(()=>{
       <p class="gd-note"><a href="privacy.html" target="_blank" rel="noopener">${esc(t("gdPriv"))}</a></p>`;
   }
   // a click on "sync now" or the cloud renews the token first when needed (that click is what lets Google's popup open)
-  const act=()=>{ if(!cfg.on || status==="auth" || !fresh()) connect(); else if(status!=="sync") sync(); };
+  const act=()=>{ if(!cfg.on || status==="auth" || (!fresh() && !(relayOn && rt))) connect(); else if(status!=="sync") sync(); };
   $("gd").addEventListener("click", e=>{ const b=e.target.closest("[data-gd]"); if(!b) return; const a=b.dataset.gd;
     if(a==="connect") connect(); else if(a==="sync") act(); else if(a==="off") disconnect(); });
   $("gdBtn").addEventListener("click", act);
-  function init(){ render(); if(cfg.on){ poll(); if(usable) loadGis().catch(()=>{}); if(fresh()) sync(); } }
+  let bc=null;
+  function init(){
+    render();
+    if(relayOn){
+      try{ bc=new BroadcastChannel("miliadex-oauth"); bc.onmessage=e=>takeOAuth(e.data); }catch(e){}
+      window.addEventListener("storage", e=>{ if(e.key===OKEY && e.newValue){ try{ takeOAuth(JSON.parse(e.newValue)); }catch(x){} } });
+      try{ const p=JSON.parse(localStorage.getItem(OKEY)||"null"); if(p && Date.now()-p.t<600000) takeOAuth(p); }catch(e){}
+    }
+    if(!cfg.on) return;
+    poll();
+    if(relayOn){ if(!rt){ failed=true; setStatus("auth", t("gdOnce")); } else { plan(); sync(); } return; }
+    if(usable) loadGis().catch(()=>{}); if(fresh()) sync();
+  }
   return {init, soon, render};
 })();
 gdHook=()=>GD.soon(); gdRender=()=>GD.render();
