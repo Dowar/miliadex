@@ -987,16 +987,16 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 @media (max-width:370px){ .node{min-width:28px;font-size:9px} .node svg{width:29px;height:29px} .constel::before{top:25px} }
 @media (max-width:380px){ .comp .grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 /* ---------- theme backgrounds ---------- */
-.bgfx{position:fixed;inset:-3%;z-index:-2;background:#0d0a1c center/cover no-repeat;opacity:0;transition:opacity 1.1s ease;pointer-events:none}
+.bgfx{position:fixed;left:-3%;right:-3%;top:-3vh;top:-3lvh;height:106vh;height:106lvh;z-index:-2;background:#0d0a1c center/cover no-repeat;opacity:0;transition:opacity 1.1s ease;pointer-events:none}
 .bgfx.on{opacity:1}
 body.bg-move .bgfx{animation:bgDrift 80s ease-in-out infinite alternate}
 @keyframes bgDrift{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.1) translate(-2%,-1.5%)}}
-.bgshade{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .9s ease;background:radial-gradient(130% 100% at 50% 0%,rgba(13,10,28,calc(var(--bgd,.5) - .12)),rgba(13,10,28,var(--bgd,.5)) 55%,rgba(13,10,28,calc(var(--bgd,.5) + .2)))}
+.bgshade{position:fixed;left:0;right:0;top:0;height:100vh;height:100lvh;z-index:-1;pointer-events:none;opacity:0;transition:opacity .9s ease;background:radial-gradient(130% 100% at 50% 0%,rgba(13,10,28,calc(var(--bgd,.5) - .12)),rgba(13,10,28,var(--bgd,.5)) 55%,rgba(13,10,28,calc(var(--bgd,.5) + .2)))}
 body.has-bg{background:#0d0a1c}
 body.has-bg .bgshade{opacity:1}
 body.has-bg .top{background:radial-gradient(120% 160% at 0% 0%,rgba(69,49,143,.78) 0%,rgba(39,28,88,.64) 42%,rgba(20,14,49,.76) 100%)}
 body.bg-blur .bgfx{filter:blur(var(--bgb,0px)) saturate(1.1)}
-.bgcv{position:fixed;inset:0;width:100%;height:100%;z-index:-2;opacity:0;transition:opacity 1s ease;pointer-events:none}
+.bgcv{position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;z-index:-2;opacity:0;transition:opacity 1s ease;pointer-events:none}
 .bgcv.on{opacity:1}
 body.bg-blur .bgcv{filter:blur(var(--bgb,0px))}
 .bg-t canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -4420,12 +4420,16 @@ const FXBG=(()=>{
   function frame(ctx,w,h,t,name,st,mouse){ ctx.save(); ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1; ctx.canvas._w=w; P[name].draw(ctx,w,h,t,st,mouse); ctx.restore(); }
   // the page background
   const cv=$("bgCv"), cx=cv.getContext("2d"); let cur=null, st=null, raf=0, lastF=0, W=0, H=0, S=1, animate=true, mouse=null, t0=performance.now();
-  function size(){ const dpr=Math.min(window.devicePixelRatio||1, innerWidth>1400?1:1.25); S=dpr; W=innerWidth; H=innerHeight; cv.width=Math.round(W*S); cv.height=Math.round(H*S); cx.setTransform(S,0,0,S,0,0); }
+  // the height of the screen with the browser's address bar hidden: on phones the bar comes and goes while scrolling, and a background
+  // sized to the visible height would be resized (and drawn anew) each time
+  const lvh=document.createElement("div"); lvh.setAttribute("aria-hidden","true"); lvh.style.cssText="position:fixed;left:0;top:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none"; document.body.appendChild(lvh);
+  const tall=()=>Math.max(innerHeight, lvh.offsetHeight||0);
+  function size(){ const dpr=Math.min(window.devicePixelRatio||1, innerWidth>1400?1:1.25); S=dpr; W=innerWidth; H=tall(); cv.width=Math.round(W*S); cv.height=Math.round(H*S); cx.setTransform(S,0,0,S,0,0); }
   const COVER=["det","info","pick","cut","val"].map(id=>document.getElementById(id)).filter(Boolean);   // full dialogs hide the page
   function loop(now){ raf=0; if(!cur) return; if(now-lastF>=32 && !COVER.some(d=>d.open)){ lastF=now; frame(cx,W,H,(now-t0)/1000,cur,st,mouse); } if(animate) raf=requestAnimationFrame(loop); }
   function start(name,anim){ if(!P[name]) return stop(); const fresh=cur!==name; cur=name; animate=anim; size(); if(fresh||!st) st=P[name].init(W,H); cv.classList.add("on"); if(raf) cancelAnimationFrame(raf); raf=0; if(anim) raf=requestAnimationFrame(loop); else frame(cx,W,H,30,cur,st,mouse); }
   function stop(){ cur=null; if(raf) cancelAnimationFrame(raf); raf=0; cv.classList.remove("on"); }
-  let rzT=null; window.addEventListener("resize", ()=>{ if(!cur) return; clearTimeout(rzT); rzT=setTimeout(()=>{ size(); st=P[cur].init(W,H); if(!animate) frame(cx,W,H,30,cur,st,mouse); },150); });
+  let rzT=null; window.addEventListener("resize", ()=>{ if(!cur || (innerWidth===W && tall()===H)) return; clearTimeout(rzT); rzT=setTimeout(()=>{ size(); st=P[cur].init(W,H); if(!animate) frame(cx,W,H,30,cur,st,mouse); },150); });
   window.addEventListener("pointermove", e=>{ if(cur==="constellations" && e.pointerType==="mouse") mouse={x:e.clientX,y:e.clientY}; }, {passive:true});
   document.addEventListener("pointerleave", ()=>{ mouse=null; });
   // previews in the picker (a still frame, animated while hovered)
@@ -4438,7 +4442,7 @@ const FXBG=(()=>{
 const BGS=[["kv1", "Phantom Night Candlelight", "2/2d/Stellar_Reunion_Miliastra_Wonderland_01.png"], ["kv2", "Frosty Court", "2/29/Stellar_Reunion_Miliastra_Wonderland_02.png"], ["kv3", "Star of Auspicious Fortune", "2/23/Stellar_Reunion_Miliastra_Wonderland_03.png"], ["kv4", "Cloud Edge's Glory", "f/f9/Stellar_Reunion_Miliastra_Wonderland_04.png"], ["kv5", "Scales Aflame", "4/49/Stellar_Reunion_Miliastra_Wonderland_05.png"], ["kv6", "Prismatic Flutter", "5/5d/Stellar_Reunion_Miliastra_Wonderland_06.png"], ["kv7", "Breezes Meet the Fatebound Sea", "b/b9/Stellar_Reunion_Miliastra_Wonderland_07.png"]];
 const BG_L=[$("bgA"),$("bgB")]; let bgFront=0, bgOwnUrl=null, bgReq=0;
 const bgSrc=(path,w)=>IMG+path+"/revision/latest/scale-to-width-down/"+w;
-const bgCfg=()=>Object.assign({id:"",dim:50,blur:0,pa:88,move:true}, ui.bg||{});
+const bgCfg=()=>Object.assign({id:"fx:crystals",dim:50,blur:0,pa:88,move:true}, ui.bg||{});   // default: the "Prism crystals" scene
 async function applyBg(){
   const c=bgCfg(), req=++bgReq;
   document.documentElement.style.setProperty("--bgd",(c.dim/100).toFixed(2)); document.documentElement.style.setProperty("--pa",c.pa+"%"); document.documentElement.style.setProperty("--bgb",(c.blur||0)+"px"); document.body.classList.toggle("bg-blur", (c.blur||0)>0);
@@ -4510,12 +4514,25 @@ $("list").addEventListener("pointermove", e=>{ if(e.pointerType!=="mouse" || red
 $("list").addEventListener("pointerleave", untilt);
 let stuckRaf=0; const checkStuck=()=>{ stuckRaf=0; const tb=$("toolbar"); tb.classList.toggle("stuck", scrollY>0 && getComputedStyle(tb).position==="sticky" && tb.getBoundingClientRect().top<=1); };
 window.addEventListener("scroll", ()=>{ if(tiltEl) untilt(); if(!stuckRaf) stuckRaf=requestAnimationFrame(checkStuck); }, {passive:true});
-// ripple drawn in an overlay at the button's spot, so it survives the button being re-rendered by the click
-document.addEventListener("pointerdown", e=>{ if(reduce() || e.button>0) return; const el=e.target.closest(".btn,.chip,.iconbtn,.fbtn,.seg button,.tab,.stab,.bg-t,.worth,.hbtn"); if(!el) return;
+// ripple drawn in an overlay at the button's spot, so it survives the button being re-rendered by the click.
+// The overlay is fixed on screen: with a finger it waits until the press is a tap (a scroll starting cancels it, lifting the finger
+// shows it at once), and a scroll clears any ripple still showing, so none stays behind while the page moves under the finger
+let rplPend=null;
+function rplDraw(el, x, y){
+  if(!el.isConnected) return;
   const r=el.getBoundingClientRect(), cs=getComputedStyle(el), d=Math.max(r.width,r.height)*2.4, w=document.createElement("span"), sp=document.createElement("span");
   w.className="rpl-w"; w.style.cssText=`left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;border-radius:${cs.borderRadius};color:${cs.color}`;
-  sp.className="rpl"; sp.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;
-  w.appendChild(sp); (el.closest("dialog[open]")||document.body).appendChild(w); setTimeout(()=>w.remove(),650); }, {passive:true});
+  sp.className="rpl"; sp.style.cssText=`width:${d}px;height:${d}px;left:${x-r.left-d/2}px;top:${y-r.top-d/2}px`;
+  w.appendChild(sp); (el.closest("dialog[open]")||document.body).appendChild(w); setTimeout(()=>w.remove(),650);
+}
+const rplFire=()=>{ const p=rplPend; rplPend=null; if(p){ clearTimeout(p.t); rplDraw(p.el, p.x, p.y); } };
+const rplDrop=()=>{ if(rplPend){ clearTimeout(rplPend.t); rplPend=null; } document.querySelectorAll(".rpl-w").forEach(x=>x.remove()); };
+document.addEventListener("pointerdown", e=>{ if(reduce() || e.button>0) return; const el=e.target.closest(".btn,.chip,.iconbtn,.fbtn,.seg button,.tab,.stab,.bg-t,.worth,.hbtn"); if(!el) return;
+  if(e.pointerType==="mouse"){ rplDraw(el, e.clientX, e.clientY); return; }
+  rplDrop(); rplPend={el, x:e.clientX, y:e.clientY, t:setTimeout(rplFire,120)}; }, {passive:true});
+document.addEventListener("pointerup", rplFire, {passive:true});
+document.addEventListener("pointercancel", rplDrop, {passive:true});   // the browser took the gesture over: a scroll
+document.addEventListener("scroll", ()=>{ if(rplPend || document.querySelector(".rpl-w")) rplDrop(); }, {passive:true, capture:true});
 
 /* ---------- sliding selection: a pill glides to the chosen option (EN/FR, Both/♀/♂, tabs…) ---------- */
 const pillPos=new WeakMap();
