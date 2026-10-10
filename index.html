@@ -1260,6 +1260,22 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .nick-f input{font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--raise);color:var(--text)}
 .nick-f input:focus{outline:none;border-color:var(--accent)}
 .nick-f .nick-err{color:#d6455d;min-height:1.2em;font-size:13.5px}
+.ask-dlg{width:min(430px,calc(100% - 32px));overflow:auto}
+.ask{display:grid;gap:14px}
+.ask-hd{display:flex;align-items:center;gap:12px}
+.ask-hd > div{min-width:0;flex:1}
+.ask-img{flex:none;width:60px;height:60px;border-radius:14px;background:var(--raise);overflow:hidden;border:2px solid var(--line)}
+.ask-img img{width:100%;height:100%;object-fit:cover;display:block}
+.ask-hd small{display:block;color:var(--muted);font-size:12.5px;font-weight:650}
+.ask-hd h3{margin:2px 0 0;font-family:var(--serif);font-weight:650;font-size:20px;line-height:1.2;overflow-wrap:anywhere}
+.ask-hd .dx{align-self:flex-start;width:34px;height:34px;font-size:14px}
+.ask p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.45}
+.ask-ps{display:flex;flex-wrap:wrap;gap:6px}
+.ask-ps span{position:relative;width:46px;height:46px;border-radius:11px;background:var(--raise);overflow:hidden;border:2px solid var(--line)}
+.ask-ps img{width:100%;height:100%;object-fit:contain;display:block}
+.ask-ps .miss img{filter:grayscale(1) brightness(.55);opacity:.7}
+.ask-ps .cur{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.ask .row .btn{flex:1 1 150px}
 .sh-wrap > .sh-msg.sr{position:absolute}
 /* "show in the showcase" switch, next to the share buttons */
 .pub-t{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none}
@@ -1405,9 +1421,9 @@ html.x404 body, html.xadm body{background:var(--screen)}
 @media (prefers-reduced-motion:reduce){ .sh-card,.sh-img,.sv-img,.sv-bar i{animation:none!important} .sh-card{transform:none!important} }
 /* save & backup: folded by default */
 .tools{gap:0}
-.tools-h{margin:0}
+.tools-h{margin:0;min-width:0}
 .tools-tg{display:flex;align-items:center;gap:10px;width:100%;padding:2px 0;border:0;background:none;color:inherit;font:650 19px/1.2 var(--serif);text-align:left;cursor:pointer}
-.tools-tg small{margin-left:auto;font:500 13px var(--body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools-tg small{margin-left:auto;min-width:0;font:500 13px var(--body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tools-tg svg{flex:none;width:18px;height:18px;color:var(--muted);transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
 .tools-tg[aria-expanded="true"] svg{transform:rotate(180deg)}
 .tools-tg:hover svg{color:var(--accent)}
@@ -1534,7 +1550,7 @@ const T = {
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
   importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code, link or image",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
-  viaSet:n=>`Owned with the set ${n}`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
+  viaSet:n=>`Owned with the set ${n}`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
   ranksIntro:"Your rank follows your Vivid rating, like in the game: every set (each version) and every standalone cosmetic you own adds its Vivid value. A set's pieces are covered by the set's rating; interactions give none. Every 300 Vivid is one Raiment Collector level; the ranks below are reached at those levels.",
   yourPts:(a,b,l,lm)=>`Your Vivid: ${a} / ${b} · Raiment Collector Lv. ${l} / ${lm}`,maxed:"Everything collected. Legendary.",rankUp:r=>`New rank: ${r}!`,
@@ -1587,7 +1603,7 @@ const T = {
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
   importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu, lien ou image",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
-  viaSet:n=>`Obtenu avec le set ${n}`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
+  viaSet:n=>`Obtenu avec le set ${n}`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
   ranksIntro:"Ton rang suit ton Vivid rating, comme en jeu : chaque set (chaque version) et chaque cosmétique hors set obtenu ajoute sa valeur de Vivid. Les pièces d'un set sont couvertes par le Vivid du set ; les interactions n'en donnent pas. Tous les 300 Vivid, tu gagnes un niveau de Raiment Collector ; les rangs ci-dessous s'obtiennent à ces niveaux.",
   yourPts:(a,b,l,lm)=>`Ton Vivid : ${a} / ${b} · Raiment Collector niv. ${l} / ${lm}`,maxed:"Tout est à toi. Légendaire.",rankUp:r=>`Nouveau rang : ${r} !`,
@@ -2171,7 +2187,31 @@ function setSlot(it, s, val){
   if(!Object.values(o).some(Boolean)) delete state.owned[it.id];
   stamp(it.id+":"+s); save();
 }
-function toggleCatch(it, s, orbEl){
+// marking a set piece as owned while other pieces of that set (same version) are still missing: ask whether the whole set is owned
+function askSet(it, orbEl){
+  const set=it.set, g=it.g, ps=(set.pieces||[]).filter(p=>p.g===g), miss=ps.filter(p=>p!==it && !has(p,"x")).length;
+  let d=$("setAsk");
+  if(!d){ d=document.createElement("dialog"); d.id="setAsk"; d.className="nick-dlg ask-dlg"; d.setAttribute("aria-labelledby","askT"); document.body.appendChild(d);
+    d.addEventListener("click", e=>{ if(e.target===d || e.target.closest("[data-askx]")){ d.close(); return; }
+      const b=e.target.closest("[data-ask]"); if(!b || !d._go) return; const go=d._go; d._go=null; d.close(); go(b.dataset.ask); });
+    d.addEventListener("close", ()=>{ d._go=null; }); }
+  const img=g==="m"?set.m:set.f;
+  d.innerHTML=`<div class="ask"><div class="ask-hd"><span class="ask-img">${img?`<img src="${esc(wurl(img,160))}" alt="" referrerpolicy="no-referrer">`:""}</span>
+      <div><small>${esc(t("partOf"))} · <span style="white-space:nowrap">${g==="f"?"♀":"♂"} ${esc(t(g))}</span></small><h3 id="askT">${esc(nm(set))}</h3></div>
+      <button type="button" class="dx" data-askx aria-label="${esc(t("close"))}">✕</button></div>
+    <p>${esc(t("askSetTxt")(nm(it),miss))}</p>
+    <div class="ask-ps" aria-hidden="true">${ps.map(p=>`<span class="${p===it?"cur":has(p,"x")?"":"miss"}" title="${esc(nm(p))}">${p.img?`<img src="${esc(wurl(p.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}</span>`).join("")}</div>
+    <div class="row"><button type="button" class="btn" data-ask="set">${esc(t("askAll")(ps.length))}</button><button type="button" class="btn ghost" data-ask="one">${esc(t("askOne"))}</button></div></div>`;
+  d._go = c => {
+    if(c==="set"){ toggleCatch(set, g, orbEl, true); toast("✦ "+t("askDone")(nm(set))); }
+    else toggleCatch(it, "x", orbEl, true);
+    if($("det").open && detId) openDetail(detId);
+  };
+  d.showModal ? d.showModal() : d.setAttribute("open",""); d.querySelector("[data-ask=set]").focus();
+}
+function toggleCatch(it, s, orbEl, asked){
+  if(!asked && s==="x" && it.kind==="comp" && it.set && !manual(it,"x") && !viaSet(it)
+     && it.set.pieces.some(p=>p!==it && p.g===it.g && !has(p,"x"))){ askSet(it, orbEl); return; }
   const key=groupKeyOf(it); const [g0,t0]=tally(groupItems(key)); const [a0,b0]=tally(ALL[ui.tab].filter(i=>i.kind==="set"||compVisible(i)));
   const rk0=rankIdx(), lv0=lvOf(score()[0]);
   const now=!manual(it,s); setSlot(it,s,now);
