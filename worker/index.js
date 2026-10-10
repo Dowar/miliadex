@@ -4,8 +4,11 @@
 //   /s/<file>   a Showcase item → same, with the outfit image
 // Link previews never see the part after "#", so the data rides in the path. The Worker answers with a tiny page:
 // preview tags for the bots, and a redirect to the usual "/#col=…" (or #look= / #show=) address for people.
-// Only these three paths run code: every other file is served straight from the static assets.
+// Preview pictures: when someone shares from the site, the page draws the card (same look as the site) and sends it to
+//   POST /api/card; the Worker keeps it in a Durable Object (CardStore) and serves it at /card/<key>.jpg for that link.
+// Only these paths run code: every other file is served straight from the static assets.
 // The catalog (worker/embed-data.json) is extracted from index.html by tools/build.py at each deploy, so the numbers follow the site.
+import { DurableObject } from "cloudflare:workers";
 import D from "./embed-data.json";
 
 const VLV = 300;                                   // Raiment Collector: one level every 300 Vivid
@@ -165,22 +168,22 @@ function fit(lines, listLine, at = lines.length) {
   return lines.join("\n");
 }
 
-function colPreview(c, lang) {
-  const T = TX[lang], st = collStats(c), N = n => fmt(n, lang);
-  const pct = st.tot && st.got === st.tot ? 100 : Math.floor(st.pct * 100);
-  const lines = [
-    `🏅 ${T.ranks[st.rank]} · ${T.lv} ${st.lv}`,
-    `✨ ${T.vivid} ${N(st.vg)} / ${N(st.vt)}`,
-    `💎 ${T.value} ${N(st.worth)} Chronal Nexus · ≈ ${money(st.worth, lang)}`,
-    `📊 ${T.done(pct)} · ${N(st.got)} / ${N(st.tot)}`,
-    `👗 ${T.sets} ${N(st.sg)} / ${N(st.st)} · 🌟 5★ ${N(st.g5)} / ${N(st.t5)}`,
-    `🧩 ${T.comp} ${N(st.cg)} / ${N(st.ct)} · ${T.wear(st.g)}`,
-  ];
-  const tops = st.top.slice(0, 3).map(e => nameOf(e.it, lang));
-  const e0 = st.top[0], img = e0 ? (e0.it.kind === "set" ? (e0.gs.includes("f") ? e0.it.f || e0.it.m : e0.it.m || e0.it.f) : e0.it.img) : "";
-  return { title: T.profile(c.name), desc: fit(lines, tops.length ? [`🏆 ${T.top}${lang === "fr" ? " : " : ": "}`, tops] : null),
-    image: wurl(img), large: false, color: CREST[st.rank] };
+const CARD_V = 1;   // same as CARD_V in index.html: bump both when the card design changes
+const pctOf = st => st.tot && st.got === st.tot ? 100 : Math.floor(st.pct * 100);
+async function cardKey(k, code, lang) {
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${CARD_V}`));
+  return [...new Uint8Array(d)].slice(0, 16).map(b => b.toString(16).padStart(2, "0")).join("");
 }
+// with a card picture, the text stays short: the picture carries the details
+function colShort(c, lang) {
+  const T = TX[lang], st = collStats(c), N = n => fmt(n, lang);
+  return { title: T.profile(c.name), desc: `🏅 ${T.ranks[st.rank]} · ${T.lv} ${st.lv} · ${T.done(pctOf(st))}\n✨ ${N(st.vg)} Vivid · 💎 ${N(st.worth)} Chronal Nexus`, color: CREST[st.rank] };
+}
+function lookShort(L, info, lang) {
+  const T = TX[lang];
+  return `${L.g === "m" ? "♂ Manekin" : "♀ Manekina"} · ${T.pieces(info.n)} · ✨ ${fmt(info.viv, lang)} Vivid\n🪄 ${T.remix}`;
+}
+
 
 function lookLines(L, info, lang, extra) {
   const T = TX[lang];
@@ -198,6 +201,7 @@ function page(p, url, target, lang) {
     `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="Miliadex">`,
     `<meta property="og:title" content="${esc(p.title)}">`, `<meta property="og:description" content="${esc(p.desc)}">`, `<meta property="og:url" content="${esc(url)}">`,
     p.image ? `<meta property="og:image" content="${esc(p.image)}">` : "",
+    p.image && p.w ? `<meta property="og:image:width" content="${p.w}">\n<meta property="og:image:height" content="${p.h}">` : "",
     `<meta name="twitter:card" content="${p.large ? "summary_large_image" : "summary"}">`, `<meta name="twitter:title" content="${esc(p.title)}">`, `<meta name="twitter:description" content="${esc(p.desc)}">`,
     p.image ? `<meta name="twitter:image" content="${esc(p.image)}">` : "",
   ].filter(Boolean).join("\n");
@@ -224,10 +228,66 @@ async function showItem(env, origin, file) {
   } catch (e) { return null; }
 }
 
+/* ---------- preview pictures ---------- */
+// One Durable Object keeps every card (SQLite storage, strongly consistent: a card sent from Paris is there for Discord's
+// fetch from the US a second later). Cards unused for 6 months are dropped.
+export class CardStore extends DurableObject {
+  constructor(ctx, env) {
+    super(ctx, env);
+    this.sql = ctx.storage.sql;
+    this.sql.exec("CREATE TABLE IF NOT EXISTS cards (k TEXT PRIMARY KEY, t INTEGER NOT NULL, ty TEXT NOT NULL, b BLOB NOT NULL)");
+    this.sql.exec("CREATE INDEX IF NOT EXISTS cards_t ON cards (t)");
+  }
+  put(k, ty, b) {
+    this.sql.exec("INSERT OR REPLACE INTO cards (k, t, ty, b) VALUES (?, ?, ?, ?)", k, Date.now(), ty, b);
+    if (Math.random() < .02) this.sql.exec("DELETE FROM cards WHERE t < ?", Date.now() - 183 * 864e5);
+    return true;
+  }
+  get(k) {
+    const r = this.sql.exec("SELECT ty, b FROM cards WHERE k = ?", k).toArray()[0];
+    if (r && Math.random() < .05) this.sql.exec("UPDATE cards SET t = ? WHERE k = ?", Date.now(), k);
+    return r ? { ty: r.ty, b: r.b } : null;
+  }
+}
+const store = env => env.CARDS ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
+const sniff = b => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff ? "image/jpeg"
+  : b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 ? "image/png"
+  : b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50 ? "image/webp" : "";
+
+// POST /api/card?k=c|o&l=en|fr&c=<code>  body: the picture the page drew for that link
+async function saveCard(request, env, url) {
+  if (request.method !== "POST") return new Response("POST only", { status: 405 });
+  const k = url.searchParams.get("k"), code = url.searchParams.get("c") || "", lang = url.searchParams.get("l") === "fr" ? "fr" : "en";
+  if (!/^[co]$/.test(k) || code.length > 4000) return new Response("bad link", { status: 400 });
+  const ok = k === "c" ? await readCol(code) : readLook(code);
+  if (!ok) return new Response("bad link", { status: 400 });
+  const b = new Uint8Array(await request.arrayBuffer()), ty = sniff(b);
+  if (!ty || b.length > 900 * 1024) return new Response("bad picture", { status: 400 });
+  const s = store(env); if (!s) return new Response("no store", { status: 503 });
+  await s.put(await cardKey(k, code, lang), ty, b.buffer);
+  return new Response(null, { status: 204 });
+}
+// GET /card/<key>.jpg  the picture; it may still be on its way (the page draws it while the link is pasted), so wait a little
+async function sendCard(env, origin, key) {
+  const s = store(env);
+  for (let i = 0; s && i < 10; i++) {
+    let r = null; try { r = await s.get(key); } catch (e) {}
+    if (r) return new Response(r.b, { headers: { "content-type": r.ty, "cache-control": "public, max-age=31536000, immutable" } });
+    await new Promise(res => setTimeout(res, 700));
+  }
+  const fb = await env.ASSETS.fetch(new Request(origin + "/og-banner.png"));
+  return new Response(fb.body, { headers: { "content-type": "image/png", "cache-control": "public, max-age=120" } });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url), origin = url.origin;
     const lang = url.searchParams.get("l") === "fr" ? "fr" : "en";
+    try {
+      if (url.pathname === "/api/card") return await saveCard(request, env, url);
+      const cm = url.pathname.match(/^\/card\/([0-9a-f]{32})\.(?:jpg|png|webp)$/);
+      if (cm) return await sendCard(env, origin, cm[1]);
+    } catch (e) { return new Response("error", { status: 500 }); }
     const m = url.pathname.match(/^\/([cos])\/([^/]+)\/?$/);
     if (!m) return env.ASSETS.fetch(request);
     const [, kind, raw] = m;
@@ -236,13 +296,15 @@ export default {
     try {
       if (kind === "c") {
         const target = "/#col=" + arg, c = await readCol(arg);
-        return c ? page(colPreview(c, lang), here, target, lang) : Response.redirect(origin + target, 302);
+        if (!c) return Response.redirect(origin + target, 302);
+        const card = `${origin}/card/${await cardKey("c", arg, lang)}.jpg`;
+        return page({ ...colShort(c, lang), image: card, large: true, w: 1200, h: 630 }, here, target, lang);
       }
       if (kind === "o") {
         const target = "/#look=" + arg, L = readLook(arg);
         if (!L) return Response.redirect(origin + target, 302);
-        const info = lookInfo(L);
-        return page({ title: TX[lang].outfit(L.n), desc: lookLines(L, info, lang), image: wurl(info.thumb), large: false, color: SITE_COLOR }, here, target, lang);
+        const info = lookInfo(L), card = `${origin}/card/${await cardKey("o", arg, lang)}.jpg`;
+        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), image: card, large: true, w: 1200, h: 630, color: SITE_COLOR }, here, target, lang);
       }
       const target = "/#show=" + encodeURIComponent(arg), it = await showItem(env, origin, arg);
       if (!it) return Response.redirect(origin + target, 302);
