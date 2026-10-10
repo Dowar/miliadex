@@ -3614,10 +3614,11 @@ const SHARE=(()=>{
   }
   const clean=n=>String(n||"").replace(/[\u0000-\u001f\u007f]/g,"").trim().slice(0,24);
   // link = one base64url block (no dots: Discord mistakes dotted base64 for a login token and warns before sending)
-  // bytes: [2][wear 0 both · 1 ♀ · 2 ♂][name length][name UTF-8][collection bits], deflated when that's shorter ("z…") or raw ("r…")
-  async function make(owned,g,name){
+  // bytes: [2][wear 0 both · 1 ♀ · 2 ♂, +16 when its owner shows the value in money][name length][name UTF-8][collection bits],
+  // deflated when that's shorter ("z…") or raw ("r…")
+  async function make(owned,g,name,money){
     const nm=new TextEncoder().encode(clean(name)).subarray(0,96), bits=pack(owned), raw=new Uint8Array(3+nm.length+bits.length);
-    raw[0]=2; raw[1]=g==="f"?1:g==="m"?2:0; raw[2]=nm.length; raw.set(nm,3); raw.set(bits,3+nm.length);
+    raw[0]=2; raw[1]=(g==="f"?1:g==="m"?2:0)|(money?16:0); raw[2]=nm.length; raw.set(nm,3); raw.set(bits,3+nm.length);
     const z=await flate(raw,true);
     return z && z.length<raw.length ? "z"+enc(z) : "r"+enc(raw);
   }
@@ -3634,7 +3635,7 @@ const SHARE=(()=>{
       const L=by[2]; if(3+L+2>by.length) return null;
       const owned=unpack(by.subarray(3+L)); if(!owned) return null;
       let name=""; try{ name=clean(new TextDecoder().decode(by.subarray(3,3+L))); }catch(e){}
-      return {owned, g:by[1]===1?"f":by[1]===2?"m":"both", name};
+      const w=by[1]&3; return {owned, g:w===1?"f":w===2?"m":"both", name, money:!!(by[1]&16)};
     }catch(e){ return null; }
   }
   return {make, read, pack, unpack, clean};
@@ -3650,7 +3651,7 @@ function collStats(owned,g){
   } finally { state.owned=so; ui.g=sg; }
 }
 const pctTxt = st => (st.tot && st.got===st.tot ? 100 : Math.floor(st.pct*100)) + (ui.lang==="fr" ? " %" : "%");
-function shCard(st,name){
+function shCard(st,name,cur){
   const ri=st.rank, C=CREST[ri], R=50, CI=2*Math.PI*R, L=(CI*st.pct).toFixed(2);
   const ring=`<svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="scg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset=".45" stop-color="#c58cff"/><stop offset="1" stop-color="#5fd3ff"/></linearGradient></defs>
     <circle cx="60" cy="60" r="${R}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="9"/>${st.got?`<circle class="sc-arc" cx="60" cy="60" r="${R}" fill="none" stroke="url(#scg)" stroke-width="9" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="${L} ${CI.toFixed(2)}" style="--C:${CI.toFixed(2)}"/>`:""}</svg>`;
@@ -3663,7 +3664,7 @@ function shCard(st,name){
       <div class="sc-who"><small>${esc(t("scOf"))}</small><h2 id="scWho">${esc(name||t("scAnon"))}</h2><p><b>${esc(t("ranks")[ri])}</b><span>${esc(t("lvShort"))} ${st.lv}</span></p></div></div>
     <div class="sc-main"><div class="sc-ring" role="img" aria-label="${esc(pctTxt(st)+" "+t("scDone"))}">${ring}<div class="mid"><b>${esc(pctTxt(st))}</b><small>${esc(t("scDone"))}</small></div></div>
       <div class="sc-kpis"><div class="sc-kpi"><span class="k">${vivIcon()}${esc(t("vividL"))}</span><b>${fmtN(st.vg)}</b><small>/ ${fmtN(st.vt)}</small></div>
-        <div class="sc-kpi"><span class="k">${cnIcon()}${esc(t("worthL"))}</span><b>${fmtN(st.worth)}</b>${showMoney()?`<small>≈ ${esc(money(st.worth))}</small>`:""}</div></div></div>
+        <div class="sc-kpi"><span class="k">${cnIcon()}${esc(t("worthL"))}</span><b>${fmtN(st.worth)}</b>${cur?`<small>≈ ${esc(money(st.worth))}</small>`:""}</div></div></div>
     <div class="sc-bars">${bar(t("sets"),st.sg,st.st,"s")}${bar(t("comp"),st.cg,st.ct,"c")}${bar(t("sc5"),st.g5,st.t5,"g")}</div>
     <div class="sc-top"><h3>${esc(t("scTop"))}</h3><div class="sc-ths">${thumbs}</div></div>
     <div class="sc-foot"><span>MILIADEX</span><span>${esc(t("scWear")(st.g))}</span></div></article>`;
@@ -3672,12 +3673,12 @@ const ICON_CHAT=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stro
 const colUrl = code => shareUrl("c", code);
 let shReady=null, shTok=0;
 async function shPrepare(){
-  const tok=++shTok, code=await SHARE.make(state.owned, ui.g, ui.shName);
+  const tok=++shTok, code=await SHARE.make(state.owned, ui.g, ui.shName, showMoney());
   if(tok!==shTok) return shReady;
   const url=colUrl(code), key=shortKeyOf("c", code, ui.lang==="fr"?"fr":"en", ""), nm=SHARE.clean(ui.shName).replace(/[\\\[\]]/g,"\\$&");
   // Discord masked link: the message shows "Miliadex - Name Profile" instead of the long link
   const st=collStats(state.owned, ui.g), who=SHARE.clean(ui.shName);
-  const card=pushCard("c", code, ()=>shareCardCol(st, who), {short:true, fp:showMoney()?"":"cn"});   // the picture changes with the setting
+  const card=pushCard("c", code, ()=>shareCardCol(st, who, showMoney()), {short:true});   // the setting is in the code: its own link and picture
   return shReady={url, key, code, card, md:u=>`[${nm?`Miliadex - ${nm} Profile`:"Miliadex Profile"}](${u})`};
 }
 function openShare(theirs){
@@ -3692,7 +3693,7 @@ function openShare(theirs){
     foot=`${any?`<p class="sc-vs">${esc(t("scYou")(me.lv, pctTxt(me), fmtN(me.vg)))}</p>`:""}<div class="sc-act"><button type="button" class="btn" data-close>${esc(t(any?"scMine":"scStart"))}</button></div>`; }
   d.innerHTML=`<div class="vp-sky" aria-hidden="true"><i class="aur a1"></i><i class="aur a2"></i><i class="aur a3"></i><i class="starfield"></i><i class="vp-shoot" style="top:7%;left:92%"></i></div>
     <div class="vp-head"><span class="vp-kick" id="scTitle">${esc(t(mine?"scKickMine":"scKickTheirs"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
-    <div class="sc-scroll">${shCard(st,name)}${foot}</div>`;
+    <div class="sc-scroll">${shCard(st,name,mine?showMoney():theirs.money)}${foot}</div>`;   // a shared profile shows its owner's choice
   if(!d.open){ d.showModal ? d.showModal() : d.setAttribute("open",""); }
 }
 $("shBtn").addEventListener("click", ()=>openShare(null));
@@ -3787,7 +3788,7 @@ function cardTile(c,it,img,x,y,S){
   c.restore(); c.strokeStyle="rgba(255,255,255,.22)"; c.lineWidth=1.5; rrect(c,x,y,S,S,r); c.stroke();
 }
 // a collection: crest, name, rank, completion ring, Vivid rating, account value, bars and the most valuable items
-async function shareCardCol(st,name){
+async function shareCardCol(st,name,cur){
   await cardFonts();
   const W=1200,H=630,P=56, C=CREST[st.rank], tops=st.top.slice(0,6);
   const pathOf=e=>{ const it=e.it; return it.kind==="set" ? (e.gs.includes("f")?it.f||it.m:it.m||it.f) : it.img; };
@@ -3820,7 +3821,7 @@ async function shareCardCol(st,name){
     const vw=cardText(c,val,x+22,y+100,{font:F_TECH,size:44,min:30,maxW:w-150,fill:"#fff"});
     cardText(c,sub,x+22+vw+10,y+100,{font:F_BODY,size:20,min:14,maxW:w-54-vw,fill:"#b9b0e6"}); };
   kpi(360,vimg,t("vividL"),fmtN(st.vg),"/ "+fmtN(st.vt));
-  kpi(764,cimg,t("worthL"),fmtN(st.worth),showMoney() ? "≈ "+money(st.worth) : "Chronal Nexus");
+  kpi(764,cimg,t("worthL"),fmtN(st.worth),cur ? "≈ "+money(st.worth) : "Chronal Nexus");
   // bars
   const bar=(y,lab,a,b,col)=>{ const x0=360, x1=W-P, tx=x0+200, tw=x1-tx-160;
     cardText(c,lab,x0,y+8,{font:F_BODY,size:20,fill:"#e6e0ff",maxW:190});

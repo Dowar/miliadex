@@ -84,7 +84,7 @@ async function inflate(by) {
 }
 const clean = n => String(n || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 24);
 
-// [2][wear 0 both · 1 ♀ · 2 ♂][name length][name UTF-8][sets count u16][2 bits per set ♀/♂][1 bit per cosmetic], "z" deflated or "r" raw
+// [2][wear 0 both · 1 ♀ · 2 ♂, +16: its owner shows the value in money][name length][name UTF-8][sets count u16][2 bits per set ♀/♂][1 bit per cosmetic], "z" deflated or "r" raw
 async function readCol(code) {
   if (!/^[zr][A-Za-z0-9_-]+$/.test(code)) return null;
   try {
@@ -97,7 +97,8 @@ async function readCol(code) {
     const s = new Uint8Array(SETS.length), c = new Uint8Array(COMP.length);
     SETS.forEach((it, i) => { if (it.sx == null || it.sx >= ns) return; s[i] = (bit(16 + it.sx * 2) ? 1 : 0) | (bit(17 + it.sx * 2) ? 2 : 0); });
     COMP.forEach((it, j) => { if (it.sx != null && bit((2 + sb) * 8 + it.sx)) c[j] = 1; });
-    return { s, c, name, g: by[1] === 1 ? "f" : by[1] === 2 ? "m" : "both" };
+    const w = by[1] & 3;
+    return { s, c, name, g: w === 1 ? "f" : w === 2 ? "m" : "both", money: !!(by[1] & 16) };
   } catch (e) { return null; }
 }
 
@@ -196,7 +197,8 @@ async function shortKey(k, code, lang, salt) {
 // with a card picture, the text stays short: the picture carries the details
 function colShort(c, lang) {
   const T = TX[lang], st = collStats(c), N = n => fmt(n, lang);
-  return { title: T.profile(c.name), desc: `🏅 ${T.ranks[st.rank]} · ${T.lv} ${st.lv} · ${T.done(pctOf(st))}\n✨ ${N(st.vg)} Vivid · 💎 ${N(st.worth)} Chronal Nexus`, color: CREST[st.rank] };
+  // the value in money only when the profile's owner shows it on the site
+  return { title: T.profile(c.name), desc: `🏅 ${T.ranks[st.rank]} · ${T.lv} ${st.lv} · ${T.done(pctOf(st))}\n✨ ${N(st.vg)} Vivid · 💎 ${N(st.worth)} Chronal Nexus${c.money ? ` (≈ ${money(st.worth, lang)})` : ""}`, color: CREST[st.rank] };
 }
 function lookShort(L, info, lang) {
   const T = TX[lang];
