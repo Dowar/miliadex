@@ -5,7 +5,9 @@
 // Link previews never see the part after "#", so the data rides in the path. The Worker answers with a tiny page:
 // preview tags for the bots, and a redirect to the usual "/#col=…" (or #look= / #show=) address for people.
 // Preview pictures: when someone shares from the site, the page draws the card (same look as the site) and sends it to
-//   POST /api/card; the Worker keeps it in a Durable Object (CardStore) and serves it at /card/<key>.jpg for that link.
+//   POST /api/card; the Worker keeps it in Durable Objects (CardStore) and serves it at /card/<key>.jpg|png for that link.
+//   An outfit's picture is the image the site downloads, with the outfit and its in-game screenshot inside: people opening the
+//   link get "/#look=…&card=<key>", and the site reads the screenshot back from that picture.
 // Only these paths run code: every other file is served straight from the static assets.
 // The catalog (worker/embed-data.json) is extracted from index.html by tools/build.py at each deploy, so the numbers follow the site.
 import { DurableObject } from "cloudflare:workers";
@@ -229,46 +231,85 @@ async function showItem(env, origin, file) {
 }
 
 /* ---------- preview pictures ---------- */
-// One Durable Object keeps every card (SQLite storage, strongly consistent: a card sent from Paris is there for Discord's
-// fetch from the US a second later). Cards unused for 6 months are dropped.
+// Cards live in SQLite-backed Durable Objects (strongly consistent: a card sent from Paris is there for Discord's fetch from
+// the US a second later). Free plan: 5 GB for the account and 1 GB per object, so the cards are spread over SHARDS objects,
+// each kept under BUDGET: past it, the cards used least recently go first. Cards unused for 6 months go too.
+const SHARDS = 4, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024;
 export class CardStore extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
-    this.sql = ctx.storage.sql;
-    this.sql.exec("DROP TABLE IF EXISTS cards");   // first version (one row per card, 2 MB cap)
-    this.sql.exec("CREATE TABLE IF NOT EXISTS card (k TEXT PRIMARY KEY, t INTEGER NOT NULL, ty TEXT NOT NULL, n INTEGER NOT NULL)");
-    this.sql.exec("CREATE TABLE IF NOT EXISTS card_part (k TEXT NOT NULL, i INTEGER NOT NULL, b BLOB NOT NULL, PRIMARY KEY (k, i))");
-    this.sql.exec("CREATE INDEX IF NOT EXISTS card_t ON card (t)");
+    const sql = this.sql = ctx.storage.sql;
+    sql.exec("DROP TABLE IF EXISTS cards");   // first version (one row per card, 2 MB cap)
+    sql.exec("CREATE TABLE IF NOT EXISTS card (k TEXT PRIMARY KEY, t INTEGER NOT NULL, ty TEXT NOT NULL, n INTEGER NOT NULL)");
+    sql.exec("CREATE TABLE IF NOT EXISTS card_part (k TEXT NOT NULL, i INTEGER NOT NULL, b BLOB NOT NULL, PRIMARY KEY (k, i))");
+    sql.exec("CREATE INDEX IF NOT EXISTS card_t ON card (t)");
+    sql.exec("CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v INTEGER NOT NULL)");
+    if (this.meta("schema") < 2) {            // v2: each card's size (z) and the running total (meta "bytes")
+      sql.exec("ALTER TABLE card ADD COLUMN z INTEGER NOT NULL DEFAULT 0");
+      sql.exec("UPDATE card SET z = COALESCE((SELECT SUM(length(b)) FROM card_part WHERE card_part.k = card.k), 0)");
+      this.recount(); this.setMeta("schema", 2);
+    }
+  }
+  meta(k) { const r = this.sql.exec("SELECT v FROM meta WHERE k = ?", k).toArray()[0]; return r ? r.v : 0; }
+  setMeta(k, v) { this.sql.exec("INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, v); }
+  recount() { const s = this.sql.exec("SELECT COALESCE(SUM(z), 0) AS s FROM card").toArray()[0].s; this.setMeta("bytes", s); return s; }
+  drop(k) { this.sql.exec("DELETE FROM card_part WHERE k = ?", k); this.sql.exec("DELETE FROM card WHERE k = ?", k); }
+  // least recently used first, until the cards weigh at most `room` bytes
+  evict(total, room) {
+    while (total > room) {
+      const old = this.sql.exec("SELECT k, z FROM card ORDER BY t LIMIT 32").toArray();
+      if (!old.length) return 0;
+      for (const r of old) { this.drop(r.k); total -= r.z; if (total <= room) break; }
+    }
+    return Math.max(0, total);
   }
   // pictures are kept in 1.5 MB parts (a row holds at most 2 MB; an outfit PNG with its screenshot can weigh several MB)
   put(k, ty, b) {
-    const CH = 1536 * 1024, now = Date.now();
-    this.sql.exec("DELETE FROM card_part WHERE k = ?", k);
-    let n = 0; for (let o = 0; o < b.byteLength; o += CH, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(o, o + CH));
-    this.sql.exec("INSERT OR REPLACE INTO card (k, t, ty, n) VALUES (?, ?, ?, ?)", k, now, ty, n);
-    if (Math.random() < .02) {
-      const old = now - 183 * 864e5;
-      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ?)", old);
-      this.sql.exec("DELETE FROM card WHERE t < ?", old);
+    const now = Date.now(), size = b.byteLength;
+    let total = this.meta("bytes");
+    if (Math.random() < .02) {                 // now and then: forget cards unused for 6 months, recount
+      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ?)", now - KEEP);
+      this.sql.exec("DELETE FROM card WHERE t < ?", now - KEEP);
+      total = this.recount();
     }
+    const prev = this.sql.exec("SELECT z FROM card WHERE k = ?", k).toArray()[0];
+    if (prev) { this.drop(k); total = Math.max(0, total - prev.z); }
+    if (total + size > BUDGET) total = this.evict(total, BUDGET * .9 - size);   // make room for ~10% more at once
+    const write = () => this.ctx.storage.transactionSync(() => {
+      let n = 0; for (let o = 0; o < size; o += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(o, o + PART));
+      this.sql.exec("INSERT INTO card (k, t, ty, n, z) VALUES (?, ?, ?, ?, ?)", k, now, ty, n, size);
+    });
+    try { write(); }
+    catch (e) {                                // full anyway (SQLite's own overhead): clear a fifth more, try once again
+      if (!/full/i.test(String(e && e.message))) throw e;
+      total = this.evict(total, total * .8 - size); write();
+    }
+    this.setMeta("bytes", total + size);
     return true;
   }
   has(k) {
     return this.sql.exec("SELECT 1 AS x FROM card WHERE k = ?", k).toArray().length > 0;
   }
   get(k) {
-    const r = this.sql.exec("SELECT ty FROM card WHERE k = ?", k).toArray()[0];
+    const r = this.sql.exec("SELECT ty, t FROM card WHERE k = ?", k).toArray()[0];
     if (!r) return null;
     const parts = this.sql.exec("SELECT b FROM card_part WHERE k = ? ORDER BY i", k).toArray().map(x => new Uint8Array(x.b));
     const out = new Uint8Array(parts.reduce((a, p) => a + p.length, 0)); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; }
-    if (Math.random() < .05) this.sql.exec("UPDATE card SET t = ? WHERE k = ?", Date.now(), k);
+    const now = Date.now(); if (now - r.t > 864e5) this.sql.exec("UPDATE card SET t = ? WHERE k = ?", now, k);   // still in use: keep it
     return { ty: r.ty, b: out.buffer };
   }
+  size() { return { cards: this.sql.exec("SELECT COUNT(*) AS c FROM card").toArray()[0].c, bytes: this.meta("bytes") }; }
 }
-const store = env => env.CARDS ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
+// a card's object follows its key; the first one keeps the name of the single object used before (its cards stay readable)
+const shardOf = key => parseInt(key[0], 16) % SHARDS;
+const store = (env, key) => { if (!env.CARDS) return null; const n = shardOf(key); return env.CARDS.get(env.CARDS.idFromName(n ? "cards-" + n : "cards")); };
+const legacy = (env, key) => env.CARDS && shardOf(key) ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
 const sniff = b => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff ? "image/jpeg"
   : b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 ? "image/png"
   : b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50 ? "image/webp" : "";
+// link previews (Discord, X, Slack, WhatsApp, iMessage…) wait a few seconds for a card that is on its way; people never wait
+const BOTS = /bot\b|crawl|spider|preview|externalhit|facebot|embedly|iframely|slack|discord|telegram|whatsapp|skype|mastodon|bluesky|cardyb|pleroma|misskey|vkshare|pinterest|linkedin|google-|curl|wget|python|go-http|okhttp|axios|node-fetch|headless/i;
+const isBot = request => { const ua = request.headers.get("user-agent") || ""; return !/Mozilla/.test(ua) || BOTS.test(ua); };
 
 // POST /api/card?k=c|o&l=en|fr&c=<code>  body: the picture the page drew for that link
 async function saveCard(request, env, url) {
@@ -279,36 +320,37 @@ async function saveCard(request, env, url) {
   if (!ok) return new Response("bad link", { status: 400 });
   const b = new Uint8Array(await request.arrayBuffer()), ty = sniff(b);
   if (!ty || b.length > 8 * 1024 * 1024) return new Response("bad picture", { status: 400 });
-  const s = store(env); if (!s) return new Response("no store", { status: 503 });
-  await s.put(await cardKey(k, code, lang), ty, b.buffer);
+  const key = await cardKey(k, code, lang), s = store(env, key); if (!s) return new Response("no store", { status: 503 });
+  await s.put(key, ty, b.buffer);
   return new Response(null, { status: 204 });
 }
-// is the picture there? The page sends it as the link is copied: give it a few seconds before answering without it
-async function cardThere(env, key, tries = 9) {
-  const s = store(env);
+// is the picture there? The page sends it as the link is copied: previews give it a few seconds before answering without it
+async function cardThere(env, key, tries) {
+  const s = store(env, key);
   for (let i = 0; s && i < tries; i++) {
     try { if (await s.has(key)) return true; } catch (e) { return false; }
     if (i < tries - 1) await new Promise(res => setTimeout(res, 650));
   }
-  return false;
+  try { const l = legacy(env, key); return !!l && await l.has(key); } catch (e) { return false; }
 }
 // the preview's picture: the card when the site has it, the site banner otherwise (so a card address never stands for the banner)
 // collection: a 1200 × 630 card (JPEG) · outfit: the picture the site downloads, 1080 × 1350 PNG with the outfit inside
-async function previewImage(env, origin, k, code, lang) {
+async function previewImage(env, origin, k, code, lang, bot) {
   const key = await cardKey(k, code, lang);
-  if (!await cardThere(env, key)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
-  return k === "o" ? { image: `${origin}/card/${key}.png`, w: 1080, h: 1350 } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630 };
+  if (!await cardThere(env, key, bot ? 9 : 1)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
+  return k === "o" ? { image: `${origin}/card/${key}.png`, w: 1080, h: 1350, key } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630, key };
 }
-// GET /card/<key>.jpg  the picture
+// GET /card/<key>.png|jpg  the picture (cards can be replaced: the same outfit shared again with another screenshot)
 async function sendCard(env, origin, key) {
-  const s = store(env);
+  const s = store(env, key);
   for (let i = 0; s && i < 3; i++) {
     let r = null; try { r = await s.get(key); } catch (e) {}
-    if (r) return new Response(r.b, { headers: { "content-type": r.ty, "cache-control": "public, max-age=31536000, immutable" } });
+    if (!r && i === 0) try { const l = legacy(env, key); if (l) r = await l.get(key); } catch (e) {}
+    if (r) return new Response(r.b, { headers: { "content-type": r.ty, "cache-control": "public, max-age=86400" } });
     await new Promise(res => setTimeout(res, 700));
   }
   const fb = await env.ASSETS.fetch(new Request(origin + "/og-banner.png"));
-  return new Response(fb.body, { headers: { "content-type": "image/png", "cache-control": "public, max-age=120" } });
+  return new Response(fb.body, { headers: { "content-type": "image/png", "cache-control": "public, max-age=120", "x-miliadex": "no-card" } });
 }
 
 export default {
@@ -324,18 +366,19 @@ export default {
     if (!m) return env.ASSETS.fetch(request);
     const [, kind, raw] = m;
     let arg = raw; try { arg = decodeURIComponent(raw); } catch (e) {}
-    const here = origin + url.pathname + url.search;
+    const here = origin + url.pathname + url.search, bot = isBot(request);
     try {
       if (kind === "c") {
         const target = "/#col=" + arg, c = await readCol(arg);
         if (!c) return Response.redirect(origin + target, 302);
-        return page({ ...colShort(c, lang), ...await previewImage(env, origin, "c", arg, lang), large: true }, here, target, lang);
+        return page({ ...colShort(c, lang), ...await previewImage(env, origin, "c", arg, lang, bot), large: true }, here, target, lang);
       }
       if (kind === "o") {
-        const target = "/#look=" + arg, L = readLook(arg);
-        if (!L) return Response.redirect(origin + target, 302);
-        const info = lookInfo(L);
-        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...await previewImage(env, origin, "o", arg, lang), large: true, color: SITE_COLOR }, here, target, lang);
+        const L = readLook(arg);
+        if (!L) return Response.redirect(origin + "/#look=" + arg, 302);
+        const info = lookInfo(L), pic = await previewImage(env, origin, "o", arg, lang, bot);
+        // people land on the outfit with the card's key: the site reads the in-game screenshot back from the card
+        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...pic, large: true, color: SITE_COLOR }, here, "/#look=" + arg + (pic.key ? "&card=" + pic.key : ""), lang);
       }
       const target = "/#show=" + encodeURIComponent(arg), it = await showItem(env, origin, arg);
       if (!it) return Response.redirect(origin + target, 302);
