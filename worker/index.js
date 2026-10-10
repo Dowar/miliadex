@@ -8,10 +8,13 @@
 //   POST /api/card; the Worker keeps it in Durable Objects (CardStore) and serves it at /card/<key>.jpg|png for that link.
 //   An outfit's picture is the image the site downloads, with the outfit and its in-game screenshot inside: people opening the
 //   link get "/#look=…&card=<key>", and the site reads the screenshot back from that picture.
-// Outfits Showcase: outfits shared with "Show in the Outfits Showcase" ticked are listed by GET /api/showcase (newest first),
-//   with a small picture at /card/<key>/thumb. The images uploaded to the repo (showcase/) stay the featured ones.
-// Admin: /a/<secret> is a 404 page, except for the site owner's Google account (the one connected for Drive sync), checked
-//   here with Google on every admin call; it can take an outfit out of the showcase or delete its picture.
+// Outfits Showcase: outfits shared by signed-in people with "Show in the Outfits Showcase" on, listed by GET /api/showcase
+//   (most liked or newest, small pictures inside the same response). The repo's images (showcase/) and the outfits the admin
+//   featured are the featured ones; featured outfits are never cleared.
+// Accounts: the Google account connected for Drive sync, checked with Google once (POST /api/auth), then a signed session;
+//   a pseudo (random at first) is shown on the outfits one shares; one like per account and outfit.
+// Admin: /a/<secret> is a 404 page, except for the site owner's Google account, checked with Google on every admin call.
+// People opening a link (a browser navigation) are sent on right away: no storage read, the site works out the rest itself.
 // Only these paths run code: every other file is served straight from the static assets.
 // The catalog (worker/embed-data.json) is extracted from index.html by tools/build.py at each deploy, so the numbers follow the site.
 import { DurableObject } from "cloudflare:workers";
@@ -236,12 +239,16 @@ async function showItem(env, origin, file) {
   } catch (e) { return null; }
 }
 
-/* ---------- preview pictures ---------- */
+/* ---------- preview pictures, showcase, accounts ---------- */
 // Cards live in SQLite-backed Durable Objects (strongly consistent: a card sent from Paris is there for Discord's fetch from
 // the US a second later), spread over SHARDS objects. Each keeps at most MAX_CARDS cards (4 × 1250 = about 5,000 in all)
 // and stays under BUDGET bytes (free plan: 1 GB per object, 5 GB per account): past either, the cards used least recently
-// go first. Cards unused for 6 months go too.
-const SHARDS = 4, MAX_CARDS = 1250, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024;
+// go first, never a featured one. Cards unused for 6 months go too. One more object, "users", keeps the accounts.
+const SHARDS = 4, MAX_CARDS = 1250, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024, PAGE = 36;
+const COLS = "k, code, lang, pt, pic, likes, nick, feat, th, thty";   // a showcase entry, with its small picture
+const NICK_A = ["Starry", "Lunar", "Velvet", "Crimson", "Azure", "Golden", "Misty", "Frosty", "Blooming", "Silent", "Radiant", "Moonlit", "Stellar", "Wild", "Gentle", "Amber"];
+const NICK_B = ["Manekin", "Manekina", "Stylist", "Wanderer", "Dreamer", "Seeker", "Muse", "Comet", "Petal", "Lantern", "Traveler", "Tailor", "Sparrow", "Ribbon", "Fable", "Nova"];
+const randomNick = long => NICK_A[Math.random() * 16 | 0] + NICK_B[Math.random() * 16 | 0] + (Math.random() * (long ? 9000 : 90) + (long ? 1000 : 10) | 0);
 export class CardStore extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
@@ -265,40 +272,55 @@ export class CardStore extends DurableObject {
       sql.exec("CREATE INDEX IF NOT EXISTS card_pub ON card (pub, pt)");
       this.setMeta("schema", 4);
     }
+    if (v < 5) {                              // v5: author, likes, featured by the admin
+      for (const c of ["uid TEXT", "nick TEXT", "likes INTEGER NOT NULL DEFAULT 0", "feat INTEGER NOT NULL DEFAULT 0"]) addCol(c);
+      sql.exec("CREATE INDEX IF NOT EXISTS card_top ON card (pub, feat, likes, pt)");
+      sql.exec("CREATE TABLE IF NOT EXISTS lk (k TEXT NOT NULL, u TEXT NOT NULL, t INTEGER NOT NULL, PRIMARY KEY (k, u))");
+      sql.exec("CREATE INDEX IF NOT EXISTS lk_u ON lk (u)");
+      sql.exec("CREATE TABLE IF NOT EXISTS user (u TEXT PRIMARY KEY, n TEXT NOT NULL, nl TEXT NOT NULL UNIQUE, t INTEGER NOT NULL)");
+      sql.exec("CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL)");
+      this.setMeta("schema", 5);
+    }
   }
   meta(k) { const r = this.sql.exec("SELECT v FROM meta WHERE k = ?", k).toArray()[0]; return r ? r.v : 0; }
   setMeta(k, v) { this.sql.exec("INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, v); }
   recount() { const r = this.sql.exec("SELECT COUNT(*) AS c, COALESCE(SUM(z), 0) AS s FROM card").toArray()[0]; this.setMeta("bytes", r.s); this.setMeta("count", r.c); return [r.s, r.c]; }
-  drop(k) { this.sql.exec("DELETE FROM card_part WHERE k = ?", k); this.sql.exec("DELETE FROM card WHERE k = ?", k); }
-  // least recently used first, until the cards weigh at most `room` bytes and number at most `most`
+  dropRow(k) { this.sql.exec("DELETE FROM card_part WHERE k = ?", k); this.sql.exec("DELETE FROM card WHERE k = ?", k); }
+  drop(k) { this.dropRow(k); this.sql.exec("DELETE FROM lk WHERE k = ?", k); }
+  // least recently used first (never a featured one), until the cards weigh at most `room` bytes and number at most `most`
   evict(total, count, room, most) {
     while (total > room || count > most) {
-      const old = this.sql.exec("SELECT k, z FROM card ORDER BY t LIMIT 32").toArray();
-      if (!old.length) return [0, 0];
+      const old = this.sql.exec("SELECT k, z FROM card WHERE feat = 0 ORDER BY t LIMIT 32").toArray();
+      if (!old.length) break;
       for (const r of old) { this.drop(r.k); total -= r.z; count--; if (total <= room && count <= most) break; }
     }
     return [Math.max(0, total), Math.max(0, count)];
   }
-  // pictures are kept in 1.5 MB parts (a row holds at most 2 MB; an outfit PNG with its screenshot can weigh several MB)
-  // o (outfits): {code, lang, pub: listed in the showcase, pic: has an in-game screenshot, th/thty: its small picture}
+  // pictures are kept in 1.5 MB parts (a row holds at most 2 MB)
+  // o (outfits): {code, lang, pub, uid, nick (signed-in author), pic: has an in-game screenshot, th/thty: its small picture}
   put(k, ty, b, o = {}) {
     const now = Date.now(), th = o.th || null, size = b.byteLength + (th ? th.byteLength : 0);
     let total = this.meta("bytes"), count = this.meta("count");
     if (Math.random() < .02) {                 // now and then: forget cards unused for 6 months, recount
-      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ?)", now - KEEP);
-      this.sql.exec("DELETE FROM card WHERE t < ?", now - KEEP);
+      this.sql.exec("DELETE FROM lk WHERE k IN (SELECT k FROM card WHERE t < ? AND feat = 0)", now - KEEP);
+      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ? AND feat = 0)", now - KEEP);
+      this.sql.exec("DELETE FROM card WHERE t < ? AND feat = 0", now - KEEP);
       [total, count] = this.recount();
     }
-    const prev = this.sql.exec("SELECT z, ban, pub, pt FROM card WHERE k = ?", k).toArray()[0];
-    // taken out by the admin: stays out, even when shared again
-    const ban = prev ? prev.ban : 0, pub = o.pub && o.code && !ban ? 1 : 0, pt = pub ? (prev && prev.pub && prev.pt) || now : 0;
-    if (prev) { this.drop(k); total = Math.max(0, total - prev.z); count = Math.max(0, count - 1); }
+    const prev = this.sql.exec("SELECT z, ban, pub, pt, uid, nick, likes, feat FROM card WHERE k = ?", k).toArray()[0];
+    // featured, or in the showcase under someone else's name: the entry stays as it is (only the picture is refreshed)
+    const keep = prev && (prev.feat || (prev.pub && prev.uid && prev.uid !== o.uid));
+    const ban = prev ? prev.ban : 0, feat = prev ? prev.feat : 0, likes = prev ? prev.likes : 0;   // taken out by the admin: stays out
+    const pub = keep ? prev.pub : (o.pub && o.code && o.uid && !ban ? 1 : 0);
+    const uid = keep ? prev.uid : pub ? o.uid : null, nick = keep ? prev.nick : pub ? o.nick || null : null;
+    const pt = pub ? (prev && prev.pub && prev.pt) || now : 0;
+    if (prev) { this.dropRow(k); total = Math.max(0, total - prev.z); count = Math.max(0, count - 1); }
     // full: make room for a few more at once (2% of the cards, ~10% of the bytes)
     if (count + 1 > MAX_CARDS || total + size > BUDGET) [total, count] = this.evict(total, count, BUDGET * .9 - size, MAX_CARDS - Math.ceil(MAX_CARDS * .02) - 1);
     const write = () => this.ctx.storage.transactionSync(() => {
-      let n = 0; for (let o = 0; o < size; o += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(o, o + PART));
-      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pub, ban, pt, pic, th, thty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        k, now, ty, n, size, o.code || null, o.lang || null, pub, ban, pt, o.pic ? 1 : 0, th, th ? o.thty || "image/jpeg" : null);
+      let n = 0; for (let x = 0; x < b.byteLength; x += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(x, x + PART));
+      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pub, ban, pt, pic, th, thty, uid, nick, likes, feat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        k, now, ty, n, size, o.code || null, o.lang || null, pub, ban, pt, o.pic ? 1 : 0, th, th ? o.thty || "image/jpeg" : null, uid, nick, likes, feat);
     });
     try { write(); }
     catch (e) {                                // full anyway (SQLite's own overhead): clear a fifth more, try once again
@@ -320,27 +342,76 @@ export class CardStore extends DurableObject {
     return { ty: r.ty, b: out.buffer };
   }
   size() { return { cards: this.sql.exec("SELECT COUNT(*) AS c FROM card").toArray()[0].c, bytes: this.meta("bytes") }; }
-  // showcase: newest first, before a time (paging)
-  list(before, n) { return this.sql.exec("SELECT k, code, lang, pt, pic FROM card WHERE pub = 1 AND pt < ? ORDER BY pt DESC LIMIT ?", before, n).toArray(); }
-  item(k) { return this.sql.exec("SELECT k, code, lang, pt, pic FROM card WHERE k = ? AND pub = 1", k).toArray()[0] || null; }
+  // showcase: a page (most liked, or newest) after a cursor, plus (first page) the featured ones — one call per object
+  page(sort, cur, n, withFeat) {
+    const rows = sort === "new"
+      ? this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND feat = 0 AND pt < ? ORDER BY pt DESC LIMIT ?`, cur.t, n).toArray()
+      : this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND feat = 0 AND (likes < ? OR (likes = ? AND pt < ?)) ORDER BY likes DESC, pt DESC LIMIT ?`, cur.l, cur.l, cur.t, n).toArray();
+    const feat = withFeat ? this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND feat = 1 ORDER BY likes DESC, pt DESC LIMIT 200`).toArray() : [];
+    return { rows, feat };
+  }
+  item(k) { return this.sql.exec(`SELECT ${COLS} FROM card WHERE k = ? AND pub = 1`, k).toArray()[0] || null; }
   thumb(k) {
-    const r = this.sql.exec("SELECT th, thty, t FROM card WHERE k = ?", k).toArray()[0];
+    const r = this.sql.exec("SELECT th, thty FROM card WHERE k = ?", k).toArray()[0];
     if (!r) return null; if (!r.th) return this.get(k);
-    const now = Date.now(); if (now - r.t > 864e5) this.sql.exec("UPDATE card SET t = ? WHERE k = ?", now, k);   // looked at: keep it
     return { ty: r.thty || "image/jpeg", b: new Uint8Array(r.th).buffer };
   }
+  // likes: one per account and outfit; a like keeps the outfit from being cleared for a while
+  like(k, u, on) {
+    const c = this.sql.exec("SELECT likes, pub FROM card WHERE k = ?", k).toArray()[0];
+    if (!c || !c.pub) return null;
+    const had = this.sql.exec("SELECT 1 AS x FROM lk WHERE k = ? AND u = ?", k, u).toArray().length > 0;
+    if (on && !had) { this.sql.exec("INSERT INTO lk (k, u, t) VALUES (?, ?, ?)", k, u, Date.now()); this.sql.exec("UPDATE card SET likes = likes + 1, t = ? WHERE k = ?", Date.now(), k); return c.likes + 1; }
+    if (!on && had) { this.sql.exec("DELETE FROM lk WHERE k = ? AND u = ?", k, u); this.sql.exec("UPDATE card SET likes = MAX(0, likes - 1) WHERE k = ?", k); return Math.max(0, c.likes - 1); }
+    return c.likes;
+  }
+  myLikes(u) { return this.sql.exec("SELECT k FROM lk WHERE u = ?", u).toArray().map(r => r.k); }
+  renameAuthor(u, n) { this.sql.exec("UPDATE card SET nick = ? WHERE uid = ?", n, u); }
+  // an account deleted: its likes go, its outfits leave the showcase
+  forgetUser(u) {
+    this.sql.exec("UPDATE card SET likes = MAX(0, likes - 1) WHERE k IN (SELECT k FROM lk WHERE u = ?)", u);
+    this.sql.exec("DELETE FROM lk WHERE u = ?", u);
+    this.sql.exec("UPDATE card SET pub = 0, uid = NULL, nick = NULL WHERE uid = ? AND feat = 0", u);
+    this.sql.exec("UPDATE card SET uid = NULL, nick = NULL WHERE uid = ?", u);
+  }
+  // accounts (object "users"): pseudo, unique whatever the case
+  login(u) {
+    const r = this.sql.exec("SELECT n FROM user WHERE u = ?", u).toArray()[0];
+    if (r) return r.n;
+    for (let i = 0; i < 24; i++) {
+      const n = randomNick(i > 8);
+      if (!this.sql.exec("SELECT 1 AS x FROM user WHERE nl = ?", n.toLowerCase()).toArray().length) { this.sql.exec("INSERT INTO user (u, n, nl, t) VALUES (?, ?, ?, ?)", u, n, n.toLowerCase(), Date.now()); return n; }
+    }
+    const n = "Traveler" + Date.now().toString(36); this.sql.exec("INSERT INTO user (u, n, nl, t) VALUES (?, ?, ?, ?)", u, n, n.toLowerCase(), Date.now()); return n;
+  }
+  setNick(u, n) {
+    const o = this.sql.exec("SELECT u FROM user WHERE nl = ?", n.toLowerCase()).toArray()[0];
+    if (o && o.u !== u) return "taken";
+    if (!this.sql.exec("SELECT 1 AS x FROM user WHERE u = ?", u).toArray().length) return "gone";
+    this.sql.exec("UPDATE user SET n = ?, nl = ? WHERE u = ?", n, n.toLowerCase(), u); return "ok";
+  }
+  forgetAccount(u) { this.sql.exec("DELETE FROM user WHERE u = ?", u); }
+  userCount() { return this.sql.exec("SELECT COUNT(*) AS c FROM user").toArray()[0].c; }
+  secret() {
+    const r = this.sql.exec("SELECT v FROM kv WHERE k = 'session'").toArray()[0]; if (r) return r.v;
+    const v = [...crypto.getRandomValues(new Uint8Array(32))].map(x => x.toString(16).padStart(2, "0")).join("");
+    this.sql.exec("INSERT INTO kv (k, v) VALUES ('session', ?)", v); return v;
+  }
   // admin
-  stats() { return this.sql.exec("SELECT COUNT(*) AS c, COALESCE(SUM(z), 0) AS z, COALESCE(SUM(pub), 0) AS p, COALESCE(SUM(ban), 0) AS b FROM card").toArray()[0]; }
+  stats() { return this.sql.exec("SELECT COUNT(*) AS c, COALESCE(SUM(z), 0) AS z, COALESCE(SUM(pub), 0) AS p, COALESCE(SUM(ban), 0) AS b, COALESCE(SUM(feat), 0) AS f FROM card").toArray()[0]; }
   adminList(which, before, n) {
-    return which === "ban"
-      ? this.sql.exec("SELECT k, code, lang, t AS at, pic, z, ban, pub FROM card WHERE ban = 1 AND t < ? ORDER BY t DESC LIMIT ?", before, n).toArray()
-      : this.sql.exec("SELECT k, code, lang, pt AS at, pic, z, ban, pub FROM card WHERE pub = 1 AND pt < ? ORDER BY pt DESC LIMIT ?", before, n).toArray();
+    const q = "SELECT k, code, lang, %AT% AS at, pic, z, ban, pub, feat, likes, nick FROM card WHERE %W% AND %AT% < ? ORDER BY %AT% DESC LIMIT ?";
+    const [at, w] = which === "ban" ? ["t", "ban = 1"] : which === "feat" ? ["pt", "feat = 1"] : ["pt", "pub = 1 AND feat = 0"];
+    return this.sql.exec(q.replace(/%AT%/g, at).replace("%W%", w), before, n).toArray();
   }
   moderate(k, op) {
     const r = this.sql.exec("SELECT z, code FROM card WHERE k = ?", k).toArray()[0];
     if (!r) return false;
-    if (op === "hide") this.sql.exec("UPDATE card SET pub = 0, ban = 1 WHERE k = ?", k);
-    else if (op === "show") { if (!r.code) return false; this.sql.exec("UPDATE card SET ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", Date.now(), k); }
+    const now = Date.now();
+    if (op === "hide") this.sql.exec("UPDATE card SET pub = 0, ban = 1, feat = 0 WHERE k = ?", k);
+    else if (op === "show") { if (!r.code) return false; this.sql.exec("UPDATE card SET ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", now, k); }
+    else if (op === "feature") { if (!r.code) return false; this.sql.exec("UPDATE card SET feat = 1, ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", now, k); }
+    else if (op === "unfeature") this.sql.exec("UPDATE card SET feat = 0, t = ? WHERE k = ?", now, k);
     else if (op === "delete") { this.drop(k); this.setMeta("bytes", Math.max(0, this.meta("bytes") - r.z)); this.setMeta("count", Math.max(0, this.meta("count") - 1)); }
     else return false;
     return true;
@@ -348,18 +419,103 @@ export class CardStore extends DurableObject {
 }
 // a card's object follows its key; the first one keeps the name of the single object used before (its cards stay readable)
 const shardOf = key => parseInt(key[0], 16) % SHARDS;
-const store = (env, key) => { if (!env.CARDS) return null; const n = shardOf(key); return env.CARDS.get(env.CARDS.idFromName(n ? "cards-" + n : "cards")); };
-const shards = env => env.CARDS ? Array.from({ length: SHARDS }, (_, n) => env.CARDS.get(env.CARDS.idFromName(n ? "cards-" + n : "cards"))) : [];
+const shardName = n => n ? "cards-" + n : "cards";
+const store = (env, key) => env.CARDS ? env.CARDS.get(env.CARDS.idFromName(shardName(shardOf(key)))) : null;
+const shards = env => env.CARDS ? Array.from({ length: SHARDS }, (_, n) => env.CARDS.get(env.CARDS.idFromName(shardName(n)))) : [];
+const users = env => env.CARDS ? env.CARDS.get(env.CARDS.idFromName("users")) : null;
 const legacy = (env, key) => env.CARDS && shardOf(key) ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
+// every card object at once; one that fails counts as empty
+const each = (env, f, empty) => Promise.all(shards(env).map(async s => { try { return await f(s); } catch (e) { return empty; } }));
 const sniff = b => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff ? "image/jpeg"
   : b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47 ? "image/png"
   : b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50 ? "image/webp" : "";
-// link previews (Discord, X, Slack, WhatsApp, iMessage…) wait a few seconds for a card that is on its way; people never wait
+// link previews (Discord, X, Slack, WhatsApp, iMessage…) wait a little for a card that is on its way; people never wait
 const BOTS = /bot\b|crawl|spider|preview|externalhit|facebot|embedly|iframely|slack|discord|telegram|whatsapp|skype|mastodon|bluesky|cardyb|pleroma|misskey|vkshare|pinterest|linkedin|google-|curl|wget|python|go-http|okhttp|axios|node-fetch|headless/i;
 const isBot = request => { const ua = request.headers.get("user-agent") || ""; return !/Mozilla/.test(ua) || BOTS.test(ua); };
+// a person opening the link in a browser (browsers mark navigations; link previews don't)
+const isPerson = request => request.headers.get("sec-fetch-mode") === "navigate" && !isBot(request);
+const enc = new TextEncoder(), sha256 = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s)))].map(x => x.toString(16).padStart(2, "0")).join("");
+const json = (o, age, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": age ? `public, max-age=${age}` : "no-store" } });
+const notFound = () => new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
 
-// POST /api/card?k=c|o&l=en|fr&c=<code>  body: the picture the page drew for that link, or (outfits, since the showcase)
-// a form: card = the picture · thumb = its small square picture · pub = 1 to list it in the showcase · pic = 1 with an in-game screenshot
+/* ---------- accounts ---------- */
+// the Google token the page holds for Drive sync: issued to the Miliadex (tokeninfo's audience); the account through Drive
+const googleSeen = new Map();
+async function googleUser(tok) {
+  if (!tok || tok.length > 4096) return null;
+  const h = await sha256(tok), c = googleSeen.get(h);
+  if (c && c.exp > Date.now()) return c.user;
+  let user = null;
+  try {
+    const ti = await (await fetch("https://oauth2.googleapis.com/tokeninfo?access_token=" + encodeURIComponent(tok))).json();
+    if (ti && !ti.error && (!D.g || ti.aud === D.g || ti.azp === D.g)) {
+      const r = await fetch("https://www.googleapis.com/drive/v3/about?fields=user(emailAddress,permissionId)", { headers: { authorization: "Bearer " + tok } });
+      if (r.ok) { const j = await r.json(), u = j && j.user; if (u && u.permissionId) user = { uid: "g" + u.permissionId, email: String(u.emailAddress || "").trim().toLowerCase() }; }
+    }
+  } catch (e) { user = null; }
+  if (googleSeen.size > 500) googleSeen.clear();
+  googleSeen.set(h, { user, exp: Date.now() + (user ? 10 : 2) * 60e3 });
+  return user;
+}
+const bearer = request => (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "").trim();
+// sessions: {u, n (pseudo), e (expiry)} signed with a key kept in the "users" object (read once per Worker instance)
+let SKEY = null;
+async function sessionKey(env) {
+  if (!SKEY) { const hex = await users(env).secret(); SKEY = await crypto.subtle.importKey("raw", new Uint8Array(hex.match(/../g).map(x => parseInt(x, 16))), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]); }
+  return SKEY;
+}
+const b64u = by => btoa(String.fromCharCode(...by)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+async function makeSession(env, u, n) {
+  const e = Date.now() + 30 * 864e5, p = b64u(enc.encode(JSON.stringify({ u, n, e })));
+  return { s: p + "." + b64u(new Uint8Array(await crypto.subtle.sign("HMAC", await sessionKey(env), enc.encode(p)))), n, e };
+}
+async function readSession(env, request) {
+  const tok = request.headers.get("x-session") || "";
+  const [p, sig] = tok.split(".");
+  if (!p || !sig || tok.length > 1200) return null;
+  try {
+    if (!await crypto.subtle.verify("HMAC", await sessionKey(env), bytes64(sig), enc.encode(p))) return null;
+    const d = JSON.parse(new TextDecoder().decode(bytes64(p)));
+    return d && d.u && d.e > Date.now() ? d : null;
+  } catch (e) { return null; }
+}
+function cleanNick(x) {
+  const s = String(x || "").normalize("NFC").replace(/\s+/g, " ").trim();
+  if (s.length < 3 || s.length > 20 || !/^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(s) || /miliadex|admin|modérat|moderat/i.test(s)) return null;
+  return s;
+}
+// POST /api/auth (Google token) · /api/nick {nick} · /api/like {k, on} · /api/account/delete — the last three with the session
+async function accountApi(request, env, url, ctx) {
+  if (request.method !== "POST") return notFound();
+  const op = url.pathname.slice(5);
+  if (op === "auth") {
+    const g = await googleUser(bearer(request)); if (!g) return json({ error: "google" }, 0, 401);
+    const n = await users(env).login(g.uid), likes = (await each(env, s => s.myLikes(g.uid), [])).flat();
+    return json({ ...await makeSession(env, g.uid, n), likes });
+  }
+  const me = await readSession(env, request); if (!me) return json({ error: "session" }, 0, 401);
+  let body = {}; try { body = await request.json(); } catch (e) {}
+  if (op === "like") {
+    const k = String(body.k || ""); if (!/^[0-9a-f]{32}$/.test(k)) return json({ error: "bad" }, 0, 400);
+    const n = await store(env, k).like(k, me.u, !!body.on);
+    return n == null ? json({ error: "gone" }, 0, 404) : json({ ok: true, likes: n });
+  }
+  if (op === "nick") {
+    const n = cleanNick(body.nick); if (!n) return json({ error: "bad" }, 0, 400);
+    const r = await users(env).setNick(me.u, n); if (r !== "ok") return json({ error: r }, 0, r === "taken" ? 409 : 400);
+    await each(env, s => s.renameAuthor(me.u, n), null); dropShowCache(url.origin, ctx);
+    return json(await makeSession(env, me.u, n));
+  }
+  if (op === "account/delete") {
+    await users(env).forgetAccount(me.u); await each(env, s => s.forgetUser(me.u), null); dropShowCache(url.origin, ctx);
+    return json({ ok: true });
+  }
+  return notFound();
+}
+
+/* ---------- preview pictures ---------- */
+// POST /api/card?k=c|o&l=en|fr&c=<code>  body: the picture the page drew for that link, or (outfits) a form: card = the picture ·
+// thumb = its small square picture · pub = 1 to show it in the showcase (signed in: x-session) · pic = 1 with an in-game screenshot
 async function saveCard(request, env, url, ctx) {
   if (request.method !== "POST") return new Response("POST only", { status: 405 });
   const k = url.searchParams.get("k"), code = url.searchParams.get("c") || "", lang = url.searchParams.get("l") === "fr" ? "fr" : "en";
@@ -377,33 +533,33 @@ async function saveCard(request, env, url, ctx) {
   const ty = sniff(b);
   if (!ty || b.length > 8 * 1024 * 1024) return new Response("bad picture", { status: 400 });
   const key = await cardKey(k, code, lang), s = store(env, key); if (!s) return new Response("no store", { status: 503 });
-  const o = k === "o" ? { code, lang, pub: pub && L.its.length > 0, pic, th: th && th.buffer, thty: th && sniff(th) } : {};
+  const me = k === "o" && pub ? await readSession(env, request) : null;   // the showcase takes signed-in people only
+  const o = k === "o" ? { code, lang, pub: !!me && L.its.length > 0, uid: me && me.u, nick: me && me.n, pic, th: th && th.buffer, thty: th && sniff(th) } : {};
   await s.put(key, ty, b.buffer, o);
   if (o.pub) dropShowCache(url.origin, ctx);
   return new Response(null, { status: 204 });
 }
-// is the picture there? The page sends it as the link is copied: previews give it a few seconds before answering without it
+// is the picture there? The page sends it before the link is copied: previews still give it a moment before answering without it
 async function cardThere(env, key, tries) {
   const s = store(env, key);
   for (let i = 0; s && i < tries; i++) {
     try { if (await s.has(key)) return true; } catch (e) { return false; }
-    if (i < tries - 1) await new Promise(res => setTimeout(res, 650));
+    if (i < tries - 1) await new Promise(res => setTimeout(res, 600));
   }
   try { const l = legacy(env, key); return !!l && await l.has(key); } catch (e) { return false; }
 }
 // the preview's picture: the card when the site has it, the site banner otherwise (so a card address never stands for the banner)
 // collection: a 1200 × 630 card (JPEG) · outfit: the picture the site downloads, 1080 × 1350 JPEG with the outfit inside
-// (outfit cards sent before October 2026 are PNG: served with their own type)
 async function previewImage(env, origin, k, code, lang, bot) {
   const key = await cardKey(k, code, lang);
-  if (!await cardThere(env, key, bot ? 9 : 1)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
+  if (!await cardThere(env, key, bot ? 5 : 1)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
   return k === "o" ? { image: `${origin}/card/${key}.jpg`, w: 1080, h: 1350, key } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630, key };
 }
 // GET /card/<key>.png|jpg  the picture (cards can be replaced: the same outfit shared again with another screenshot)
-// GET /card/<key>/thumb    its small square picture (the showcase grid), the picture itself for cards sent without one
+// GET /card/<key>/thumb    its small square picture (admin page), the picture itself for cards sent without one
 async function sendCard(env, origin, key, small) {
   const s = store(env, key);
-  for (let i = 0; s && i < 3; i++) {
+  for (let i = 0; s && i < 2; i++) {
     let r = null; try { r = small ? await s.thumb(key) : await s.get(key); } catch (e) {}
     if (!r && i === 0) try { const l = legacy(env, key); if (l) r = await l.get(key); } catch (e) {}
     if (r) return new Response(r.b, { headers: { "content-type": r.ty, "cache-control": "public, max-age=86400" } });
@@ -413,31 +569,42 @@ async function sendCard(env, origin, key, small) {
   return new Response(fb.body, { headers: { "content-type": "image/png", "cache-control": "public, max-age=120", "x-miliadex": "no-card" } });
 }
 
-/* ---------- Outfits Showcase: outfits people chose to show ---------- */
-// every object at once; one that fails counts as empty
-const each = (env, f, empty) => Promise.all(shards(env).map(async s => { try { return await f(s); } catch (e) { return empty; } }));
-const json = (o, age, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": age ? `public, max-age=${age}` : "no-store" } });
-const showItemOut = r => ({ k: r.k, c: r.code, l: r.lang || "en", t: r.pt, p: r.pic ? 1 : 0 });
-const showCacheKey = origin => new Request(origin + "/api/showcase");
-function dropShowCache(origin, ctx) {
-  try { if (typeof caches !== "undefined") { const p = caches.default.delete(showCacheKey(origin)); if (ctx && ctx.waitUntil) ctx.waitUntil(p.catch(() => {})); } } catch (e) {}
+/* ---------- Outfits Showcase ---------- */
+// one response per page: "MLS1" · JSON length (u32) · JSON {items, feat, next} · the small pictures back to back (th: [offset, length, type])
+function bundle(o, age) {
+  const parts = []; let off = 0;
+  const out = x => {
+    const r = { k: x.k, c: x.code, l: x.lang || "en", t: x.pt, p: x.pic ? 1 : 0, lk: x.likes || 0, n: x.nick || "", f: x.feat ? 1 : 0 };
+    if (x.th) { const b = new Uint8Array(x.th); r.th = [off, b.length, x.thty || "image/jpeg"]; parts.push(b); off += b.length; }
+    return r;
+  };
+  const js = enc.encode(JSON.stringify({ items: o.items.map(out), feat: (o.feat || []).map(out), next: o.next || null })), head = new Uint8Array(8);
+  head.set([77, 76, 83, 49]); new DataView(head.buffer).setUint32(4, js.length);
+  return new Response(new Blob([head, js, ...parts]), { headers: { "content-type": "application/octet-stream", "cache-control": `public, max-age=${age}` } });
 }
-// GET /api/showcase[?before=<time>] newest first, 48 at a time · GET /api/showcase?k=<key> one of them
+const showCacheKey = (origin, q) => new Request(origin + "/api/showcase?" + q);
+function dropShowCache(origin, ctx) {
+  try { if (typeof caches !== "undefined") { const p = Promise.all(["sort=top", "sort=new"].map(q => caches.default.delete(showCacheKey(origin, q)))); if (ctx && ctx.waitUntil) ctx.waitUntil(p.catch(() => {})); } } catch (e) {}
+}
+const dedupe = rows => { const seen = new Set(); return rows.filter(r => r.code && !seen.has(r.code) && seen.add(r.code)); };   // the same outfit shared in English and French: once
+// GET /api/showcase?sort=top|new[&after=<cursor>] · GET /api/showcase?k=<key> (one of them)
 async function showcaseList(env, url, ctx) {
   const one = url.searchParams.get("k");
   if (one != null) {
-    if (!/^[0-9a-f]{32}$/.test(one)) return json({ items: [] }, 60);
-    let r = null; try { const s = store(env, one); r = s && await s.item(one); } catch (e) {}
-    return json({ items: r ? [showItemOut(r)] : [] }, 60);
+    let r = null; if (/^[0-9a-f]{32}$/.test(one)) try { const s = store(env, one); r = s && await s.item(one); } catch (e) {}
+    return bundle({ items: r && !r.feat ? [r] : [], feat: r && r.feat ? [r] : [] }, 60);
   }
-  const first = !url.searchParams.get("before"), before = Math.min(+url.searchParams.get("before") || 9e15, 9e15), N = 48;
-  const hit = first && typeof caches !== "undefined" ? await caches.default.match(showCacheKey(url.origin)).catch(() => null) : null;
+  const sort = url.searchParams.get("sort") === "new" ? "new" : "top", after = (url.searchParams.get("after") || "").slice(0, 60);
+  const q = "sort=" + sort + (after ? "&after=" + encodeURIComponent(after) : ""), ck = showCacheKey(url.origin, q);
+  const hit = typeof caches !== "undefined" ? await caches.default.match(ck).catch(() => null) : null;
   if (hit) return hit;
-  const rows = (await each(env, s => s.list(before, N + 8), [])).flat().sort((a, b) => b.pt - a.pt);
-  const seen = new Set(), items = [];
-  for (const r of rows) { if (!r.code || seen.has(r.code)) continue; seen.add(r.code); items.push(showItemOut(r)); if (items.length >= N) break; }   // the same outfit shared in English and French: once
-  const res = json({ items, next: items.length >= N ? items[items.length - 1].t : null }, first ? 60 : 300);
-  if (first && typeof caches !== "undefined") { const p = caches.default.put(showCacheKey(url.origin), res.clone()).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(p); }
+  const [a, b] = after.split("_").map(Number), cur = sort === "new" ? { t: a || 9e15 } : { l: after ? a || 0 : 1e15, t: b || 9e15 };
+  const got = await each(env, s => s.page(sort, cur, PAGE + 4, !after), { rows: [], feat: [] });
+  const order = sort === "new" ? (x, y) => y.pt - x.pt : (x, y) => y.likes - x.likes || y.pt - x.pt;
+  const items = dedupe(got.flatMap(g => g.rows).sort(order)).slice(0, PAGE), last = items[items.length - 1];
+  const feat = dedupe(got.flatMap(g => g.feat).sort((x, y) => y.likes - x.likes || y.pt - x.pt));
+  const res = bundle({ items, feat, next: items.length >= PAGE ? (sort === "new" ? String(last.pt) : last.likes + "_" + last.pt) : null }, 60);
+  if (typeof caches !== "undefined") { const p = caches.default.put(ck, res.clone()).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(p); }
   return res;
 }
 
@@ -445,31 +612,10 @@ async function showcaseList(env, url, ctx) {
 // sha256 of the owner's Google address and of the secret part of the admin address (neither is written here in clear)
 const ADMIN_EMAIL = "65022ea26dc785e5b8c6c96b814e0a7f127c3cc439cd6684bc53fd75a39288ec";
 const ADMIN_PATH = "6e4e34447ea09adf1e85c657b16d940af33af38b9bcb5d284a038d859c97a86a";
-const sha256 = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map(x => x.toString(16).padStart(2, "0")).join("");
-const notFound = () => new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
-const adminSeen = new Map();
-// the Google token the page holds for Drive sync: issued to the Miliadex (tokeninfo's audience) for the owner's account
 async function isAdmin(request, seg) {
   if (typeof seg !== "string" || !seg || seg.length > 100 || await sha256(seg) !== ADMIN_PATH) return false;
-  const tok = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "").trim();
-  if (!tok || tok.length > 4096) return false;
-  const h = await sha256(tok), c = adminSeen.get(h);
-  if (c && c.exp > Date.now()) return c.ok;
-  let ok = false;
-  try {
-    const ti = await (await fetch("https://oauth2.googleapis.com/tokeninfo?access_token=" + encodeURIComponent(tok))).json();
-    if (ti && !ti.error && (!D.g || ti.aud === D.g || ti.azp === D.g)) {
-      let email = ti.email && String(ti.email_verified) === "true" ? ti.email : "";
-      if (!email) {   // Drive-only token: the account's address through Drive
-        const r = await fetch("https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)", { headers: { authorization: "Bearer " + tok } });
-        if (r.ok) { const j = await r.json(); email = (j && j.user && j.user.emailAddress) || ""; }
-      }
-      ok = !!email && await sha256(email.trim().toLowerCase()) === ADMIN_EMAIL;
-    }
-  } catch (e) { ok = false; }
-  if (adminSeen.size > 200) adminSeen.clear();
-  adminSeen.set(h, { ok, exp: Date.now() + (ok ? 10 : 2) * 60e3 });
-  return ok;
+  const g = await googleUser(bearer(request));
+  return !!g && !!g.email && await sha256(g.email) === ADMIN_EMAIL;
 }
 // POST /api/admin/me | list | set   body {seg, …}: anything else, or anyone else, gets a plain 404
 async function adminApi(request, env, url, ctx) {
@@ -477,15 +623,18 @@ async function adminApi(request, env, url, ctx) {
   let body = {}; try { body = await request.json(); } catch (e) {}
   if (!body || !await isAdmin(request, body.seg)) return notFound();
   const op = url.pathname.slice("/api/admin/".length);
-  if (op === "me") return json({ ok: true, max: SHARDS * MAX_CARDS, budget: SHARDS * BUDGET, stats: await each(env, s => s.stats(), null) });
+  if (op === "me") {
+    let people = 0; try { people = await users(env).userCount(); } catch (e) {}
+    return json({ ok: true, max: SHARDS * MAX_CARDS, budget: SHARDS * BUDGET, people, stats: await each(env, s => s.stats(), null) });
+  }
   if (op === "list") {
-    const which = body.which === "ban" ? "ban" : "pub", before = Math.min(+body.before || 9e15, 9e15), N = 48;
+    const which = ["ban", "feat"].includes(body.which) ? body.which : "pub", before = Math.min(+body.before || 9e15, 9e15), N = 48;
     const rows = (await each(env, s => s.adminList(which, before, N), [])).flat().sort((a, b) => b.at - a.at).slice(0, N);
-    return json({ items: rows.map(r => ({ k: r.k, c: r.code, l: r.lang || "en", at: r.at, p: r.pic ? 1 : 0, z: r.z, ban: r.ban, pub: r.pub })), next: rows.length >= N ? rows[rows.length - 1].at : null });
+    return json({ items: rows.map(r => ({ k: r.k, c: r.code, l: r.lang || "en", at: r.at, p: r.pic ? 1 : 0, z: r.z, ban: r.ban, pub: r.pub, f: r.feat, lk: r.likes, n: r.nick || "" })), next: rows.length >= N ? rows[rows.length - 1].at : null });
   }
   if (op === "set") {
     const k = String(body.k || "");
-    if (!/^[0-9a-f]{32}$/.test(k) || !["hide", "show", "delete"].includes(body.op)) return json({ ok: false }, 0, 400);
+    if (!/^[0-9a-f]{32}$/.test(k) || !["hide", "show", "delete", "feature", "unfeature"].includes(body.op)) return json({ ok: false }, 0, 400);
     const ok = await store(env, k).moderate(k, body.op);
     dropShowCache(url.origin, ctx);
     return json({ ok });
@@ -506,6 +655,7 @@ export default {
       if (url.pathname === "/api/card") return await saveCard(request, env, url, ctx);
       if (url.pathname === "/api/showcase") return await showcaseList(env, url, ctx);
       if (url.pathname.startsWith("/api/admin/")) return await adminApi(request, env, url, ctx);
+      if (/^\/api\/(auth|nick|like|account\/delete)$/.test(url.pathname)) return await accountApi(request, env, url, ctx);
       if (url.pathname.startsWith("/a/")) return await adminPage(env, origin);
       const cm = url.pathname.match(/^\/card\/([0-9a-f]{32})(?:\.(?:jpg|png|webp)|\/(thumb))$/);
       if (cm) return await sendCard(env, origin, cm[1], !!cm[2]);
@@ -514,21 +664,25 @@ export default {
     if (!m) return env.ASSETS.fetch(request);
     const [, kind, raw] = m;
     let arg = raw; try { arg = decodeURIComponent(raw); } catch (e) {}
+    // where the site takes over: the outfit's language and "has an in-game screenshot" ride along, the page works out the rest
+    const p = url.searchParams.get("p"), lookAt = card => "/#look=" + arg + (lang === "fr" ? "&l=fr" : "") + (p === "0" || p === "1" ? "&p=" + p : "") + (card ? "&card=" + card : "");
+    const target = kind === "c" ? "/#col=" + arg : kind === "o" ? lookAt("") : "/#show=" + encodeURIComponent(arg);
+    // a person: straight to the site (no storage read, nothing to describe)
+    if (isPerson(request)) return new Response(null, { status: 302, headers: { location: origin + target, "cache-control": "no-store" } });
     const here = origin + url.pathname + url.search, bot = isBot(request);
     try {
       if (kind === "c") {
-        const target = "/#col=" + arg, c = await readCol(arg);
+        const c = await readCol(arg);
         if (!c) return Response.redirect(origin + target, 302);
         return page({ ...colShort(c, lang), ...await previewImage(env, origin, "c", arg, lang, bot), large: true }, here, target, lang);
       }
       if (kind === "o") {
         const L = readLook(arg);
-        if (!L) return Response.redirect(origin + "/#look=" + arg, 302);
+        if (!L) return Response.redirect(origin + target, 302);
         const info = lookInfo(L), pic = await previewImage(env, origin, "o", arg, lang, bot);
-        // people land on the outfit with the card's key: the site reads the in-game screenshot back from the card
-        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...pic, large: true, color: SITE_COLOR }, here, "/#look=" + arg + (pic.key ? "&card=" + pic.key : ""), lang);
+        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...pic, large: true, color: SITE_COLOR }, here, lookAt(pic.key), lang);
       }
-      const target = "/#show=" + encodeURIComponent(arg), it = await showItem(env, origin, arg);
+      const it = await showItem(env, origin, arg);
       if (!it) return Response.redirect(origin + target, 302);
       const title = TX[lang].show(it.name || arg.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ").trim());
       const L = it.look ? readLook(it.look) : null, img = it.view || it.thumb ? origin + "/showcase/" + (it.view || it.thumb).split("/").map(encodeURIComponent).join("/") + (it.v ? "?v=" + it.v : "") : origin + "/showcase/" + encodeURIComponent(it.file);

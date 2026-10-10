@@ -1229,6 +1229,28 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sh-hs{margin:-6px 0 2px;color:var(--muted);font-size:14px}
 .sh-none{margin:0;padding:22px 16px;border:2px dashed var(--line);border-radius:18px;color:var(--muted);text-align:center}
 .sh-more{justify-self:center;margin-top:4px}
+.sh-by{display:block;margin:-2px 0 4px;font-size:12.5px;color:#cfc6ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-r{flex:none;display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
+.sh-lk{display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:13px;color:#ffc1d9}
+.sh-lk.on{color:#ff6fa8}
+.sh-acct{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:-2px 0 4px;font-size:14px;color:var(--muted)}
+.gbtn.sm{height:34px;padding:0 14px 0 10px;gap:8px;font-size:13.5px}
+.gbtn.sm .g-logo{width:16px;height:16px}
+.linkbtn{background:none;border:0;padding:0;font:inherit;font-weight:600;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.linkbtn.danger,.linkbtn.armed{color:#d6455d}
+.pub-in{border:0;background:none;padding:0;color:var(--accent);text-align:left}
+.pub-in .g-logo{flex:none;width:17px;height:17px}
+.sv-act .btn.sv-like.on{background:#ff6fa8;border-color:#ff6fa8;color:#fff}
+.sv-by{margin:-6px 0 8px;color:var(--muted);font-size:14px}
+.adm-feat{color:#b77d12}
+.nick-dlg{border:0;border-radius:18px;padding:22px;width:min(380px,calc(100% - 32px));background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(10,6,40,.35)}
+.nick-dlg::backdrop{background:rgba(10,6,30,.55)}
+.nick-f{display:grid;gap:10px}
+.nick-f h3{margin:0;font-family:var(--serif);font-weight:650;font-size:21px}
+.nick-f p{margin:0;color:var(--muted);font-size:14px}
+.nick-f input{font:inherit;font-size:16px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--raise);color:var(--text)}
+.nick-f input:focus{outline:none;border-color:var(--accent)}
+.nick-f .nick-err{color:#d6455d;min-height:1.2em;font-size:13.5px}
 .sh-wrap > .sh-msg.sr{position:absolute}
 /* "show in the showcase" switch, next to the share buttons */
 .pub-t{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none}
@@ -1532,7 +1554,7 @@ const T = {
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
   imgImp:"Import with image",showT:"Outfits Showcase",shKick:"Miliadex gallery",shSub:"Outfits made with the Miliadex. Open one to remix it, keep it in My Outfits or download it.",shSearch:"Search an outfit or a piece",shAll:"All",shMine:"I own every piece",
-  shSort:"Sort",shSorts:{repo:"Showcase order",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shFeat:"Featured",shComm:"Community",shCommSub:"Outfits players chose to show when they shared their link.",shCommEmpty:"No shared outfits yet: share yours from My Outfits with “Show in the Outfits Showcase” on.",shCommFail:"Shared outfits couldn’t be loaded.",shMore:"Show more",shPubL:"Show in the Outfits Showcase",shPubTip:"When you copy a link to an outfit, it also appears in the Outfits Showcase (its name, pieces and in-game screenshot).",shPubDone:" · in the Outfits Showcase",nf404:"Page not found",nf404s:"This page doesn’t exist or has moved.",nf404b:"Back to the Miliadex",admT:"Showcase moderation",admSite:"Back to the site",admImgs:"pictures",admMB:"MB",admPub:"in the showcase",admBan:"taken out",admTabPub:"In the showcase",admTabBan:"Taken out",admHide:"Take out",admShow:"Put back",admDel:"Delete picture",admSure:"Sure? Click again",admNone:"Nothing here.",admDone:"Done",admFail:"That didn’t work",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
+  shSort:"Sort",shSorts:{repo:"Most liked",new:"Newest",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shFeat:"Featured",shComm:"Community",shCommSub:"Outfits players chose to show when they shared their link.",shCommEmpty:"No shared outfits yet: share yours from My Outfits with “Show in the Outfits Showcase” on.",shCommFail:"Shared outfits couldn’t be loaded.",shMore:"Show more",shPubL:"Show in the Outfits Showcase",shPubTip:"When you copy a link to an outfit, it also appears in the Outfits Showcase (its name, pieces and in-game screenshot).",shPubDone:" · in the Outfits Showcase",nf404:"Page not found",nf404s:"This page doesn’t exist or has moved.",nf404b:"Back to the Miliadex",admT:"Showcase moderation",admSite:"Back to the site",admImgs:"pictures",admMB:"MB",admPub:"in the showcase",admBan:"taken out",admTabPub:"In the showcase",admTabBan:"Taken out",admHide:"Take out",admShow:"Put back",admDel:"Delete picture",admSure:"Sure? Click again",admNone:"Nothing here.",admDone:"Done",admFail:"That didn’t work",admTabFeat:"Featured",admFeat:"Feature",admUnfeat:"Unfeature",admPeople:"accounts",admFeatN:"featured",shBy:n=>`by ${n}`,likeL:"Like",likeNeed:"Sign in with Google to like outfits",likeFail:"The like didn’t go through",acIn:n=>`Signed in as ${n}`,acNick:"Change pseudo",acOut:"Sign in with Google",acWhy:"to like outfits and show yours here",pubNeed:"Sign in with Google to show your outfits in the showcase",shPubAs:n=>`Show in the Outfits Showcase as ${n}`,nkT:"Your pseudo",nkSub:"Shown on the outfits you show in the Outfits Showcase. 3 to 20 characters.",nkSave:"Save",nkTaken:"This pseudo is already taken",nkBad:"3 to 20 letters, digits, spaces or . _ ' -",nkDone:"Pseudo saved",nkFail:"That didn’t work, try again",acDel:"Delete my Miliadex account",acDelSure:"Sure? Click again: pseudo and likes deleted, your outfits leave the showcase",acDelDone:"Account deleted",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
   shFail:"The showcase couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
   shEdit:"Edit in My Outfits",shEditMine:"Edit",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
   shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't in the showcase anymore.",
@@ -1585,7 +1607,7 @@ const T = {
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
   imgImp:"Importer avec une image",showT:"Vitrine de tenues",shKick:"Galerie Miliadex",shSub:"Des tenues créées avec le Miliadex. Ouvre-en une pour la modifier, la garder dans Mes tenues ou la télécharger.",shSearch:"Chercher une tenue ou une pièce",shAll:"Toutes",shMine:"Je possède tout",
-  shSort:"Trier",shSorts:{repo:"Ordre de la vitrine",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shFeat:"En vedette",shComm:"Communauté",shCommSub:"Les tenues que les joueurs ont choisi de montrer en partageant leur lien.",shCommEmpty:"Aucune tenue partagée pour l'instant : partage la tienne depuis Mes tenues avec « Montrer dans la vitrine » activé.",shCommFail:"Impossible de charger les tenues partagées.",shMore:"Afficher plus",shPubL:"Montrer dans la vitrine",shPubTip:"Quand tu copies le lien d'une tenue, elle apparaît aussi dans la vitrine (nom, pièces et capture en jeu).",shPubDone:" · visible dans la vitrine",nf404:"Page introuvable",nf404s:"Cette page n'existe pas ou a été déplacée.",nf404b:"Retour au Miliadex",admT:"Modération de la vitrine",admSite:"Retour au site",admImgs:"images",admMB:"Mo",admPub:"dans la vitrine",admBan:"retirées",admTabPub:"Dans la vitrine",admTabBan:"Retirées",admHide:"Retirer",admShow:"Remettre",admDel:"Supprimer l'image",admSure:"Sûr ? Reclique",admNone:"Rien ici.",admDone:"Fait",admFail:"Ça n'a pas marché",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
+  shSort:"Trier",shSorts:{repo:"Les plus aimées",new:"Les plus récentes",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shFeat:"En vedette",shComm:"Communauté",shCommSub:"Les tenues que les joueurs ont choisi de montrer en partageant leur lien.",shCommEmpty:"Aucune tenue partagée pour l'instant : partage la tienne depuis Mes tenues avec « Montrer dans la vitrine » activé.",shCommFail:"Impossible de charger les tenues partagées.",shMore:"Afficher plus",shPubL:"Montrer dans la vitrine",shPubTip:"Quand tu copies le lien d'une tenue, elle apparaît aussi dans la vitrine (nom, pièces et capture en jeu).",shPubDone:" · visible dans la vitrine",nf404:"Page introuvable",nf404s:"Cette page n'existe pas ou a été déplacée.",nf404b:"Retour au Miliadex",admT:"Modération de la vitrine",admSite:"Retour au site",admImgs:"images",admMB:"Mo",admPub:"dans la vitrine",admBan:"retirées",admTabPub:"Dans la vitrine",admTabBan:"Retirées",admHide:"Retirer",admShow:"Remettre",admDel:"Supprimer l'image",admSure:"Sûr ? Reclique",admNone:"Rien ici.",admDone:"Fait",admFail:"Ça n'a pas marché",admTabFeat:"En vedette",admFeat:"Mettre en vedette",admUnfeat:"Retirer de la vedette",admPeople:"comptes",admFeatN:"en vedette",shBy:n=>`par ${n}`,likeL:"J'aime",likeNeed:"Connecte-toi avec Google pour aimer des tenues",likeFail:"Le j'aime n'est pas passé",acIn:n=>`Connecté en tant que ${n}`,acNick:"Changer de pseudo",acOut:"Se connecter avec Google",acWhy:"pour aimer des tenues et montrer les tiennes ici",pubNeed:"Connecte-toi avec Google pour montrer tes tenues dans la vitrine",shPubAs:n=>`Montrer dans la vitrine en tant que ${n}`,nkT:"Ton pseudo",nkSub:"Affiché sur les tenues que tu montres dans la vitrine. 3 à 20 caractères.",nkSave:"Enregistrer",nkTaken:"Ce pseudo est déjà pris",nkBad:"3 à 20 lettres, chiffres, espaces ou . _ ' -",nkDone:"Pseudo enregistré",nkFail:"Ça n'a pas marché, réessaie",acDel:"Supprimer mon compte Miliadex",acDelSure:"Sûr ? Reclique : pseudo et j'aime supprimés, tes tenues quittent la vitrine",acDelDone:"Compte supprimé",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
   shFail:"La vitrine n'a pas pu être chargée pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
   shEdit:"Modifier dans Mes tenues",shEditMine:"Modifier",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
   shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus dans la vitrine.",
@@ -2824,7 +2846,7 @@ async function openLookImage(file){
 /* codes & links */
 // links people share always point at the public site (from workers.dev too), so they get their rich preview
 const SITE = /(^|\.)miliadex\.com$|\.workers\.dev$/.test(location.hostname) ? "https://miliadex.com" : location.origin;
-const shareUrl = (k,code) => SITE+"/"+k+"/"+code+"?v="+CARD_V+(ui.lang==="fr"?"&l=fr":"");
+const shareUrl = (k,code,extra) => SITE+"/"+k+"/"+code+"?v="+CARD_V+(ui.lang==="fr"?"&l=fr":"")+(extra||"");
 const b64e = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 const b64d = s => { s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; return decodeURIComponent(escape(atob(s))); };
 const lookCode = L => b64e(JSON.stringify({v:1,n:L.n||"",g:L.g,i:L.i.map(id=>id.replace(/^c-/,""))}));
@@ -2916,13 +2938,20 @@ async function copyTxt(txt,msg){
   catch(e){ const inp=$("lkCode"); if(inp){ inp.value=txt; inp.focus(); inp.select(); } }
 }
 function readHash(){
-  const mm=location.hash.match(/look=([A-Za-z0-9_-]+)/); if(!mm) return false;
-  const cm=location.hash.match(/[&#]card=([0-9a-f]{32})/);
+  const h=location.hash, mm=h.match(/look=([A-Za-z0-9_-]+)/); if(!mm) return false;
+  const cm=h.match(/[&#]card=([0-9a-f]{32})/), pm=h.match(/[&#]p=([01])/), lang=/[&#]l=fr(&|$)/.test(h) ? "fr" : "en";
   try{ history.replaceState(null,"",location.href.split("#")[0]); }catch(e){}
   const L=parseLook(mm[1]); if(!L){ toast(t("badLook")); return false; }
   shared=L; look={id:null,n:L.n,g:L.g,i:L.i.slice()}; saveDraft(); ui.tab="outfits";
-  if(cm) lookFromCard(cm[1], L);
+  // the in-game screenshot rides in the link's preview picture, found by the same key the server uses (no lookup needed);
+  // fetched only when the link says the outfit has one (links made before that don't say: try)
+  if(pm && pm[1]==="0") return true;
+  if(cm) lookFromCard(cm[1], L); else cardKeyOf("o", mm[1], lang).then(k=>{ if(k) lookFromCard(k, L); });
   return true;
+}
+async function cardKeyOf(k, code, lang){
+  try{ const d=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${CARD_V}`));
+    return [...new Uint8Array(d)].slice(0,16).map(b=>b.toString(16).padStart(2,"0")).join(""); }catch(e){ return null; }
 }
 // a share link's preview picture is the outfit image the site downloads: it carries the in-game screenshot, put it back
 async function lookFromCard(key, L){
@@ -2939,14 +2968,15 @@ async function lookFromCard(key, L){
 }
 /* ---------- Outfits Showcase: outfit images from the repo's showcase/ folder (listed through the GitHub API, served by the site itself) ---------- */
 const SHOW_REPO="Dowar/miliadex", SHOW_DIR=ROOT+"showcase", SHOW_KEY="miliadex-showcase", SHOW_TTL=10*60e3;
-const SHOW={items:null, state:"idle", f:{q:"",g:"",mine:false,sort:"repo"}, view:[], vi:0, pending:null, tok:0, users:null, unext:null, ustate:"idle"};
+const SHOW={items:null, state:"idle", f:{q:"",g:"",mine:false,sort:"repo"}, view:[], vi:0, pending:null, tok:0, users:null, ufeat:[], unext:null, ustate:"idle", usort:""};
 try{ const c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); if(c && Array.isArray(c.list)) SHOW.items=c.list.map((x,i)=>({name:x.name,sha:x.sha,size:x.size,i})); }catch(e){}
 // featured: the images of the repo's showcase/ folder · community (it.user): outfits shared with "Show in the Outfits Showcase"
 const showUrl = it => it.user ? ROOT+"card/"+it.k+".jpg" : SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,10):"");   // the original file (carries the full outfit)
-const showThumb = it => it.user ? ROOT+"card/"+it.k+"/thumb" : it.thumb ? SHOW_DIR+"/"+it.thumb.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
+const showThumb = it => it.user ? it.thumbUrl || ROOT+"card/"+it.k+"/thumb" : it.thumb ? SHOW_DIR+"/"+it.thumb.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
 const showView = it => it.user ? showUrl(it) : it.view ? SHOW_DIR+"/"+it.view.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
 const showName = it => (it.meta && it.meta.L.n) || (it.user ? t("untitled") : "") || it.name.replace(/\.[a-z0-9]+$/i,"").replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
-const showAll = () => (SHOW.items||[]).concat(SHOW.users||[]);
+const showAll = () => (SHOW.items||[]).concat(SHOW.ufeat||[], SHOW.users||[]);
+const showIsFeat = it => !it.user || it.feat;
 const showByName = n => showAll().find(x=>x.name===n);
 function showStats(m){ const its=lookItems(m.L); return {n:its.length, own:its.filter(it=>has(it,"x")).length, viv:lookViv(its), its}; }
 const showPct = it => { if(!it.meta) return -1; const s=showStats(it.meta); return s.n ? s.own/s.n : 0; };
@@ -2983,7 +3013,7 @@ async function showLoad(force){
   showLoaded();
 }
 function showBadge(){ const sp=$("tab-show") && $("tab-show").querySelector("span"); if(!sp) return;
-  const n=(SHOW.items||[]).length+(SHOW.users||[]).length; sp.textContent = SHOW.items || SHOW.users ? n+(SHOW.unext?"+":"") : "✦"; }
+  const n=showAll().length; sp.textContent = SHOW.items || SHOW.users ? n+(SHOW.unext?"+":"") : "✦"; }
 function showLoaded(){
   showBadge();
   if(ui.tab==="show") renderShowGrid();
@@ -2991,23 +3021,50 @@ function showLoaded(){
   if(SHOW.pending){ const n=SHOW.pending; SHOW.pending=null; showOpenName(n); }
   if(SHOW.ustate==="idle") usersLoad(false);
 }
-// community: outfits people chose to show when sharing, newest first, 48 at a time (the outfit rides in the list: nothing to read per card)
+// community: outfits signed-in people chose to show, most liked (or newest) first, a page at a time; the outfit, its author,
+// its likes and its small picture all come in that one response, so a page costs a single request
 const userItem = x => { const L=x && x.c && parseLook(x.c); if(!L || !L.i.length || !/^[0-9a-f]{32}$/.test(x.k)) return null;
-  return {name:"u-"+x.k, user:true, k:x.k, code:x.c, lang:x.l==="fr"?"fr":"en", t:+x.t||0, i:0, meta:{L, pic:!!x.p, full:null}}; };
+  return {name:"u-"+x.k, user:true, k:x.k, code:x.c, lang:x.l==="fr"?"fr":"en", t:+x.t||0, i:0, lk:+x.lk||0, nick:String(x.n||""), feat:!!x.f, thumbUrl:null, meta:{L, pic:!!x.p, full:null}}; };
+function showBundle(buf){
+  const dv=new DataView(buf); if(buf.byteLength<8 || dv.getUint32(0)!==0x4D4C5331) throw new Error("not a showcase list");
+  const n=dv.getUint32(4), j=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,8,n))), base=8+n;
+  const mk=x=>{ const it=userItem(x); if(it && x.th) it.thumbUrl=URL.createObjectURL(new Blob([new Uint8Array(buf, base+x.th[0], x.th[1])],{type:x.th[2]})); return it; };
+  return {items:(j.items||[]).map(mk).filter(Boolean), feat:(j.feat||[]).map(mk).filter(Boolean), next:j.next||null};
+}
+const usersSort = () => SHOW.f.sort==="new" ? "new" : "top";
 async function usersLoad(more){
   if(!/^https?:$/.test(location.protocol)){ SHOW.users=SHOW.users||[]; SHOW.ustate="off"; return; }
-  if(SHOW.ustate==="loading") return; SHOW.ustate="loading"; if(more && ui.tab==="show") renderShowGrid();
-  try{ const r=await fetch(ROOT+"api/showcase"+(more && SHOW.unext ? "?before="+SHOW.unext : ""), {cache:"no-cache"}); if(!r.ok) throw new Error("HTTP "+r.status);
-    const j=await r.json(), list=more ? (SHOW.users||[]).slice() : [], have=new Set(list.map(x=>x.code));
-    for(const x of (j.items||[])){ const it=userItem(x); if(it && !have.has(it.code)){ have.add(it.code); const o=(SHOW.users||[]).find(y=>y.name===it.name); list.push(o||it); } }
-    list.forEach((x,i)=>x.i=i); SHOW.users=list; SHOW.unext=j.next||null; SHOW.ustate="ok";
+  if(SHOW.ustate==="loading") return; const sort=usersSort(); SHOW.ustate="loading"; if(ui.tab==="show") renderShowGrid();
+  try{ const r=await fetch(ROOT+"api/showcase?sort="+sort+(more && SHOW.unext ? "&after="+encodeURIComponent(SHOW.unext) : "")); if(!r.ok) throw new Error("HTTP "+r.status);
+    const got=showBundle(await r.arrayBuffer());
+    if(!more){ got.feat.forEach((x,i)=>x.i=1000+i); SHOW.ufeat=got.feat; }
+    const list=more ? (SHOW.users||[]).slice() : [], have=new Set(list.concat(SHOW.ufeat).map(x=>x.code));
+    for(const it of got.items) if(!have.has(it.code)){ have.add(it.code); list.push(it); }
+    list.forEach((x,i)=>x.i=i); SHOW.users=list; SHOW.unext=got.next; SHOW.ustate="ok"; SHOW.usort=sort;
   }catch(e){ console.warn("Miliadex: shared outfits unavailable", e); SHOW.users=SHOW.users||[]; SHOW.ustate="fail"; }
   showBadge(); if(ui.tab==="show") renderShowGrid();
+  const d=$("shv"); if(d.open && VW.src==="show") paintView(true);
 }
 // one shared outfit opened by its address (it may not be among the ones loaded yet)
 async function showFetchUser(k){
-  try{ const j=await (await fetch(ROOT+"api/showcase?k="+encodeURIComponent(k))).json(); const it=userItem((j.items||[])[0]); if(!it) return null;
-    const o=showByName(it.name); if(o) return o; SHOW.users=(SHOW.users||[]).concat(it); SHOW.users.forEach((x,i)=>x.i=i); return it; }catch(e){ return null; }
+  try{ const r=await fetch(ROOT+"api/showcase?k="+encodeURIComponent(k)); if(!r.ok) return null;
+    const got=showBundle(await r.arrayBuffer()), it=got.items[0] || got.feat[0]; if(!it) return null;
+    const o=showByName(it.name); if(o) return o;
+    if(it.feat){ it.i=1000+SHOW.ufeat.length; SHOW.ufeat=SHOW.ufeat.concat(it); } else { SHOW.users=(SHOW.users||[]).concat(it); SHOW.users.forEach((x,i)=>x.i=i); }
+    return it; }catch(e){ return null; }
+}
+// likes: the page shows its own like at once, the server keeps the count (one like per account)
+function likeLocal(it, on){
+  const L=new Set(ACCT.likes||[]); if(on) L.add(it.k); else L.delete(it.k); ACCT.likes=[...L]; saveAcct();
+  it.lk=Math.max(0,(it.lk||0)+(on?1:-1));
+}
+async function likeToggle(it){
+  if(!signedIn()){ toast(t("likeNeed")); GD.connect(); return; }
+  const on=!likedSet().has(it.k); likeLocal(it, on); showArrived(it);
+  try{ const r=await fetch(ROOT+"api/like", {method:"POST", headers:{"content-type":"application/json","x-session":ACCT.s}, body:JSON.stringify({k:it.k, on})});
+    const j=r.ok ? await r.json() : null; if(!j || !j.ok) throw new Error(r.status===401 ? "session" : "like");
+    it.lk=j.likes; showArrived(it);
+  }catch(e){ likeLocal(it, !on); showArrived(it); toast(t("likeFail")); if(String(e.message)==="session") acctEnsure(true); }
 }
 function showOpenName(n){
   const it=showFind(n); if(it){ openShowView(it.name); return; }
@@ -3044,17 +3101,20 @@ function showList(){
   const order=L=>{ if(F.sort==="name") L.sort((a,b)=>showName(a).localeCompare(showName(b), ui.lang));
     else if(F.sort==="own") L.sort((a,b)=>showPct(b)-showPct(a) || a.i-b.i);
     return L; };
-  return order((SHOW.items||[]).filter(keep)).concat(order((SHOW.users||[]).filter(keep)));   // featured first, then the community
+  // featured first (the repo's images, then the community outfits the admin featured), then the community; likes order the
+  // community (the server's order), or the newest, or the chosen sort within what is loaded
+  return order((SHOW.items||[]).concat(SHOW.ufeat||[]).filter(keep)).concat(order((SHOW.users||[]).filter(keep)));
 }
 function showCard(it,k){
   const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot && !it.user, full=st && st.n && st.own===st.n;
   const tags = m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.pic?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "";
-  const vv = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
+  const lk = it.user ? `<span class="sh-lk${signedIn() && likedSet().has(it.k)?" on":""}" title="${esc(t("likeL"))}">♥ ${fmtN(it.lk||0)}</span>` : "", vg = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
+  const vv = lk || vg ? `<span class="sh-r">${lk}${vg}</span>` : "";
   const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-bar" aria-hidden="true"><i style="width:${st.n?(st.own/st.n*100).toFixed(1):0}%"></i></span>`
     : m===undefined ? `<span class="sh-sk" aria-hidden="true"><i></i><i></i></span>` : "";
   return `<button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" style="--d:${Math.min(k,14)*45}ms" aria-label="${esc(title)}">
     <span class="sh-frame"><span class="sh-img"><img src="${esc(spot?showView(it):showThumb(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span><span class="sh-glare" aria-hidden="true"></span></span>
-    <span class="sh-info"><b class="sh-name">${esc(title)}</b>${tags||vv?`<span class="sh-l2"><span class="sh-tags">${tags}</span>${vv}</span>`:""}${meta?`<span class="sh-meta">${meta}</span>`:""}</span>
+    <span class="sh-info"><b class="sh-name">${esc(title)}</b>${it.user && it.nick ? `<span class="sh-by">${esc(t("shBy")(it.nick))}</span>` : ""}${tags||vv?`<span class="sh-l2"><span class="sh-tags">${tags}</span>${vv}</span>`:""}${meta?`<span class="sh-meta">${meta}</span>`:""}</span>
   </button>`;
 }
 function renderShow(){
@@ -3076,16 +3136,18 @@ function renderShowGrid(){
   const g=$("shGrid"); if(!g) return; const F=SHOW.f;
   if(!SHOW.items && SHOW.state!=="fail"){ g.innerHTML=shSkel(6)+`<p class="sh-msg sr">${esc(t("shLoading"))}</p>`; return; }
   if(SHOW.state==="fail" && !SHOW.items){ g.innerHTML=`<div class="sh-grid msg"><div class="sh-msg"><b>${esc(t("shFail"))}</b><button type="button" class="btn" data-shretry>${esc(t("shRetry"))}</button></div></div>`; return; }
-  const list=showList(), feat=list.filter(x=>!x.user), comm=list.filter(x=>x.user), filt=!!(F.q || F.g || F.mine);
+  const list=showList(), feat=list.filter(showIsFeat), comm=list.filter(x=>!showIsFeat(x)), filt=!!(F.q || F.g || F.mine);
   SHOW.spot = !filt && F.sort==="repo" && feat.length>=4;
   let h="";
-  if(SHOW.items.length) h+=`<section class="sh-sec feat"><h3 class="sh-h"><span class="sh-star" aria-hidden="true">★</span>${esc(t("shFeat"))} <small>${feat.length}</small></h3>
+  if(SHOW.items.length || (SHOW.ufeat||[]).length) h+=`<section class="sh-sec feat"><h3 class="sh-h"><span class="sh-star" aria-hidden="true">★</span>${esc(t("shFeat"))} <small>${feat.length}</small></h3>
     ${feat.length ? `<div class="sh-grid${SHOW.spot?" has-spot":""}">${feat.map((it,k)=>showCard(it,k)).join("")}</div>` : `<p class="sh-none">${esc(t("shNone"))}</p>`}</section>`;
   const loading=SHOW.ustate==="loading", more = SHOW.unext ? `<button type="button" class="btn ghost sh-more" data-shmore${loading?" disabled":""}>${esc(loading?t("shLoading"):t("shMore"))}</button>` : "";
   const body = !SHOW.users && SHOW.ustate!=="fail" && SHOW.ustate!=="off" ? shSkel(3)
     : comm.length ? `<div class="sh-grid">${comm.map((it,k)=>showCard(it,k)).join("")}</div>${more}`
     : `<p class="sh-none">${esc(filt ? t("shNone") : SHOW.ustate==="fail" ? t("shCommFail") : t("shCommEmpty"))}</p>${filt?more:""}`;
-  if(SHOW.ustate!=="off") h+=`<section class="sh-sec comm"><h3 class="sh-h">${esc(t("shComm"))} <small>${SHOW.users ? comm.length+(SHOW.unext?"+":"") : ""}</small></h3><p class="sh-hs">${esc(t("shCommSub"))}</p>${body}</section>`;
+  const acct = signedIn() ? `<div class="sh-acct"><span>${esc(t("acIn")(ACCT.n))}</span><button type="button" class="linkbtn" data-nick>${esc(t("acNick"))}</button></div>`
+    : `<div class="sh-acct"><button type="button" class="gbtn sm" data-glogin>${ICON_G}<span>${esc(t("acOut"))}</span></button><span>${esc(t("acWhy"))}</span></div>`;
+  if(SHOW.ustate!=="off") h+=`<section class="sh-sec comm"><h3 class="sh-h">${esc(t("shComm"))} <small>${SHOW.users ? comm.length+(SHOW.unext?"+":"") : ""}</small></h3><p class="sh-hs">${esc(t("shCommSub"))}</p>${acct}${body}</section>`;
   g.innerHTML = h || `<div class="sh-grid msg"><div class="sh-msg"><span class="sh-msg-ic" aria-hidden="true">✦</span><b>${esc(t("shEmpty"))}</b></div></div>`;
 }
 /* viewer: one detail page for showcase images and saved outfits */
@@ -3118,13 +3180,14 @@ function paintView(quiet){
   const n=VW.keys.length, L=v.L, its=L?lookItems(L):[], own=its.filter(it=>has(it,"x")).length, viv=lookViv(its);
   const pcs = its.slice().sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0])).map(x=>{ const o=has(x,"x"), sl=slotsOf(x)[0];
       return `<li class="${o?"own":""} r${x.r}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span><span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)} · ${"★".repeat(x.r||0)}</small></span><span class="ok" aria-label="${o?"✓":""}">${o?"✓":""}</span></li>`; }).join("");
-  const mine=v.kind==="mine", saved=!mine && L && showSaved(v.m);
+  const mine=v.kind==="mine", saved=!mine && L && showSaved(v.m), uit=!mine && v.it && v.it.user ? v.it : null, liked=uit && signedIn() && likedSet().has(uit.k);
+  const likeBtn = uit ? `<button type="button" class="btn ghost sv-like${liked?" on":""}" data-sv="like" aria-pressed="${!!liked}">♥ ${fmtN(uit.lk||0)} · ${esc(t("likeL"))}</button>` : "";
   const linkRow=`<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button><button type="button" class="btn ghost" data-sv="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button>${mine && /^https?:$/.test(location.protocol)?pubToggle():""}</div>`;
   const acts = L ? `<button type="button" class="btn sv-main" data-sv="edit">${ICON_EDIT} ${esc(t(mine?"shEditMine":"shEdit"))}</button>
       ${mine?"":`<button type="button" class="btn ghost" data-sv="save"${saved?" disabled":""}>${saved?"✓ "+esc(t("shSaved")):ICON_PLUS+" "+esc(t("shSave"))}</button>`}
-      <button type="button" class="btn ghost" data-sv="gcode" title="${esc(t("gameTip"))}">${ICON_PAD} ${esc(t("gameCode"))}</button>${linkRow}` : linkRow;
+      ${likeBtn}<button type="button" class="btn ghost" data-sv="gcode" title="${esc(t("gameTip"))}">${ICON_PAD} ${esc(t("gameCode"))}</button>${linkRow}` : likeBtn+linkRow;
   const side = !v.ready ? `<div class="sv-sk" aria-hidden="true"><i></i><i></i><i></i></div>` : `
-      <div class="sv-chips">${L?`<span>${L.g==="f"?"♀":"♂"} ${esc(t(L.g))}</span><span class="vv">${vivIcon()} ${fmtN(viv)} Vivid</span><span>${esc(t("shPieces")(its.length))}</span>${v.pic?`<span>${ICON_CAM} ${esc(t("shPhoto"))}</span>`:""}`:""}</div>
+      ${uit && uit.nick ? `<p class="sv-by">${esc(t("shBy")(uit.nick))}</p>` : ""}<div class="sv-chips">${L?`<span>${L.g==="f"?"♀":"♂"} ${esc(t(L.g))}</span><span class="vv">${vivIcon()} ${fmtN(viv)} Vivid</span><span>${esc(t("shPieces")(its.length))}</span>${v.pic?`<span>${ICON_CAM} ${esc(t("shPhoto"))}</span>`:""}`:""}</div>
       ${L?`<div class="sv-own${its.length&&own===its.length?" full":""}"><div class="sv-bar"><i style="width:${its.length?own/its.length*100:0}%"></i></div><span>${esc(its.length&&own===its.length?t("shAllOwned"):t("shOwned")(own,its.length))}</span></div>`:`<p class="sv-note">${esc(t("shNoData"))}</p>`}
       <div class="sv-act">${acts}</div>
       ${pcs?`<h3>${esc(t("shPiecesT"))}</h3><ul class="sv-pcs">${pcs}</ul>`:""}`;
@@ -3158,7 +3221,8 @@ async function showAct(a){
       catch(e){ toast(t("dlFail")); } return; }
     if(a==="edit"){ loadSaved(L); closeV(); goBuilder(); } return; }
   const it=v.it;
-  if(a==="link" || a==="discord"){ const url=it.user ? SITE+"/o/"+it.code+"?v="+CARD_V+(it.lang==="fr"?"&l=fr":"") : shareUrl("s", encodeURIComponent(showBase(it.name))), n=showName(it).replace(/[\\\[\]]/g,"\\$&");
+  if(a==="like"){ if(it.user) await likeToggle(it); return; }
+  if(a==="link" || a==="discord"){ const url=it.user ? SITE+"/o/"+it.code+"?v="+CARD_V+(it.lang==="fr"?"&l=fr":"")+"&p="+(it.meta && it.meta.pic?1:0) : shareUrl("s", encodeURIComponent(showBase(it.name))), n=showName(it).replace(/[\\\[\]]/g,"\\$&");
     return copyTxt(a==="discord" ? `[${t("cardDiscordO")(n)}](${url})` : url, t(a==="discord"?"scCopiedD":"linkCopied")); }
   if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.user ? (slug(showName(it))||"miliadex-outfit")+".jpg" : it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
   const m=await showMeta(it); if(!m) return;
@@ -3179,7 +3243,7 @@ $("showcase").addEventListener("click", e=>{
 });
 document.addEventListener("change", e=>{ if(e.target.matches && e.target.matches("[data-shpub]")){ ui.shPub=e.target.checked; saveUI(); document.querySelectorAll("[data-shpub]").forEach(x=>x.checked=ui.shPub); } });
 $("showcase").addEventListener("input", e=>{ if(e.target.id==="shQ"){ SHOW.f.q=e.target.value; clearTimeout(showRT); showRT=setTimeout(renderShowGrid,120); } });
-$("showcase").addEventListener("change", e=>{ if(e.target.id==="shMine"){ SHOW.f.mine=e.target.checked; renderShowGrid(); } else if(e.target.id==="shSort"){ SHOW.f.sort=e.target.value; renderShowGrid(); } });
+$("showcase").addEventListener("change", e=>{ if(e.target.id==="shMine"){ SHOW.f.mine=e.target.checked; renderShowGrid(); } else if(e.target.id==="shSort"){ SHOW.f.sort=e.target.value; if(SHOW.ustate!=="off" && usersSort()!==SHOW.usort) usersLoad(false); renderShowGrid(); } });
 // cards lean toward the pointer and catch the light
 let shTiltEl=null, shTiltRAF=0;
 $("showcase").addEventListener("pointermove", e=>{ if(e.pointerType!=="mouse" || reduce()) return; const c=e.target.closest(".sh-card[data-sh]");
@@ -3251,7 +3315,7 @@ window.addEventListener("popstate", ()=>{
 });
 /* ---------- admin: /a/<secret> is a "page not found", except for the site owner (the Google account connected for Drive sync,
    checked by the server on every call). It lists the outfits shared to the showcase: take one out, put it back, delete its picture ---------- */
-const ADMIN={seg:"", which:"pub", items:[], next:null, stats:null, max:0, busy:false, arm:null};
+const ADMIN={seg:"", which:"pub", items:[], next:null, stats:null, max:0, people:0, busy:false, arm:null};
 function adminBoot(){
   const m=location.pathname.match(/^\/a\/([^/?#]+)/); try{ ADMIN.seg=m ? decodeURIComponent(m[1]) : ""; }catch(e){ ADMIN.seg=""; }
   document.documentElement.classList.add("x404"); document.title="404 · Miliadex";
@@ -3269,7 +3333,7 @@ async function adminCheck(){
   const j=await adminCall("me"); if(!j || !j.ok) return;
   const h=document.documentElement; h.classList.remove("x404"); h.classList.add("xadm"); document.title="Admin · Miliadex";
   let p=$("padmin"); if(!p){ p=document.createElement("div"); p.id="padmin"; document.body.appendChild(p); p.addEventListener("click", adminClick); }
-  ADMIN.stats=j.stats; ADMIN.max=j.max; adminLoad(false);
+  ADMIN.stats=j.stats; ADMIN.max=j.max; ADMIN.people=j.people||0; adminLoad(false);
 }
 async function adminLoad(more){
   ADMIN.busy=true; adminRender();
@@ -3284,7 +3348,7 @@ async function adminClick(e){
   if(op==="delete" && ADMIN.arm!==k){ ADMIN.arm=k; adminRender(); return; }   // deleting takes a second click
   ADMIN.arm=null; b.disabled=true;
   const j=await adminCall("set", {k, op});
-  if(j && j.ok){ ADMIN.items=ADMIN.items.filter(x=>x.k!==k); const me=await adminCall("me"); if(me) ADMIN.stats=me.stats; toast("✓ "+t("admDone")); } else toast(t("admFail"));
+  if(j && j.ok){ ADMIN.items=ADMIN.items.filter(x=>x.k!==k); const me=await adminCall("me"); if(me){ ADMIN.stats=me.stats; ADMIN.people=me.people||0; } toast("✓ "+t("admDone")); } else toast(t("admFail"));
   adminRender();
 }
 function adminRender(){
@@ -3292,12 +3356,13 @@ function adminRender(){
   const day=ms=>{ try{ return new Date(ms).toLocaleDateString(ui.lang==="fr"?"fr-FR":"en-GB",{day:"numeric",month:"short",year:"numeric"}); }catch(e){ return ""; } };
   const cards=ADMIN.items.map(x=>{ const L=x.c ? parseLook(x.c) : null, n=(L && L.n.trim())||t("untitled"), its=L ? lookItems(L) : [];
     return `<article class="adm-card"><a class="adm-th" href="${ROOT}card/${x.k}.jpg" target="_blank" rel="noopener"><img src="${ROOT}card/${x.k}/thumb" alt="" loading="lazy"></a>
-      <div class="adm-tx"><b>${esc(n)}</b><small>${L?(L.g==="f"?"♀":"♂")+" · ":""}${esc(t("shPieces")(its.length))} · ${esc(day(x.at))} · ${esc(String(x.l).toUpperCase())} · ${Math.max(1,Math.round((x.z||0)/1024))} KB${x.p?" · "+esc(t("shPhoto")):""}</small></div>
-      <div class="adm-act">${ADMIN.which==="ban" ? `<button type="button" class="btn ghost" data-aop="show" data-k="${x.k}">${esc(t("admShow"))}</button>` : `<button type="button" class="btn ghost" data-aop="hide" data-k="${x.k}">${esc(t("admHide"))}</button>`}
+      <div class="adm-tx"><b>${esc(n)}</b><small>${x.n?esc(t("shBy")(x.n))+" · ":""}♥ ${fmtN(x.lk||0)} · ${L?(L.g==="f"?"♀":"♂")+" · ":""}${esc(t("shPieces")(its.length))} · ${esc(day(x.at))} · ${esc(String(x.l).toUpperCase())} · ${Math.max(1,Math.round((x.z||0)/1024))} KB${x.p?" · "+esc(t("shPhoto")):""}</small></div>
+      <div class="adm-act">${ADMIN.which==="ban" ? `<button type="button" class="btn ghost" data-aop="show" data-k="${x.k}">${esc(t("admShow"))}</button>`
+        : `${ADMIN.which==="feat" ? `<button type="button" class="btn ghost" data-aop="unfeature" data-k="${x.k}">${esc(t("admUnfeat"))}</button>` : `<button type="button" class="btn ghost adm-feat" data-aop="feature" data-k="${x.k}">★ ${esc(t("admFeat"))}</button>`}<button type="button" class="btn ghost" data-aop="hide" data-k="${x.k}">${esc(t("admHide"))}</button>`}
         <button type="button" class="btn ghost adm-del${ADMIN.arm===x.k?" armed":""}" data-aop="delete" data-k="${x.k}">${esc(ADMIN.arm===x.k ? t("admSure") : t("admDel"))}</button></div></article>`; }).join("");
   p.innerHTML=`<header class="adm-top"><div><span class="vp-kick">Miliadex</span><h1>${esc(t("admT"))}</h1></div><a class="btn ghost" href="/">${esc(t("admSite"))}</a></header>
-    <div class="adm-stats"><span><b>${fmtN(sum("c"))}</b> / ${fmtN(ADMIN.max)} ${esc(t("admImgs"))}</span><span><b>${fmtN(Math.round(sum("z")/2**20))}</b> ${esc(t("admMB"))}</span><span><b>${fmtN(sum("p"))}</b> ${esc(t("admPub"))}</span><span><b>${fmtN(sum("b"))}</b> ${esc(t("admBan"))}</span></div>
-    <div class="seg adm-seg" role="group">${[["pub",t("admTabPub")],["ban",t("admTabBan")]].map(([v,l])=>`<button type="button" data-aw="${v}" aria-pressed="${ADMIN.which===v}">${esc(l)}</button>`).join("")}</div>
+    <div class="adm-stats"><span><b>${fmtN(sum("c"))}</b> / ${fmtN(ADMIN.max)} ${esc(t("admImgs"))}</span><span><b>${fmtN(Math.round(sum("z")/2**20))}</b> ${esc(t("admMB"))}</span><span><b>${fmtN(sum("p"))}</b> ${esc(t("admPub"))}</span><span><b>${fmtN(sum("f"))}</b> ${esc(t("admFeatN"))}</span><span><b>${fmtN(sum("b"))}</b> ${esc(t("admBan"))}</span><span><b>${fmtN(ADMIN.people)}</b> ${esc(t("admPeople"))}</span></div>
+    <div class="seg adm-seg" role="group">${[["pub",t("admTabPub")],["feat",t("admTabFeat")],["ban",t("admTabBan")]].map(([v,l])=>`<button type="button" data-aw="${v}" aria-pressed="${ADMIN.which===v}">${esc(l)}</button>`).join("")}</div>
     <div class="adm-grid">${cards || (ADMIN.busy ? "" : `<p class="adm-none">${esc(t("admNone"))}</p>`)}</div>
     ${ADMIN.busy ? `<p class="adm-busy"><span class="spin"></span></p>` : ADMIN.next ? `<button type="button" class="btn ghost adm-more" data-amore>${esc(t("shMore"))}</button>` : ""}`;
 }
@@ -3442,12 +3507,17 @@ $("shc").addEventListener("input", e=>{ if(e.target.id!=="scName") return;
 /* ---------- share pictures: the card Discord shows for a /c/ or /o/ link — drawn here with the site's own look, kept by the site's Worker ---------- */
 const CARD_V=2;   // same as CARD_V in worker/index.js: bump both when the card design changes
 const cardJobs=new Map();   // link → the picture on its way (true once the site has it)
-// draw() gives a canvas, a Blob, or (outfits) {card, thumb, pic}; opt.pub lists the outfit in the Outfits Showcase
+// pictures this browser already sent: not sent again for 2 days (same link, same picture, same showcase choice)
+const SENT_KEY="miliadex-sent", SENT_TTL=2*864e5;
+function sentAll(){ try{ const o=JSON.parse(localStorage.getItem(SENT_KEY)||"{}"), now=Date.now(); for(const k in o) if(!(now-o[k]<SENT_TTL)) delete o[k]; return o; }catch(e){ return {}; } }
+function sentMark(id, on){ try{ const o=sentAll(); if(on) o[id]=Date.now(); else delete o[id]; localStorage.setItem(SENT_KEY, JSON.stringify(o)); }catch(e){} }
+// draw() gives a canvas, a Blob, or (outfits) {card, thumb, pic}; opt.pub lists the outfit in the Outfits Showcase, opt.fp tells pictures apart
 function pushCard(k, code, draw, opt){
   if(!/^https?:$/.test(location.protocol)) return Promise.resolve(false);
-  const lang=ui.lang==="fr"?"fr":"en", pub=!!(opt && opt.pub), base=k+"|"+lang+"|"+code, id=base+(pub?"|pub":"");
+  const lang=ui.lang==="fr"?"fr":"en", pub=!!(opt && opt.pub), base=k+"|"+lang+"|"+code, id=base+(pub?"|pub":""), memo=id+"|"+((opt && opt.fp)||"")+"|"+CARD_V;
   if(cardJobs.has(id)) return cardJobs.get(id);
   cardJobs.delete(pub ? base : base+"|pub");   // the other choice is outdated once this one is sent
+  if(sentAll()[memo]){ const done=Promise.resolve(true); cardJobs.set(id, done); return done; }
   const job=(async()=>{
     try{
       const out=await draw(); let b=out, th=null, pic=false;
@@ -3455,10 +3525,10 @@ function pushCard(k, code, draw, opt){
       if(b && !(b instanceof Blob)) b=await toBlobP(b,"image/jpeg",.88);
       if(!b) throw new Error("no picture");
       let body=b, headers={"content-type":b.type||"image/jpeg"};
-      if(k==="o"){ body=new FormData(); body.append("card",b,"card.jpg"); if(th) body.append("thumb",th,"thumb"); body.append("pub",pub?"1":"0"); body.append("pic",pic?"1":"0"); headers={}; }
+      if(k==="o"){ body=new FormData(); body.append("card",b,"card.jpg"); if(th) body.append("thumb",th,"thumb"); body.append("pub",pub?"1":"0"); body.append("pic",pic?"1":"0"); headers=pub && signedIn() ? {"x-session":ACCT.s} : {}; }
       const r=await fetch("/api/card?k="+k+"&l="+lang+"&c="+encodeURIComponent(code),{method:"POST",body,headers});
       if(!r.ok) throw new Error("card upload "+r.status);
-      return true;
+      sentMark(memo, true); return true;
     }catch(e){ console.warn("Miliadex: preview picture not sent", e); cardJobs.delete(id); return false; }
   })();
   cardJobs.set(id, job); return job;
@@ -3559,19 +3629,23 @@ async function shareCardCol(st,name){
 }
 // sharing an outfit: its link (and the picture behind its preview), listed in the Outfits Showcase when the person chose so
 const shPubOn = () => ui.shPub!==false;
-const pubToggle = () => `<label class="pub-t" title="${esc(t("shPubTip"))}"><input type="checkbox" data-shpub${shPubOn()?" checked":""}><span class="tg" aria-hidden="true"></span><span>${esc(t("shPubL"))}</span></label>`;
+// signed in: the switch, with the pseudo the outfit will show · not signed in: the way to sign in
+const pubToggle = () => !/^https?:$/.test(location.protocol) ? "" : signedIn()
+  ? `<label class="pub-t" title="${esc(t("shPubTip"))}"><input type="checkbox" data-shpub${shPubOn()?" checked":""}><span class="tg" aria-hidden="true"></span><span>${esc(t("shPubAs")(ACCT.n))}</span></label>`
+  : `<button type="button" class="pub-t pub-in" data-glogin>${ICON_G}<span>${esc(t("pubNeed"))}</span></button>`;
 // the showcase grid's small picture: the bottom square of the outfit image (its title band stays out), like the featured ones
 async function lookThumb(cv){
-  const s=Math.min(cv.width,cv.height), c=mkCanvas(480,480), g=c.getContext("2d"); g.imageSmoothingQuality="high";
-  g.drawImage(cv,(cv.width-s)/2,cv.height-s,s,s,0,0,480,480);
-  const w=await toBlobP(c,"image/webp",.8); return w && w.type==="image/webp" ? w : await toBlobP(c,"image/jpeg",.82);
+  const s=Math.min(cv.width,cv.height), c=mkCanvas(400,400), g=c.getContext("2d"); g.imageSmoothingQuality="high";
+  g.drawImage(cv,(cv.width-s)/2,cv.height-s,s,s,0,0,400,400);
+  const w=await toBlobP(c,"image/webp",.72); return w && w.type==="image/webp" ? w : await toBlobP(c,"image/jpeg",.78);
 }
 function shareLook(L, discord){
-  const code=lookCode(L), url=shareUrl("o",code), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&"), pub=shPubOn() && lookItems(L).length>0;
+  const code=lookCode(L), hasPic=!!(L.pic && L.picOn!==false), url=shareUrl("o",code,"&p="+(hasPic?1:0)), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
+  const pub=shPubOn() && signedIn() && lookItems(L).length>0;
   // the preview shows the outfit exactly as the site downloads it (JPEG with the outfit inside, so it can be opened back in the Miliadex)
   const ready=pushCard("o", code, async()=>{ const cv=await lookCanvas(L), card=await lookImage(L, cv); if(!card) throw new Error("no picture");
     let thumb=null; try{ thumb=await lookThumb(cv); }catch(e){}
-    return {card, thumb, pic:!!(L.pic && L.picOn!==false)}; }, {pub});
+    return {card, thumb, pic:hasPic}; }, {pub, fp:(L.pic||"")+(hasPic?"+":"-")+(pub?ACCT.n:"")});
   return copyLater(discord ? `[${t("cardDiscordO")(name)}](${url})` : url, ready, t(discord?"scCopiedD":"linkCopied")+(pub?t("shPubDone"):""),
     txt=>{ const inp=$("lkCode"); if(inp){ inp.value=txt; inp.focus(); inp.select(); } });
 }
@@ -4228,7 +4302,7 @@ const GD=(()=>{
       if(!d || !d.access_token) throw new Error((d&&d.error)||"token");
       if(d.refresh_token) setRt(d.refresh_token);
       setTok({v:d.access_token, exp:Date.now()+(+d.expires_in||3600)*1000-120000});
-      cfg.on=true; saveCfg(); failed=false; poll(); plan(); setStatus("idle"); whoami(); sync();
+      cfg.on=true; saveCfg(); failed=false; poll(); plan(); setStatus("idle"); whoami(); sync(); acctEnsure(true);
     }catch(e){ failed=true; setStatus(cfg.on?"auth":"off", t("gdNet")); }
   }
   const saveCfg=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(cfg)); }catch(e){} };
@@ -4242,7 +4316,7 @@ const GD=(()=>{
     if(client) return client;
     client=google.accounts.oauth2.initTokenClient({client_id:CID, scope:SCOPE, hint:cfg.email||undefined,
       callback:r=>{ asking=false;
-        if(r && r.access_token){ setTok({v:r.access_token, exp:Date.now()+(+r.expires_in||3600)*1000-120000}); failed=false; const first=!cfg.on; cfg.on=true; saveCfg(); poll(); setStatus("idle"); if(first || !cfg.email) whoami(); sync(); }
+        if(r && r.access_token){ setTok({v:r.access_token, exp:Date.now()+(+r.expires_in||3600)*1000-120000}); failed=false; const first=!cfg.on; cfg.on=true; saveCfg(); poll(); setStatus("idle"); if(first || !cfg.email) whoami(); sync(); acctEnsure(first); }
         else { failed=true; setStatus(cfg.on?"auth":"off", cfg.on?"":t("gdDenied")); } },
       error_callback:e=>{ asking=false; failed=true; setStatus(cfg.on?"auth":"off", e && e.type==="popup_closed" ? "" : cfg.on ? "" : t("gdDenied")); } });
     return client;
@@ -4262,7 +4336,7 @@ const GD=(()=>{
     asking=true; lastAsk=Date.now(); ensureClient().requestAccessToken({prompt:"", hint:cfg.email||undefined});
   }
   document.addEventListener("click", e=>{ if(e.target.closest && e.target.closest("#gdBtn,[data-gd]")) return; renew(); });
-  function disconnect(){ const v=tok&&tok.v; if(rt){ relay({revoke:rt}).catch(()=>{}); setRt(null); } clearTimeout(renewT); setTok(null); cfg={on:false,fid:"",at:0,md5:"",lt:0,email:""}; saveCfg(); clearTimeout(pushT); clearInterval(pollT); client=null;
+  function disconnect(){ acctOut(); const v=tok&&tok.v; if(rt){ relay({revoke:rt}).catch(()=>{}); setRt(null); } clearTimeout(renewT); setTok(null); cfg={on:false,fid:"",at:0,md5:"",lt:0,email:""}; saveCfg(); clearTimeout(pushT); clearInterval(pollT); client=null;
     try{ if(v && window.google) google.accounts.oauth2.revoke(v, ()=>{}); }catch(e){} setStatus("off"); toast(t("gdOff")); }
   async function api(path, opt={}){
     if(!fresh()){ setTok(null); throw Object.assign(new Error("auth"),{auth:true}); }
@@ -4341,6 +4415,7 @@ const GD=(()=>{
     box.innerHTML=`<div class="gd-h"><span class="gd-ic" aria-hidden="true">${ICON_DRIVE}</span><div><h3>${esc(t("gdTitle"))}</h3><p>${esc(cfg.on?t("gdStay"):t("gdText"))}</p></div>${cfg.on?`<span class="gd-st" data-st="${status}"><i></i>${esc(st)}</span>`:""}</div>
       ${err?`<p class="gd-warn">${esc(err)}</p>`:""}
       ${cfg.on && cfg.email ? `<p class="gd-note">${esc(t("gdAs")(cfg.email))}</p>`:""}
+      ${cfg.on && signedIn() ? `<p class="gd-note gd-acct">${esc(t("acIn")(ACCT.n))} · <button type="button" class="linkbtn" data-nick>${esc(t("acNick"))}</button> · <button type="button" class="linkbtn danger" data-acdel>${esc(t("acDel"))}</button></p>`:""}
       ${cfg.on ? `<div class="row">${status==="auth"?`<button class="gbtn" type="button" data-gd="connect">${ICON_G}<span>${esc(t("gdReconnect"))}</span></button>`:`<button class="btn" type="button" data-gd="sync"${status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}<button class="btn ghost" type="button" data-gd="off">${esc(t("gdDisconnect"))}</button></div>`
         : `<div class="row"><button class="gbtn" type="button" data-gd="connect"${usable?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${usable?"":`<p class="gd-note">${esc(t("gdLocal"))}</p>`}`}
       <p class="gd-note"><a href="${ROOT}privacy.html" target="_blank" rel="noopener">${esc(t("gdPriv"))}</a></p>`;
@@ -4365,11 +4440,69 @@ const GD=(()=>{
   }
   // a valid access token (renewed through the relay when it expired), for the admin page's calls
   async function token(){ if(fresh()) return tok.v; if(rt){ await refresh(); if(fresh()) return tok.v; } return null; }
-  return {init, soon, render, token};
+  return {init, soon, render, token, connect, on:()=>cfg.on, off:disconnect};
 })();
 gdHook=()=>GD.soon(); gdRender=()=>GD.render();
+/* ---------- account: the Google account connected for Drive sync also signs in to the showcase (show outfits there, like),
+   under a pseudo. Google is asked once; the server then gives a signed session (30 days) the page keeps ---------- */
+const AKEY="miliadex-acct";
+let ACCT=null; try{ const a=JSON.parse(localStorage.getItem(AKEY)||"null"); if(a && a.s && a.e>Date.now()) ACCT=a; }catch(e){}
+const saveAcct=()=>{ try{ ACCT ? localStorage.setItem(AKEY, JSON.stringify(ACCT)) : localStorage.removeItem(AKEY); }catch(e){} };
+function signedIn(){ return !!(ACCT && ACCT.s && ACCT.e>Date.now()); }
+function likedSet(){ return new Set((ACCT && ACCT.likes) || []); }
+let acctP=null;
+function acctEnsure(force){
+  if(!/^https?:$/.test(location.protocol) || !GD.on()) return Promise.resolve(false);
+  if(!force && signedIn() && ACCT.e-Date.now()>3*864e5) return Promise.resolve(true);
+  return acctP || (acctP=(async()=>{ try{ const tk=await GD.token(); if(!tk) return false;
+      const r=await fetch(ROOT+"api/auth", {method:"POST", headers:{authorization:"Bearer "+tk}}); if(!r.ok) return false;
+      const j=await r.json(); if(!j || !j.s) return false;
+      ACCT={s:j.s, n:j.n, e:j.e, likes:j.likes||[]}; saveAcct(); acctChanged(); return true;
+    }catch(e){ return false; } finally{ acctP=null; } })());
+}
+function acctOut(){ if(!ACCT) return; ACCT=null; saveAcct(); acctChanged(); }
+function acctChanged(){
+  try{ GD.render(); }catch(e){}
+  if(ui.tab==="show") renderShowGrid(); else if(ui.tab==="outfits") renderOutfits();
+  const d=$("shv"); if(d && d.open) paintView(true);
+}
+function nickOpen(){
+  if(!signedIn()) return;
+  let d=$("nickDlg");
+  if(!d){ d=document.createElement("dialog"); d.id="nickDlg"; d.className="nick-dlg"; document.body.appendChild(d);
+    d.addEventListener("click", e=>{ if(e.target===d || e.target.closest("[data-nkx]")) d.close(); });
+    d.addEventListener("submit", e=>{ e.preventDefault(); nickSave(); }); }
+  d.innerHTML=`<form class="nick-f"><h3>${esc(t("nkT"))}</h3><p>${esc(t("nkSub"))}</p>
+    <input id="nickIn" maxlength="20" autocomplete="off" spellcheck="false" value="${esc(ACCT.n)}" aria-label="${esc(t("nkT"))}"><p class="nick-err" id="nickErr" role="alert"></p>
+    <div class="row"><button type="submit" class="btn">${esc(t("nkSave"))}</button><button type="button" class="btn ghost" data-nkx>${esc(t("close"))}</button></div></form>`;
+  d.showModal ? d.showModal() : d.setAttribute("open",""); const i=$("nickIn"); i.focus(); i.select();
+}
+async function nickSave(){
+  const d=$("nickDlg"), err=$("nickErr"), b=d.querySelector("button[type=submit]"), v=$("nickIn").value.normalize("NFC").replace(/\s+/g," ").trim();
+  if(v.length<3 || v.length>20 || !/^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(v)){ err.textContent=t("nkBad"); return; }
+  if(v===ACCT.n){ d.close(); return; }
+  b.disabled=true; err.textContent="";
+  try{ const r=await fetch(ROOT+"api/nick", {method:"POST", headers:{"content-type":"application/json","x-session":ACCT.s}, body:JSON.stringify({nick:v})});
+    const j=await r.json().catch(()=>null);
+    if(r.ok && j && j.s){ Object.assign(ACCT, {s:j.s, n:j.n, e:j.e}); saveAcct(); d.close(); toast("✓ "+t("nkDone")); acctChanged(); if(SHOW.ustate==="ok") usersLoad(false); }
+    else err.textContent = j && j.error==="taken" ? t("nkTaken") : j && j.error==="bad" ? t("nkBad") : t("nkFail");
+  }catch(e){ err.textContent=t("nkFail"); }
+  b.disabled=false;
+}
+let acDelArm=0;
+async function acctDelete(btn){
+  if(!signedIn()) return;
+  if(Date.now()-acDelArm>6000){ acDelArm=Date.now(); btn.textContent=t("acDelSure"); btn.classList.add("armed"); return; }   // a second click confirms
+  acDelArm=0; btn.disabled=true;
+  try{ const r=await fetch(ROOT+"api/account/delete", {method:"POST", headers:{"x-session":ACCT.s}}); if(!r.ok) throw new Error("HTTP "+r.status);
+    toast("✓ "+t("acDelDone")); GD.off(); }
+  catch(e){ toast(t("nkFail")); btn.disabled=false; }
+}
+document.addEventListener("click", e=>{ const g=e.target.closest && e.target.closest("[data-glogin],[data-nick],[data-acdel]"); if(!g) return;
+  if(g.matches("[data-glogin]")) GD.connect(); else if(g.matches("[data-nick]")) nickOpen(); else acctDelete(g); });
 
 const R0=routeBoot(); readShowHash(); readHash(); renderAll(); applyBg(); syncPills(); GD.init(); readCol();
+if(GD.on()) acctEnsure(); else acctOut();
 if(R0 && R0.det && !$("shc").open) openDetail(R0.det);
 // start the ambient loops once the first render has settled
 window.addEventListener("load", ()=>{ const go=()=>document.body.classList.add("ready"); (window.requestIdleCallback ? requestIdleCallback(go,{timeout:2500}) : setTimeout(go,1200)); });
