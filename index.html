@@ -1288,6 +1288,70 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .ask-ps .miss img{filter:grayscale(1) brightness(.55);opacity:.7}
 .ask-ps .cur{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .ask .row .btn{flex:1 1 150px}
+/* the pseudo in the header, above the rank */
+.me-chip{display:inline-flex;align-items:center;gap:7px;max-width:100%;margin:0 0 6px;padding:3px 11px 3px 3px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(10,6,30,.35);color:#fff;font:650 13px var(--body);cursor:pointer;transition:background .2s,border-color .2s}
+.me-chip[hidden]{display:none}
+.me-chip:hover{background:rgba(255,255,255,.12)}
+.me-av{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#c58cff,#5fd3ff);font-size:12px;font-weight:800;color:#140f2a}
+.me-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.me-chip svg{flex:none;width:13px;height:13px;opacity:.65}
+.me-chip.rnd{border-color:rgba(255,224,138,.65);box-shadow:0 0 16px rgba(255,200,90,.28)}
+.me-go{flex:none;font-size:11.5px;font-weight:800;color:#ffe08a;white-space:nowrap}
+.me-go::before{content:"· "}
+@media (max-width:640px){ .me-chip.rnd .me-n{display:none} .me-chip.rnd .me-go::before{content:none} }   /* narrow: the random pseudo gives way to the nudge */
+/* account window */
+.acct-dlg{width:min(450px,calc(100% - 32px))}
+.am-av{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:800 21px var(--body);color:#140f2a;background:linear-gradient(135deg,#c58cff,#5fd3ff)}
+.am-av.g{background:var(--raise);border:2px solid var(--line)} .am-av.g svg{width:24px;height:24px}
+.am-hint{margin:0 0 4px!important;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#ffb84d 14%,transparent);border:1px solid color-mix(in srgb,#ffb84d 50%,transparent);color:var(--text)!important;font-size:13.5px!important}
+.am-nick{display:grid;gap:6px}
+.am-nick label{font-weight:750;font-size:13px}
+.am-row{display:flex;gap:8px}
+.am > *{min-width:0}
+.am-row input{flex:1 1 0;width:0;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border-radius:12px;border:2px solid var(--line);background:var(--raise);color:var(--text)}
+.am-row input:focus{outline:none;border-color:var(--accent)}
+.am-row .btn{flex:none}
+.am-err{margin:0!important;color:#d6455d!important;font-size:13px!important;min-height:1em}
+.am-nick small{color:var(--muted);font-size:12px}
+.am-wait{display:flex;align-items:center;gap:10px}
+.am-wait .spin{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--accent);animation:spin .9s linear infinite}
+.am-sec{display:grid;gap:6px;padding-top:12px;border-top:1px solid var(--line)}
+.am-sec h4{margin:0;display:flex;align-items:center;gap:8px;font-size:14px}
+.am-sec h4 svg{width:18px;height:18px;color:var(--accent)}
+.am-sec h4 span[aria-hidden]{color:var(--accent)}
+.am-sec p{margin:0;font-size:13.5px}
+.am-sec .row{margin-top:2px}
+.am-st{display:flex;align-items:center;gap:8px}
+.am-st i{flex:none;width:9px;height:9px;border-radius:50%;background:#8a86a8}
+.am-st[data-st="ok"] i,.am-st[data-st="idle"] i{background:#2fd39a}
+.am-st[data-st="sync"] i{background:#5fb8ff;animation:gdPulse 1s ease-in-out infinite}
+.am-st[data-st="auth"] i,.am-st[data-st="err"] i{background:#ffb84d}
+.am-warn{color:#c77700!important}
+.am-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)}
+.am-list{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.am-list li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.45}
+.am-list li span:first-child{color:var(--accent);font-size:16px;text-align:center}
+.am-small{font-size:12.5px!important}
+.am-priv{margin:0!important;font-size:12.5px!important}
+.am-priv a{color:var(--accent)}
+.am .gbtn{width:100%;box-sizing:border-box;justify-content:center}
+/* showcase confirmation */
+.pb-th{background:var(--raise)} .pb-th img{object-fit:cover}
+.pb-meta{margin:-6px 0 0!important;font-size:13px!important}
+.pb-rnd{margin:0!important;padding:9px 12px;border-radius:12px;background:color-mix(in srgb,#ffb84d 14%,transparent);border:1px solid color-mix(in srgb,#ffb84d 50%,transparent);color:var(--text)!important;font-size:13px!important}
+.pb-rule{display:grid;grid-template-columns:16px minmax(0,1fr);gap:7px;font-size:12.5px!important}
+.pb-rule svg{width:16px;height:16px;margin-top:1px;color:var(--accent)}
+.pb-chk{list-style:none;margin:0;padding:10px 12px;border-radius:12px;background:var(--raise);display:grid;gap:7px;font-size:13.5px}
+.pb-chk[hidden]{display:none}
+.pb-chk li{display:flex;align-items:center;gap:9px}
+.pb-chk i{flex:none;width:17px;height:17px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:900;color:#fff}
+.pb-chk li[data-s="run"] i{border-color:var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+.pb-chk li[data-s="ok"] i{background:#22b07f;border-color:#22b07f}
+.pb-chk li[data-s="ok"] i::after{content:"✓"}
+.pb-chk li[data-s="bad"] i{background:#d6455d;border-color:#d6455d}
+.pb-chk li[data-s="bad"] i::after{content:"✕"}
+.pb-err{margin:0!important;color:#d6455d!important;font-size:13.5px!important;font-weight:650}
+.pb-err[hidden]{display:none}
 .own-dlg{width:min(470px,calc(100% - 32px))}
 .own-ic{display:grid;place-items:center;border:0;background:linear-gradient(160deg,#22b07f,#64d7a9);color:#fff}
 .own-ic svg{width:30px;height:30px}
@@ -1489,7 +1553,7 @@ html.x404 body, html.xadm body{background:var(--screen)}
           <button type="button" class="hbtn" id="bgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/><path d="M17.5 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke="none"/></svg></button>
           <div class="seg" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="fr">FR</button></div>
         </div>
-        <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo">i</button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
+        <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><button type="button" class="me-chip" id="meChip" hidden></button><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo">i</button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
         <div class="xp"><div class="xp-bar"><i id="xpFill"></i></div><div class="xp-txt" id="xpTxt"></div></div>
       </div>
     </div>
@@ -1590,7 +1654,7 @@ const T = {
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
   importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code or link",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
-  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",vpCurL:"Show the value in dollars",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
+  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",amKick:"Your Miliadex account",amRandom:"This pseudo was picked at random. Choose your own: it signs the outfits you share in the Outfits Showcase.",amNickL:"Pseudo",amNickSub:"3 to 20 characters · shown on the outfits you share",amSync:"Google Drive sync",amShared:n=>n?`${n} outfit${n===1?"":"s"} shared`:"No outfit shared yet",amSeeMine:"See them",amOut:"Sign out",amWait:"Connecting to your Miliadex account…",amInT:"Sign in with Google",amInIntro:"Signing in with your Google account lets you:",amInSync:"<b>Sync</b> your collection and outfits between all your devices",amInShare:"<b>Share your outfits</b> in the Outfits Showcase, under a pseudo you choose",amInLike:"<b>Like</b> other players’ outfits",amInNote:"The Miliadex only uses a private, hidden folder of its own in your Google Drive: it sees nothing else there, and your email address isn’t stored.",meChange:"Choose your pseudo",nkRude:"This pseudo isn’t allowed: pick another one",acMine:"My account",chkRun:"Checking the image…",chkBad:"This image can’t be used: inappropriate content detected",chkDrop:"This outfit’s in-game screenshot was left out: inappropriate content detected",chkShareBad:"Link copied without the in-game screenshot: inappropriate content detected",chkShareNo:"Link copied without the in-game screenshot: it couldn’t be checked",pbRnd:n=>`It will be signed “${n}”, a pseudo picked at random.`,pbTxt:"Everyone will see this outfit in the Outfits Showcase: its name, its pieces, your in-game screenshot and your pseudo. You can remove it at any time.",pbRule:"No inappropriate content: the name and the in-game screenshot are checked on your device before anything is sent.",pbChkName:"Outfit name and pseudo",pbChkPic:"In-game screenshot",pbNoPic:"No in-game screenshot",pbGo:"Share",pbGoU:"Update",pbNameBad:"This outfit’s name isn’t allowed in the showcase: rename it first.",pbNickBad:"Your pseudo isn’t allowed in the showcase: change it first (My account).",pbPicBad:"Your in-game screenshot can’t go in the showcase (inappropriate content detected): remove it or pick another one.",pbPicErr:"The in-game screenshot couldn’t be checked (connection?): try again.",vpCurL:"Show the value in dollars",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
   ranksIntro:"Your rank follows your Vivid rating, like in the game: every set (each version) and every standalone cosmetic you own adds its Vivid value. A set's pieces are covered by the set's rating; interactions give none. Every 300 Vivid is one Raiment Collector level; the ranks below are reached at those levels.",
   yourPts:(a,b,l,lm)=>`Your Vivid: ${a} / ${b} · Raiment Collector Lv. ${l} / ${lm}`,maxed:"Everything collected. Legendary.",rankUp:r=>`New rank: ${r}!`,
@@ -1643,7 +1707,7 @@ const T = {
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
   importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu ou lien",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
-  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",vpCurL:"Afficher la valeur en euros",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
+  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",amKick:"Ton compte Miliadex",amRandom:"Ce pseudo a été choisi au hasard. Choisis le tien : il signe les tenues que tu partages dans la vitrine.",amNickL:"Pseudo",amNickSub:"3 à 20 caractères · affiché sur les tenues que tu partages",amSync:"Synchronisation Google Drive",amShared:n=>n?`${n} tenue${n>1?"s":""} partagée${n>1?"s":""}`:"Aucune tenue partagée pour l’instant",amSeeMine:"Les voir",amOut:"Se déconnecter",amWait:"Connexion à ton compte Miliadex…",amInT:"Se connecter avec Google",amInIntro:"Te connecter avec ton compte Google te permet de :",amInSync:"<b>Synchroniser</b> ta collection et tes tenues entre tous tes appareils",amInShare:"<b>Partager tes tenues</b> dans la vitrine, sous un pseudo que tu choisis",amInLike:"<b>Aimer</b> les tenues des autres joueurs",amInNote:"Le Miliadex n’utilise qu’un dossier privé et caché de ton Google Drive : il n’y voit rien d’autre, et ton adresse e-mail n’est pas enregistrée.",meChange:"Choisis ton pseudo",nkRude:"Ce pseudo n’est pas autorisé : choisis-en un autre",acMine:"Mon compte",chkRun:"Vérification de l’image…",chkBad:"Cette image ne peut pas être utilisée : contenu inapproprié détecté",chkDrop:"La capture en jeu de cette tenue a été retirée : contenu inapproprié détecté",chkShareBad:"Lien copié sans la capture en jeu : contenu inapproprié détecté",chkShareNo:"Lien copié sans la capture en jeu : elle n’a pas pu être vérifiée",pbRnd:n=>`Elle sera signée « ${n} », un pseudo choisi au hasard.`,pbTxt:"Tout le monde verra cette tenue dans la vitrine : son nom, ses pièces, ta capture en jeu et ton pseudo. Tu pourras la retirer quand tu veux.",pbRule:"Pas de contenu inapproprié : le nom et la capture en jeu sont vérifiés sur ton appareil avant l’envoi.",pbChkName:"Nom de la tenue et pseudo",pbChkPic:"Capture en jeu",pbNoPic:"Pas de capture en jeu",pbGo:"Partager",pbGoU:"Mettre à jour",pbNameBad:"Le nom de cette tenue n’est pas autorisé dans la vitrine : renomme-la d’abord.",pbNickBad:"Ton pseudo n’est pas autorisé dans la vitrine : change-le d’abord (Mon compte).",pbPicBad:"Ta capture en jeu ne peut pas aller dans la vitrine (contenu inapproprié détecté) : retire-la ou choisis-en une autre.",pbPicErr:"La capture en jeu n’a pas pu être vérifiée (connexion ?) : réessaie.",vpCurL:"Afficher la valeur en euros",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
   ranksIntro:"Ton rang suit ton Vivid rating, comme en jeu : chaque set (chaque version) et chaque cosmétique hors set obtenu ajoute sa valeur de Vivid. Les pièces d'un set sont couvertes par le Vivid du set ; les interactions n'en donnent pas. Tous les 300 Vivid, tu gagnes un niveau de Raiment Collector ; les rangs ci-dessous s'obtiennent à ces niveaux.",
   yourPts:(a,b,l,lm)=>`Ton Vivid : ${a} / ${b} · Raiment Collector niv. ${l} / ${lm}`,maxed:"Tout est à toi. Légendaire.",rankUp:r=>`Nouveau rang : ${r} !`,
@@ -2956,6 +3020,140 @@ async function lookImage(L, cv){
   const jpg=await toBlobP(cv || await lookCanvas(L),"image/jpeg",LOOK_Q); if(!jpg) return null;
   try{ return await lookFile(jpg, L); }catch(e){ console.warn("Miliadex: outfit data not added to the image", e); return jpg; }
 }
+// Tiny inference engine for the nsfwjs MobileNetV2 classifier (Keras layers model converted for TensorFlow.js, uint8-quantized weights).
+// Pure JavaScript, no dependency: runs in a Web Worker in the page, and in Node for the tests. Classes: Drawing, Hentai, Neutral, Porn, Sexy.
+function nsfwNet(model, buf){
+  const layers=model.modelTopology.model_config.config.layers, bytes=new Uint8Array(buf), W={};
+  let off=0;
+  for(const w of model.weightsManifest[0].weights){
+    const n=w.shape.reduce((a,b)=>a*b,1), q=w.quantization, a=new Float32Array(n);
+    if(q){ for(let i=0;i<n;i++) a[i]=bytes[off+i]*q.scale+q.min; off+=n*(q.dtype==="uint16"?2:1); }
+    else { a.set(new Float32Array(buf.slice(off,off+n*4))); off+=n*4; }
+    W[w.name]=a;
+  }
+  const T=(h,w,c,d)=>({h,w,c,d:d||new Float32Array(h*w*c)});
+  const outSize=(n,k,s,pad)=>pad==="same" ? Math.ceil(n/s) : Math.floor((n-k)/s)+1;
+  const padBefore=(n,k,s,pad)=>{ if(pad!=="same") return 0; const o=Math.ceil(n/s); return Math.floor(Math.max((o-1)*s+k-n,0)/2); };
+  function conv(x, cfg, name){
+    const K=W[name+"/kernel"], B=cfg.use_bias ? W[name+"/bias"] : null, [kh,kw]=cfg.kernel_size, [sh,sw]=cfg.strides, oc=cfg.filters, ic=x.c;
+    const oh=outSize(x.h,kh,sh,cfg.padding), ow=outSize(x.w,kw,sw,cfg.padding), pt=padBefore(x.h,kh,sh,cfg.padding), pl=padBefore(x.w,kw,sw,cfg.padding);
+    const y=T(oh,ow,oc), o=y.d, d=x.d;
+    if(kh===1 && kw===1 && sh===1 && sw===1){
+      for(let p=0, P=oh*ow; p<P; p++){ const ib=p*ic, ob=p*oc;
+        for(let i=0;i<ic;i++){ const v=d[ib+i]; if(v===0) continue; const kb=i*oc; for(let j=0;j<oc;j++) o[ob+j]+=v*K[kb+j]; } }
+    } else {
+      for(let yy=0;yy<oh;yy++) for(let xx=0;xx<ow;xx++){ const ob=(yy*ow+xx)*oc;
+        for(let a=0;a<kh;a++){ const iy=yy*sh+a-pt; if(iy<0||iy>=x.h) continue;
+          for(let b=0;b<kw;b++){ const ix=xx*sw+b-pl; if(ix<0||ix>=x.w) continue; const ib=(iy*x.w+ix)*ic, kb0=(a*kw+b)*ic*oc;
+            for(let i=0;i<ic;i++){ const v=d[ib+i]; if(v===0) continue; const kb=kb0+i*oc; for(let j=0;j<oc;j++) o[ob+j]+=v*K[kb+j]; } } } }
+    }
+    if(B) for(let p=0;p<o.length;p+=oc) for(let j=0;j<oc;j++) o[p+j]+=B[j];
+    return y;
+  }
+  function dwconv(x, cfg, name){
+    const K=W[name+"/depthwise_kernel"], B=cfg.use_bias ? W[name+"/bias"] : null, [kh,kw]=cfg.kernel_size, [sh,sw]=cfg.strides, c=x.c;
+    const oh=outSize(x.h,kh,sh,cfg.padding), ow=outSize(x.w,kw,sw,cfg.padding), pt=padBefore(x.h,kh,sh,cfg.padding), pl=padBefore(x.w,kw,sw,cfg.padding);
+    const y=T(oh,ow,c), o=y.d, d=x.d;
+    for(let yy=0;yy<oh;yy++) for(let xx=0;xx<ow;xx++){ const ob=(yy*ow+xx)*c;
+      for(let a=0;a<kh;a++){ const iy=yy*sh+a-pt; if(iy<0||iy>=x.h) continue;
+        for(let b=0;b<kw;b++){ const ix=xx*sw+b-pl; if(ix<0||ix>=x.w) continue; const ib=(iy*x.w+ix)*c, kb=(a*kw+b)*c;
+          for(let i=0;i<c;i++) o[ob+i]+=d[ib+i]*K[kb+i]; } } }
+    if(B) for(let p=0;p<o.length;p+=c) for(let j=0;j<c;j++) o[p+j]+=B[j];
+    return y;
+  }
+  function bn(x, cfg, name){
+    const g=W[name+"/gamma"], be=W[name+"/beta"], m=W[name+"/moving_mean"], v=W[name+"/moving_variance"], eps=cfg.epsilon||1e-3, c=x.c, s=new Float32Array(c), t=new Float32Array(c);
+    for(let j=0;j<c;j++){ s[j]=(g?g[j]:1)/Math.sqrt(v[j]+eps); t[j]=(be?be[j]:0)-m[j]*s[j]; }
+    const d=x.d; for(let p=0;p<d.length;p+=c) for(let j=0;j<c;j++) d[p+j]=d[p+j]*s[j]+t[j];
+    return x;
+  }
+  function act(d, kind, max){ if(kind==="relu"){ for(let i=0;i<d.length;i++){ const v=d[i]; d[i]=v<0?0:(max!=null && v>max?max:v); } }
+    else if(kind==="softmax"){ let mx=-Infinity; for(const v of d) mx=Math.max(mx,v); let s=0; for(let i=0;i<d.length;i++){ d[i]=Math.exp(d[i]-mx); s+=d[i]; } for(let i=0;i<d.length;i++) d[i]/=s; } }
+  function pad(x, p){ const [[t,b],[l,r]]=p, y=T(x.h+t+b, x.w+l+r, x.c);
+    for(let yy=0;yy<x.h;yy++) y.d.set(x.d.subarray(yy*x.w*x.c,(yy+1)*x.w*x.c), ((yy+t)*y.w+l)*x.c); return y; }
+  function avgpool(x, cfg){ const [ph,pw]=cfg.pool_size, [sh,sw]=cfg.strides||cfg.pool_size, oh=Math.floor((x.h-ph)/sh)+1, ow=Math.floor((x.w-pw)/sw)+1, y=T(oh,ow,x.c);
+    for(let yy=0;yy<oh;yy++) for(let xx=0;xx<ow;xx++){ const ob=(yy*ow+xx)*x.c;
+      for(let a=0;a<ph;a++) for(let b=0;b<pw;b++){ const ib=((yy*sh+a)*x.w+xx*sw+b)*x.c; for(let i=0;i<x.c;i++) y.d[ob+i]+=x.d[ib+i]; }
+      for(let i=0;i<x.c;i++) y.d[ob+i]/=ph*pw; }
+    return y; }
+  function dense(x, cfg, name){ const K=W[name+"/kernel"], B=W[name+"/bias"], n=x.d.length, u=cfg.units, y=T(1,1,u);
+    for(let i=0;i<n;i++){ const v=x.d[i]; if(v===0) continue; const kb=i*u; for(let j=0;j<u;j++) y.d[j]+=v*K[kb+j]; }
+    if(B) for(let j=0;j<u;j++) y.d[j]+=B[j];
+    act(y.d, cfg.activation); return y; }
+  // how many layers still need each output (freed once used)
+  const uses={}; for(const l of layers) for(const n of (l.inbound_nodes[0]||[])) uses[n[0]]=(uses[n[0]]||0)+1;
+  return function predict(rgb){   // rgb: Float32Array 224 × 224 × 3, values 0…1
+    const out={}, left=Object.assign({},uses);
+    for(const l of layers){
+      const cfg=l.config, ins=(l.inbound_nodes[0]||[]).map(n=>out[n[0]]), x=ins[0]; let y;
+      switch(l.class_name){
+        case "InputLayer": y=T(224,224,3,rgb); break;
+        case "ZeroPadding2D": y=pad(x,cfg.padding); break;
+        case "Conv2D": y=conv(x,cfg,l.name); if(cfg.activation==="relu") act(y.d,"relu"); break;
+        case "DepthwiseConv2D": y=dwconv(x,cfg,l.name); if(cfg.activation==="relu") act(y.d,"relu"); break;
+        case "BatchNormalization": y=bn(left[l.inbound_nodes[0][0][0]]>1 ? T(x.h,x.w,x.c,x.d.slice()) : x, cfg, l.name); break;
+        case "ReLU": { const d=left[l.inbound_nodes[0][0][0]]>1 ? x.d.slice() : x.d; act(d,"relu",cfg.max_value); y=T(x.h,x.w,x.c,d); break; }
+        case "Add": { y=T(x.h,x.w,x.c,x.d.slice()); for(const z of ins.slice(1)) for(let i=0;i<y.d.length;i++) y.d[i]+=z.d[i]; break; }
+        case "AveragePooling2D": y=avgpool(x,cfg); break;
+        case "GlobalAveragePooling2D": y=avgpool(x,{pool_size:[x.h,x.w]}); break;
+        case "Flatten": case "Dropout": y=x; break;
+        case "Dense": y=dense(x,cfg,l.name); break;
+        default: throw new Error("layer "+l.class_name);
+      }
+      out[l.name]=y;
+      for(const n of (l.inbound_nodes[0]||[])) if(--left[n[0]]===0 && n[0]!==l.name) delete out[n[0]];
+    }
+    return Array.from(out[layers[layers.length-1].name].d);
+  };
+}
+// in-game screenshots are checked on this device before they can be used: the classifier (nsfwjs MobileNetV2, MIT, served by the
+// site in /nsfw/) runs in a background worker; nothing is sent anywhere for it
+const NSFW=(()=>{
+  let wk=null, ready=null, seq=0, local=null; const wait=new Map(), base=()=>location.origin+"/nsfw/";
+  const load=async()=>{ const [j,b]=await Promise.all([fetch(base()+"model.json").then(r=>{ if(!r.ok) throw new Error("model "+r.status); return r.json(); }),
+    fetch(base()+"mobilenet_v2.bin").then(r=>{ if(!r.ok) throw new Error("weights "+r.status); return r.arrayBuffer(); })]); return nsfwNet(j,b); };
+  function start(){
+    if(ready) return ready;
+    ready=new Promise((res,rej)=>{
+      if(!/^https?:$/.test(location.protocol)){ rej(new Error("offline copy")); return; }
+      try{
+        const code=nsfwNet.toString()+`\nlet P=null; onmessage=async e=>{ const m=e.data;
+          if(m.init){ try{ const [j,b]=await Promise.all([fetch(m.init+"model.json").then(r=>r.json()), fetch(m.init+"mobilenet_v2.bin").then(r=>{ if(!r.ok) throw new Error("weights"); return r.arrayBuffer(); })]); P=nsfwNet(j,b); postMessage({ready:true}); }
+            catch(x){ postMessage({ready:false, error:String(x)}); } return; }
+          try{ postMessage({id:m.id, p:P(m.x)}); }catch(x){ postMessage({id:m.id, error:String(x)}); } };`;
+        wk=new Worker(URL.createObjectURL(new Blob([code],{type:"text/javascript"})));
+        wk.onmessage=e=>{ const m=e.data; if("ready" in m){ m.ready ? res() : rej(new Error(m.error)); return; }
+          const w=wait.get(m.id); if(!w) return; wait.delete(m.id); m.error ? w.rej(new Error(m.error)) : w.res(m.p); };
+        wk.onerror=()=>rej(new Error("worker"));
+        wk.postMessage({init:base()});
+      }catch(e){ load().then(P=>{ local=P; res(); }, rej); }   // no worker: on the page itself
+    }).catch(e=>{ ready=null; if(wk) wk.terminate(); wk=null; throw e; });
+    return ready;
+  }
+  // the picture over neutral grey, squeezed to the model's 224 × 224
+  async function pixels(blob){
+    const c=await blobToCanvas(blob, 1024); if(!c) return null;
+    const k=mkCanvas(224,224), g=k.getContext("2d"); g.fillStyle="#808080"; g.fillRect(0,0,224,224); g.imageSmoothingQuality="high"; g.drawImage(c,0,0,224,224);
+    const d=g.getImageData(0,0,224,224).data, x=new Float32Array(224*224*3); for(let i=0,j=0;i<d.length;i+=4){ x[j++]=d[i]/255; x[j++]=d[i+1]/255; x[j++]=d[i+2]/255; }
+    return x;
+  }
+  async function scores(blob){
+    await start(); const x=await pixels(blob); if(!x) throw new Error("unreadable image");
+    if(local) return local(x);
+    const id=++seq; return new Promise((res,rej)=>{ wait.set(id,{res,rej}); wk.postMessage({id,x},[x.buffer]); setTimeout(()=>{ if(wait.delete(id)) rej(new Error("timeout")); },60000); });
+  }
+  // classes: Drawing, Hentai, Neutral, Porn, Sexy. Refused: porn or explicit drawings (a revealing outfit on its own is fine)
+  const bad=p=>p[3]>=.5 || p[1]>=.5 || p[1]+p[3]>=.6;
+  async function verdict(blobs){ for(const b of blobs.filter(Boolean)){ const p=await scores(b); if(bad(p)) return {ok:false, p}; } return {ok:true}; }
+  return {verdict, bad, scores, warm:()=>{ start().catch(()=>{}); }};
+})();
+// a stored screenshot's verdict, kept on its record; worked out when missing (screenshots added before the check existed). null: couldn't check
+async function picOk(id){
+  const rec=id && await PicDB.get(id); if(!rec) return true;
+  if(rec.chk && rec.chk.v===1 && typeof rec.chk.ok==="boolean") return rec.chk.ok;
+  try{ const {ok}=await NSFW.verdict([rec.cut, rec.src]); rec.chk={v:1, ok}; await PicDB.put(rec); return ok; }
+  catch(e){ console.warn("Miliadex: image check unavailable", e); return null; }
+}
 async function readOutfitPng(blob){   // JPEG or PNG
   const d=await PNGX.find(blob,"mlDx") || await JPGX.data(blob); if(!d || d.length<9 || String.fromCharCode(...d.subarray(0,4))!=="MLDX" || d[4]!==1) return null;
   const n=new DataView(d.buffer,d.byteOffset,d.byteLength).getUint32(5), meta=JSON.parse(new TextDecoder().decode(d.subarray(9,9+n)));
@@ -2965,8 +3163,12 @@ async function readOutfitPng(blob){   // JPEG or PNG
 }
 async function storeOutfitPic(r){
   if(!r || !r.bl.cut) return null;
+  const chk={v:1, ok:null}, slow=setTimeout(()=>toast(t("chkRun")),600);   // a word when the check takes a moment (first time: the model loads)
+  try{ chk.ok=(await NSFW.verdict([r.bl.cut, r.bl.src])).ok; }catch(e){ console.warn("Miliadex: image check unavailable", e); }
+  clearTimeout(slow);
+  if(chk.ok===false){ toast(t("chkDrop")); return null; }   // the outfit comes without it
   const pm=r.pm||{}, id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  await PicDB.put({id, src:r.bl.src||r.bl.cut, cut:r.bl.cut, crop:r.bl.src?pm.crop:null, auto:!!pm.auto, w:pm.w||0, h:pm.h||0, t:Date.now()});
+  await PicDB.put({id, src:r.bl.src||r.bl.cut, cut:r.bl.cut, crop:r.bl.src?pm.crop:null, auto:!!pm.auto, w:pm.w||0, h:pm.h||0, t:Date.now(), chk});
   return {id, on:pm.on!==false};
 }
 /* ---------- imported outfits (a Miliadex outfit card, a code, a link): shown in the outfit window first, like a showcase outfit,
@@ -3325,7 +3527,7 @@ function renderShowGrid(){
   const body = !SHOW.users && SHOW.ustate!=="fail" && SHOW.ustate!=="off" ? shSkel(3)
     : comm.length ? `<div class="sh-grid">${comm.map((it,k)=>showCard(it,k)).join("")}</div>${more}`
     : `<p class="sh-none">${esc(filt ? t("shNone") : SHOW.ustate==="fail" ? t("shCommFail") : t("shCommEmpty"))}</p>${filt?more:""}`;
-  const acct = signedIn() ? `<div class="sh-acct"><span>${esc(t("acIn")(ACCT.n))}</span><button type="button" class="linkbtn" data-nick>${esc(t("acNick"))}</button></div>`
+  const acct = signedIn() ? `<div class="sh-acct"><span>${esc(t("acIn")(ACCT.n))}</span><button type="button" class="linkbtn" data-acct>${esc(t("acMine"))}</button></div>`
     : `<div class="sh-acct"><button type="button" class="gbtn sm" data-glogin>${ICON_G}<span>${esc(t("acOut"))}</span></button><span>${esc(t("acWhy"))}</span></div>`;
   if(SHOW.ustate!=="off") h+=`<section class="sh-sec comm"><h3 class="sh-h">${esc(t("shComm"))} <small>${SHOW.users ? comm.length+(SHOW.unext?"+":"") : ""}</small></h3><p class="sh-hs">${esc(t("shCommSub"))}</p>${acct}${body}</section>`;
   g.innerHTML = h || `<div class="sh-grid msg"><div class="sh-msg"><span class="sh-msg-ic" aria-hidden="true">✦</span><b>${esc(t("shEmpty"))}</b></div></div>`;
@@ -3413,7 +3615,7 @@ async function showAct(a){
       catch(e){ toast(t("dlFail")); } }
     return; }
   if(v.kind==="mine"){ const L=v.L;
-    if(a==="pub") return publishLook(L);
+    if(a==="pub") return publishAsk(L);
     if(a==="unpub") return unpublish(L.pub && L.pub.k);
     if(a==="pubview"){ if(!L.pub) return; closeV(); ui.tab="show"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="show")); renderHeader(); renderTab(); showOpenName("u-"+L.pub.k); return; }
     if(a==="link" || a==="discord") return shareLook(L, a==="discord");
@@ -3854,6 +4056,43 @@ function pubRow(L){
     <div class="sv-row">${changed ? `<button type="button" class="btn sv-pubb" data-sv="pub"${wait?" disabled":""}>↻ ${esc(wait ? t("pubWaitL")(wait) : t("pubUpd"))}</button>` : ""}<button type="button" class="btn ghost" data-sv="unpub">${esc(t("pubOff"))}</button></div></div>`;
 }
 let pubBusy=false;
+// "Share in the Outfits Showcase": what will be public, then the name and the in-game screenshot are checked on this device before sending
+function publishAsk(L){
+  if(pubBusy) return;
+  if(!signedIn()){ toast(t("pubNeed2")); GD.connect(); return; }
+  if(!lookItems(L).length){ toast(t("pubEmpty")); return; }
+  if(L.pub && pubWait(L)) return;
+  let d=$("pubAsk");
+  if(!d){ d=document.createElement("dialog"); d.id="pubAsk"; d.className="nick-dlg ask-dlg pub-dlg"; d.setAttribute("aria-labelledby","pbT"); document.body.appendChild(d);
+    d.addEventListener("click", e=>{ if(e.target===d || e.target.closest("[data-pbx]")){ if(!d._busy) d.close(); return; } if(e.target.closest("[data-pbgo]")) publishRun(d); });
+    d.addEventListener("cancel", e=>{ if(d._busy) e.preventDefault(); }); }
+  const upd=!!L.pub, hasPic=!!(L.pic && L.picOn!==false), rnd=nickRandom(ACCT.n), name=(L.n||"").trim()||t("untitled");
+  d._L=L; d._busy=false;
+  d.innerHTML=`<div class="ask"><div class="ask-hd"><span class="ask-img pb-th"><img id="pbTh" alt=""></span>
+      <div><small>${esc(t(upd?"pubUpd":"pubBtn"))}</small><h3 id="pbT">${esc(name)}</h3></div><button type="button" class="dx" data-pbx aria-label="${esc(t("close"))}">✕</button></div>
+    <p class="pb-meta">${esc(t("shBy")(ACCT.n))} · ${esc(t("shPieces")(lookItems(L).length))}${hasPic?" · "+esc(t("shPhoto")):""}</p>
+    ${rnd?`<p class="pb-rnd">${esc(t("pbRnd")(ACCT.n))} <button type="button" class="linkbtn" data-acct="nick">${esc(t("meChange"))}</button></p>`:""}
+    <p>${esc(t("pbTxt"))}</p>
+    <p class="pb-rule">${ICON_INFO}<span>${esc(t("pbRule"))}</span></p>
+    <ul class="pb-chk" hidden><li data-k="name"><i></i><span>${esc(t("pbChkName"))}</span></li><li data-k="pic"><i></i><span>${esc(t(hasPic?"pbChkPic":"pbNoPic"))}</span></li></ul>
+    <p class="pb-err" role="alert" hidden></p>
+    <div class="row"><button type="button" class="btn" data-pbgo>${esc(t(upd?"pbGoU":"pbGo"))}</button><button type="button" class="btn ghost" data-pbx>${esc(t("cutCancel"))}</button></div></div>`;
+  d.showModal ? d.showModal() : d.setAttribute("open",""); d.querySelector("[data-pbgo]").focus();
+  lookCanvas(L).then(cv=>lookThumb(cv)).then(b=>{ const im=$("pbTh"); if(b && im && d._L===L){ im.src=URL.createObjectURL(b); im.onload=()=>URL.revokeObjectURL(im.src); } }).catch(()=>{});
+}
+async function publishRun(d){
+  const L=d._L, go=d.querySelector("[data-pbgo]"), list=d.querySelector(".pb-chk"), err=d.querySelector(".pb-err");
+  const mark=(k,st)=>{ const li=list.querySelector(`[data-k="${k}"]`); if(li) li.dataset.s=st; };
+  const fail=m=>{ err.textContent=m; err.hidden=false; go.disabled=false; d._busy=false; };
+  go.disabled=true; d._busy=true; err.hidden=true; list.hidden=false; mark("name","run"); mark("pic","");
+  if(!nameOk(ACCT.n)){ mark("name","bad"); return fail(t("pbNickBad")); }
+  if(!nameOk(L.n)){ mark("name","bad"); return fail(t("pbNameBad")); }
+  mark("name","ok");
+  if(L.pic && L.picOn!==false){ mark("pic","run"); const ok=await picOk(L.pic);
+    if(ok!==true){ mark("pic","bad"); return fail(t(ok===false ? "pbPicBad" : "pbPicErr")); } }
+  mark("pic","ok"); d._busy=false; d.close();
+  await publishLook(L);
+}
 async function publishLook(L){
   if(pubBusy) return;
   if(!signedIn()){ toast(t("pubNeed2")); GD.connect(); return; }
@@ -3870,6 +4109,7 @@ async function publishLook(L){
     else if(j && j.error==="wait"){ if(L.pub) L.pub.t=Date.now()-60000+j.wait*1000; toast(t("pubWaitL")(j.wait)); }
     else if(j && j.error==="limit") toast(t("pubLimit")(j.max||30));
     else if(j && j.error==="ban") toast(t("pubBan"));
+    else if(j && (j.error==="name" || j.error==="nick")) toast(t(j.error==="name" ? "pbNameBad" : "pbNickBad"));
     else { toast(t("pubFail")); if(r.status===401) acctEnsure(true); }
   }catch(e){ toast(t("pubFail")); }
   pubBusy=false; paintView(true); if(ui.tab==="outfits") renderOutfits();
@@ -3893,12 +4133,19 @@ async function lookThumb(cv){
   const w=await toBlobP(c,"image/webp",.72); return w && w.type==="image/webp" ? w : await toBlobP(c,"image/jpeg",.78);
 }
 function shareLook(L, discord){
-  const code=lookCode(L), hasPic=!!(L.pic && L.picOn!==false), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
-  // a short link (/o/<key>): each screenshot gets its own; the long link (the outfit inside it) if the site couldn't keep the picture
-  const salt=hasPic ? String(L.pic).replace(/[^A-Za-z0-9_-]/g,"").slice(0,64) : "", key=shortKeyOf("o", code, ui.lang==="fr"?"fr":"en", salt), long=shareUrl("o",code,"&p="+(hasPic?1:0));
-  // the preview shows the outfit exactly as the site downloads it (JPEG with the outfit inside, so it can be opened back in the Miliadex)
-  const ready=pushCard("o", code, async()=>{ const card=await lookImage(L); if(!card) throw new Error("no picture"); return {card, pic:hasPic}; }, {fp:(L.pic||"")+(hasPic?"+":"-"), short:true, salt});
-  const text=async ok=>{ const k=ok && await key, url=k ? SITE+"/o/"+k : long; return discord ? `[${t("cardDiscordO")(name)}](${url})` : url; };
+  const want=!!(L.pic && L.picOn!==false), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
+  // the in-game screenshot goes along only once it passed the image check (screenshots added before the check get it now)
+  const job=(want ? picOk(L.pic) : Promise.resolve(false)).then(ok=>{
+    if(want && ok!==true) toast(t(ok===false ? "chkShareBad" : "chkShareNo"));
+    const hasPic=want && ok===true, L2=hasPic || !want ? L : Object.assign({}, L, {pic:null}), code=lookCode(L2);
+    // a short link (/o/<key>): each screenshot gets its own; the long link (the outfit inside it) if the site couldn't keep the picture
+    const salt=hasPic ? String(L.pic).replace(/[^A-Za-z0-9_-]/g,"").slice(0,64) : "", key=shortKeyOf("o", code, ui.lang==="fr"?"fr":"en", salt), long=shareUrl("o",code,"&p="+(hasPic?1:0));
+    // the preview shows the outfit exactly as the site downloads it (JPEG with the outfit inside, so it can be opened back in the Miliadex)
+    const ready=pushCard("o", code, async()=>{ const card=await lookImage(L2); if(!card) throw new Error("no picture"); return {card, pic:hasPic}; }, {fp:(hasPic?L.pic:"")+(hasPic?"+":"-"), short:true, salt});
+    return {ready, key, long};
+  });
+  const ready=job.then(j=>j.ready);
+  const text=async ok=>{ const j=await job, k=ok && await j.key, url=k ? SITE+"/o/"+k : j.long; return discord ? `[${t("cardDiscordO")(name)}](${url})` : url; };
   return copyLater(text, ready, t(discord?"scCopiedD":"linkCopied"),
     txt=>{ const inp=$("lkCode"); if(inp){ inp.value=txt; inp.focus(); inp.select(); } });
 }
@@ -4136,7 +4383,7 @@ const autoPref=()=>{ try{ return localStorage.getItem(AUTO_KEY)!=="0"; }catch(e)
 function defaultCrop(w,h){ let ch=h, cw=ch*RATIO; if(cw>w){ cw=w; ch=cw/RATIO; } return {x:(w-cw)/2,y:(h-ch)/2,w:cw,h:ch}; }
 const mkCanvas=(w,h)=>{ const c=document.createElement("canvas"); c.width=w; c.height=h; return c; };
 let crRO=null;
-function openCut(src, rec){
+function openCut(src, rec){ NSFW.warm();   // the image check loads while the screenshot is framed
   const d=$("cut");
   Object.assign(CR,{on:true,src,w:src.width,h:src.height,rec:rec||null,
     r: rec&&rec.crop ? Object.assign({},rec.crop) : defaultCrop(src.width,src.height),
@@ -4269,8 +4516,13 @@ async function cutApply(){
   if(cut){ const im=await blobToCanvas(cut); if(im){ const wb=await toBlobP(im,"image/webp",.9); if(wb && wb.type==="image/webp" && wb.size<cut.size) cut=wb; } }
   if(!cut) cut=await toBlobP(out,"image/jpeg",.9);
   const src = CR.rec && CR.rec.src ? CR.rec.src : await toBlobP(CR.src,"image/jpeg",.92);
+  // checked here, as it's added, so nothing unchecked ever reaches a link preview or the showcase
+  busy(true, t("chkRun")); const chk={v:1, ok:null};
+  try{ chk.ok=(await NSFW.verdict([cut, src])).ok; }catch(e){ console.warn("Miliadex: image check unavailable, checked again before sharing", e); }
+  if(!CR.on) return;
+  if(chk.ok===false){ busy(false); toast(t("chkBad")); return; }   // the framing window stays: another image can be chosen
   const id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  const ok=await PicDB.put({id,src,cut,crop:Object.assign({},CR.r),auto,w:CR.w,h:CR.h,t:Date.now()});
+  const ok=await PicDB.put({id,src,cut,crop:Object.assign({},CR.r),auto,w:CR.w,h:CR.h,t:Date.now(),chk});
   busy(false); look.pic=id; look.picOn=true; saveDraft(); closeCut(); renderOutfits(); gcPics();
   toast(ok?"✓ "+t("picSaved"):t("picNoStore"));
 }
@@ -4709,11 +4961,12 @@ const GD=(()=>{
     const box=$("gd"), btn=$("gdBtn"); if(!box) return;
     const st = status==="ok" ? t("gdOk")(ago(cfg.at)) : status==="idle" && cfg.at ? t("gdOk")(ago(cfg.at)) : t("gdSt")[status]||"";
     btn.hidden=!usable; btn.dataset.st=status;
-    btn.title = cfg.on ? `Google Drive · ${st}${err?" · "+err:""}` : t("gdHint"); btn.setAttribute("aria-label", btn.title);
+    btn.title = cfg.on ? `${t("amKick")} · Google Drive · ${st}${err?" · "+err:""}` : t("amInT"); btn.setAttribute("aria-label", btn.title);
+    acctRefresh();
     box.innerHTML=`<div class="gd-h"><span class="gd-ic" aria-hidden="true">${ICON_DRIVE}</span><div><h3>${esc(t("gdTitle"))}</h3><p>${esc(cfg.on?t("gdStay"):t("gdText"))}</p></div>${cfg.on?`<span class="gd-st" data-st="${status}"><i></i>${esc(st)}</span>`:""}</div>
       ${err?`<p class="gd-warn">${esc(err)}</p>`:""}
       ${cfg.on && cfg.email ? `<p class="gd-note">${esc(t("gdAs")(cfg.email))}</p>`:""}
-      ${cfg.on && signedIn() ? `<p class="gd-note gd-acct">${esc(t("acIn")(ACCT.n))} · <button type="button" class="linkbtn" data-nick>${esc(t("acNick"))}</button> · <button type="button" class="linkbtn danger" data-acdel>${esc(t("acDel"))}</button></p>`:""}
+      ${cfg.on && signedIn() ? `<p class="gd-note gd-acct">${esc(t("acIn")(ACCT.n))} · <button type="button" class="linkbtn" data-acct>${esc(t("acMine"))}</button></p>`:""}
       ${cfg.on ? `<div class="row">${status==="auth"?`<button class="gbtn" type="button" data-gd="connect">${ICON_G}<span>${esc(t("gdReconnect"))}</span></button>`:`<button class="btn" type="button" data-gd="sync"${status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}<button class="btn ghost" type="button" data-gd="off">${esc(t("gdDisconnect"))}</button></div>`
         : `<div class="row"><button class="gbtn" type="button" data-gd="connect"${usable?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${usable?"":`<p class="gd-note">${esc(t("gdLocal"))}</p>`}`}
       <p class="gd-note"><a href="${ROOT}privacy.html" target="_blank" rel="noopener">${esc(t("gdPriv"))}</a></p>`;
@@ -4722,7 +4975,7 @@ const GD=(()=>{
   const act=()=>{ if(!cfg.on || status==="auth" || (!fresh() && !(relayOn && rt))) connect(); else if(status!=="sync") sync(); };
   $("gd").addEventListener("click", e=>{ const b=e.target.closest("[data-gd]"); if(!b) return; const a=b.dataset.gd;
     if(a==="connect") connect(); else if(a==="sync") act(); else if(a==="off") disconnect(); });
-  $("gdBtn").addEventListener("click", act);
+  $("gdBtn").addEventListener("click", ()=>acctOpen());   // signed out: what signing in gives · signed in: the account window
   let bc=null;
   function init(){
     render();
@@ -4738,7 +4991,8 @@ const GD=(()=>{
   }
   // a valid access token (renewed through the relay when it expired), for the admin page's calls
   async function token(){ if(fresh()) return tok.v; if(rt){ await refresh(); if(fresh()) return tok.v; } return null; }
-  return {init, soon, render, token, connect, on:()=>cfg.on, off:disconnect};
+  const info=()=>({status, err, email:cfg.email, usable, st: status==="ok" || (status==="idle" && cfg.at) ? t("gdOk")(ago(cfg.at)) : t("gdSt")[status]||""});
+  return {init, soon, render, token, connect, on:()=>cfg.on, off:disconnect, info, syncNow:act};
 })();
 gdHook=()=>GD.soon(); gdRender=()=>GD.render();
 /* ---------- account: the Google account connected for Drive sync also signs in to the showcase (show outfits there, like),
@@ -4761,31 +5015,92 @@ function acctEnsure(force){
 function acctOut(){ if(!ACCT) return; ACCT=null; saveAcct(); acctChanged(); }
 function acctChanged(){
   try{ GD.render(); }catch(e){}
+  renderMe(); const ad=$("acctDlg"); if(ad && ad.open) acctRender(true);
   if(ui.tab==="show") renderShowGrid(); else if(ui.tab==="outfits") renderOutfits();
   const d=$("shv"); if(d && d.open) paintView(true);
 }
-function nickOpen(){
-  if(!signedIn()) return;
-  let d=$("nickDlg");
-  if(!d){ d=document.createElement("dialog"); d.id="nickDlg"; d.className="nick-dlg"; document.body.appendChild(d);
-    d.addEventListener("click", e=>{ if(e.target===d || e.target.closest("[data-nkx]")) d.close(); });
-    d.addEventListener("submit", e=>{ e.preventDefault(); nickSave(); }); }
-  d.innerHTML=`<form class="nick-f"><h3>${esc(t("nkT"))}</h3><p>${esc(t("nkSub"))}</p>
-    <input id="nickIn" maxlength="20" autocomplete="off" spellcheck="false" value="${esc(ACCT.n)}" aria-label="${esc(t("nkT"))}"><p class="nick-err" id="nickErr" role="alert"></p>
-    <div class="row"><button type="submit" class="btn">${esc(t("nkSave"))}</button><button type="button" class="btn ghost" data-nkx>${esc(t("close"))}</button></div></form>`;
-  d.showModal ? d.showModal() : d.setAttribute("open",""); const i=$("nickIn"); i.focus(); i.select();
+// names people choose (pseudo, showcase outfit names): a short list of insults, slurs and sexual words in English and French,
+// read through common disguises (accents, l33t, s.p.a.c.e.s, CamelCase, repeated letters). Base64 so the source doesn't spell them out
+const BADW=JSON.parse(atob("eyJzIjpbImZ1Y2siLCJiaXRjaCIsIndob3JlIiwic2x1dCIsInJhcGlzdCIsInBvcm4iLCJoZW50YWkiLCJuc2Z3IiwicGVkb3BoaWwiLCJwYWVkb3BoaWwiLCJoaXRsZXIiLCJhc3Nob2xlIiwicGVuaXMiLCJ2YWdpbmEiLCJqaXp6IiwiZGlsZG8iLCJtYXN0dXJiIiwib3JnYXNtIiwibWlsZiIsImluY2VzdCIsImtpbGx5b3Vyc2VsZiIsInB1dGFpbiIsInNhbG9wZSIsImVuY3VsIiwiY29ubmFyZCIsImNvbm5hc3NlIiwidGFybG91emUiLCJuaXF1ZXRhbWVyZSIsImNvdWlsbGUiLCJicmFubGUiLCJzdWNldXNlIiwiYmFtYm91bGEiLCJib3Vnbm91bCIsInlvdXBpbiIsImNoaW50b2siLCJlbmZvaXJlIiwidmlvbGV1ciIsInBlZG9waGlsZSIsIm5lZ3JvZmlsIiwiZnZjayIsInBodWNrIiwiYmlhdGNoIiwibW90aGVyZnVjayJdLCJyIjpbIm5pZ2ciLCJmYWdnb3QiLCJmYWdvdCJdLCJ3IjpbInNoaXQiLCJjdW50IiwicmV0YXJkIiwicmFwZSIsInBlZG8iLCJuYXppIiwibmF6aXMiLCJoZWlsIiwia2trIiwiZGljayIsImNvY2siLCJwdXNzeSIsImJvb2IiLCJib29icyIsInRpdHMiLCJhbmFsIiwic2V4Iiwic2V4ZSIsImN1bSIsImt5cyIsInB1dGUiLCJwdXRlcyIsInNhbGF1ZCIsImNvbm5lIiwicGQiLCJwZWRlIiwidGFwZXR0ZSIsImZkcCIsIm50bSIsIm5pcXVlIiwibmlxdWVyIiwidGFtZXJlIiwiYml0ZSIsInN1Y2UiLCJjaGllbm5lIiwibmVncmUiLCJuZWdybyIsImJpY290Iiwieml6aSIsImZvdXRyZSIsImJhdGFyZCIsIm1lcmRlIiwidmlvbCIsIm5hemllIiwiZmFnIiwiZmFncyIsInR3YXQiLCJ3YW5rIiwid2Fua2VyIiwiYm9sbG9ja3MiLCJwcmljayIsImJhc3RhcmQiLCJjdWwiLCJwb3JubyIsInh4eCIsImZjayIsImZ1ayIsImZraW5nIiwiZmNraW5nIiwic3RmdSJdfQ=="));
+function nameOk(s){
+  const L={"0":"o","1":"i","3":"e","4":"a","5":"s","7":"t","8":"b","@":"a","$":"s","!":"i","|":"i","€":"e"};
+  const sp=String(s||"").replace(/([a-z])([A-Z])/g,"$1 $2").normalize("NFKD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[0134578@$!|€]/g,c=>L[c]);
+  const words=sp.split(/[^a-z]+/).filter(Boolean), all=words.join(""), sq=x=>x.replace(/(.)\1+/g,"$1");
+  if(BADW.r.some(x=>all.includes(x)) || BADW.s.some(x=>all.includes(x) || sq(all).includes(sq(x)))) return false;
+  const W=new Set([...BADW.w, ...BADW.w.map(sq).filter(x=>x.length>=5)]), cand=[...words, all];
+  let run=""; for(const w of [...words,"--"]){ if(w.length===1) run+=w; else { if(run.length>1) cand.push(run); run=""; } }   // "s h i t"
+  return !cand.some(x=>W.has(x) || W.has(sq(x)));
 }
-async function nickSave(){
-  const d=$("nickDlg"), err=$("nickErr"), b=d.querySelector("button[type=submit]"), v=$("nickIn").value.normalize("NFC").replace(/\s+/g," ").trim();
+/* ---------- account window: the header's cloud button and pseudo open it (sign in, pseudo, Drive sync, showcase, sign out) ---------- */
+const NICK_RE=/^(Starry|Lunar|Velvet|Crimson|Azure|Golden|Misty|Frosty|Blooming|Silent|Radiant|Moonlit|Stellar|Wild|Gentle|Amber)(Manekin|Manekina|Stylist|Wanderer|Dreamer|Seeker|Muse|Comet|Petal|Lantern|Traveler|Tailor|Sparrow|Ribbon|Fable|Nova)\d{2,4}$/;
+const nickRandom = n => NICK_RE.test(n||"");   // the pseudo the site picked at sign-up (same lists as the server)
+const ICON_PEN=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z"/></svg>`;
+function renderMe(){
+  const b=$("meChip"); if(!b) return; const on=signedIn(); b.hidden=!on; if(!on) return;
+  const rnd=nickRandom(ACCT.n); b.classList.toggle("rnd", rnd);
+  b.innerHTML=`<span class="me-av" aria-hidden="true">${esc((ACCT.n||"?").trim().charAt(0).toUpperCase())}</span><span class="me-n">${esc(ACCT.n)}</span>${rnd?`<span class="me-go">${esc(t("meChange"))}</span>`:ICON_PEN}`;
+  b.title=t("amKick"); b.setAttribute("aria-label", `${t("amKick")} : ${ACCT.n}`);
+}
+function acctOpen(nick){
+  let d=$("acctDlg");
+  if(!d){ d=document.createElement("dialog"); d.id="acctDlg"; d.className="nick-dlg ask-dlg acct-dlg"; d.setAttribute("aria-labelledby","amT"); document.body.appendChild(d);
+    d.addEventListener("click", e=>{ if(e.target===d || e.target.closest("[data-amx]")){ d.close(); return; }
+      const b=e.target.closest("[data-am]"); if(!b || b.disabled) return; const a=b.dataset.am;
+      if(a==="in") GD.connect(); else if(a==="sync") GD.syncNow(); else if(a==="out"){ d.close(); GD.off(); } else if(a==="mine"){ d.close(); openMyShares(); } });
+    d.addEventListener("submit", e=>{ e.preventDefault(); amNickSave(); });
+    d.addEventListener("close", ()=>{ acDelArm=0; }); }
+  acctRender(true);
+  if(!d.open){ d.showModal ? d.showModal() : d.setAttribute("open",""); }
+  if(GD.on() && !signedIn()) acctEnsure(true);
+  const i=$("amNick"); if(nick && i){ i.focus(); i.select(); }
+}
+function acctRefresh(){ const d=$("acctDlg"); if(d && d.open) acctRender(false); }
+function acctSync(){
+  const I=GD.info();
+  return `<section class="am-sec am-sync"><h4>${ICON_DRIVE}<span>${esc(t("amSync"))}</span></h4>
+    <p class="am-st" data-st="${esc(I.status)}"><i></i><span>${esc(I.st)}</span></p>${I.err?`<p class="am-warn">${esc(I.err)}</p>`:""}${I.email?`<p class="am-mail">${esc(t("gdAs")(I.email))}</p>`:""}
+    <div class="row">${I.status==="auth" ? `<button class="gbtn sm" type="button" data-am="in">${ICON_G}<span>${esc(t("gdReconnect"))}</span></button>` : `<button class="btn ghost" type="button" data-am="sync"${I.status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}</div></section>`;
+}
+function acctRender(full){
+  const d=$("acctDlg"); if(!d) return;
+  const mode=!GD.on() ? "out" : signedIn() ? "in" : "wait";
+  if(!full && d.dataset.mode===mode){ const sy=d.querySelector(".am-sync"); if(sy) sy.outerHTML=acctSync(); return; }   // only the sync line moves (typing stays)
+  d.dataset.mode=mode;
+  const priv=`<p class="am-priv"><a href="${ROOT}privacy.html" target="_blank" rel="noopener">${esc(t("gdPriv"))}</a></p>`;
+  if(mode==="out"){ const I=GD.info();
+    d.innerHTML=`<div class="ask am"><div class="ask-hd"><span class="am-av g" aria-hidden="true">${ICON_G}</span><div><small>Miliadex</small><h3 id="amT">${esc(t("amInT"))}</h3></div><button type="button" class="dx" data-amx aria-label="${esc(t("close"))}">✕</button></div>
+      <p>${esc(t("amInIntro"))}</p>
+      <ul class="am-list"><li><span aria-hidden="true">☁</span><span>${t("amInSync")}</span></li><li><span aria-hidden="true">✦</span><span>${t("amInShare")}</span></li><li><span aria-hidden="true">♥</span><span>${t("amInLike")}</span></li></ul>
+      <p class="am-small">${esc(t("amInNote"))}</p>
+      <div class="row"><button class="gbtn" type="button" data-am="in"${I.usable?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${I.usable?"":`<p class="am-small">${esc(t("gdLocal"))}</p>`}${priv}</div>`;
+    return; }
+  const shared=(state.looks||[]).filter(x=>x.pub).length, rnd=signedIn() && nickRandom(ACCT.n);
+  const who = signedIn() ? `<form class="am-nick">${rnd?`<p class="am-hint">✦ ${esc(t("amRandom"))}</p>`:""}<label for="amNick">${esc(t("amNickL"))}</label>
+      <div class="am-row"><input id="amNick" maxlength="20" autocomplete="off" spellcheck="false" value="${esc(ACCT.n)}"><button type="submit" class="btn">${esc(t("nkSave"))}</button></div>
+      <p class="am-err" id="amErr" role="alert"></p><small>${esc(t("amNickSub"))}</small></form>`
+    : `<p class="am-wait"><span class="spin" aria-hidden="true"></span>${esc(t("amWait"))}</p>`;
+  d.innerHTML=`<div class="ask am"><div class="ask-hd"><span class="am-av" aria-hidden="true">${esc(signedIn() ? (ACCT.n||"?").trim().charAt(0).toUpperCase() : "·")}</span><div><small>${esc(t("amKick"))}</small><h3 id="amT">${esc(signedIn() ? ACCT.n : "…")}</h3></div><button type="button" class="dx" data-amx aria-label="${esc(t("close"))}">✕</button></div>
+    ${who}${acctSync()}
+    ${signedIn()?`<section class="am-sec"><h4><span aria-hidden="true">✦</span><span>${esc(t("showT"))}</span></h4><p>${esc(t("amShared")(shared))}${shared?` · <button type="button" class="linkbtn" data-am="mine">${esc(t("amSeeMine"))}</button>`:""}</p></section>`:""}
+    <div class="am-foot"><button type="button" class="btn ghost" data-am="out">${esc(t("amOut"))}</button>${signedIn()?`<button type="button" class="linkbtn danger" data-acdel>${esc(t("acDel"))}</button>`:""}</div>${priv}</div>`;
+}
+async function amNickSave(){
+  const d=$("acctDlg"), err=$("amErr"), inp=$("amNick"); if(!inp || !signedIn()) return;
+  const b=d.querySelector(".am-nick button[type=submit]"), v=inp.value.normalize("NFC").replace(/\s+/g," ").trim();
   if(v.length<3 || v.length>20 || !/^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(v)){ err.textContent=t("nkBad"); return; }
-  if(v===ACCT.n){ d.close(); return; }
+  if(!nameOk(v)){ err.textContent=t("nkRude"); return; }   // checked here, and again by the site
+  if(v===ACCT.n){ err.textContent=""; return; }
   b.disabled=true; err.textContent="";
   try{ const r=await fetch(ROOT+"api/nick", {method:"POST", headers:{"content-type":"application/json","x-session":ACCT.s}, body:JSON.stringify({nick:v})});
     const j=await r.json().catch(()=>null);
-    if(r.ok && j && j.s){ Object.assign(ACCT, {s:j.s, n:j.n, e:j.e}); saveAcct(); d.close(); toast("✓ "+t("nkDone")); acctChanged(); if(SHOW.ustate==="ok") usersLoad(false); }
-    else err.textContent = j && j.error==="taken" ? t("nkTaken") : j && j.error==="bad" ? t("nkBad") : t("nkFail");
+    if(r.ok && j && j.s){ Object.assign(ACCT, {s:j.s, n:j.n, e:j.e}); saveAcct(); toast("✓ "+t("nkDone")); acctChanged(); if(SHOW.ustate==="ok") usersLoad(false); return; }
+    err.textContent = j && j.error==="taken" ? t("nkTaken") : j && j.error==="rude" ? t("nkRude") : j && j.error==="bad" ? t("nkBad") : t("nkFail");
   }catch(e){ err.textContent=t("nkFail"); }
   b.disabled=false;
+}
+function openMyShares(){
+  SHOW.f.mine=true; if(!SHOW.mine) mineLoad();
+  ui.tab="show"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="show")); renderHeader(); renderTab();
 }
 let acDelArm=0;
 async function acctDelete(btn){
@@ -4796,11 +5111,12 @@ async function acctDelete(btn){
     toast("✓ "+t("acDelDone")); GD.off(); }
   catch(e){ toast(t("nkFail")); btn.disabled=false; }
 }
-document.addEventListener("click", e=>{ const g=e.target.closest && e.target.closest("[data-glogin],[data-nick],[data-acdel]"); if(!g) return;
-  if(g.matches("[data-glogin]")) GD.connect(); else if(g.matches("[data-nick]")) nickOpen(); else acctDelete(g); });
+document.addEventListener("click", e=>{ const g=e.target.closest && e.target.closest("[data-glogin],[data-nick],[data-acct],[data-acdel]"); if(!g) return;
+  if(g.matches("[data-glogin]")) GD.connect(); else if(g.matches("[data-acdel]")) acctDelete(g); else acctOpen(g.matches("[data-nick]") || g.dataset.acct==="nick"); });
 
 const R0=routeBoot(); readShowHash(); readHash(); readCol(); renderAll(); applyBg(); syncPills(); GD.init();   // links in the address are read before renderAll rewrites it
 if(GD.on()) acctEnsure(); else acctOut();
+renderMe(); $("meChip").addEventListener("click", ()=>acctOpen(true));
 if(R0 && R0.det && !$("shc").open) openDetail(R0.det);
 // start the ambient loops once the first render has settled
 window.addEventListener("load", ()=>{ const go=()=>document.body.classList.add("ready"); (window.requestIdleCallback ? requestIdleCallback(go,{timeout:2500}) : setTimeout(go,1200)); });

@@ -560,6 +560,18 @@ async function readSession(env, request) {
     return d && d.u && d.e > Date.now() ? d : null;
   } catch (e) { return null; }
 }
+// names people choose (pseudo, showcase outfit names): a short list of insults, slurs and sexual words in English and French,
+// read through common disguises (accents, l33t, s.p.a.c.e.s, CamelCase, repeated letters). Base64 so the source doesn't spell them out
+const BADW=JSON.parse(atob("eyJzIjpbImZ1Y2siLCJiaXRjaCIsIndob3JlIiwic2x1dCIsInJhcGlzdCIsInBvcm4iLCJoZW50YWkiLCJuc2Z3IiwicGVkb3BoaWwiLCJwYWVkb3BoaWwiLCJoaXRsZXIiLCJhc3Nob2xlIiwicGVuaXMiLCJ2YWdpbmEiLCJqaXp6IiwiZGlsZG8iLCJtYXN0dXJiIiwib3JnYXNtIiwibWlsZiIsImluY2VzdCIsImtpbGx5b3Vyc2VsZiIsInB1dGFpbiIsInNhbG9wZSIsImVuY3VsIiwiY29ubmFyZCIsImNvbm5hc3NlIiwidGFybG91emUiLCJuaXF1ZXRhbWVyZSIsImNvdWlsbGUiLCJicmFubGUiLCJzdWNldXNlIiwiYmFtYm91bGEiLCJib3Vnbm91bCIsInlvdXBpbiIsImNoaW50b2siLCJlbmZvaXJlIiwidmlvbGV1ciIsInBlZG9waGlsZSIsIm5lZ3JvZmlsIiwiZnZjayIsInBodWNrIiwiYmlhdGNoIiwibW90aGVyZnVjayJdLCJyIjpbIm5pZ2ciLCJmYWdnb3QiLCJmYWdvdCJdLCJ3IjpbInNoaXQiLCJjdW50IiwicmV0YXJkIiwicmFwZSIsInBlZG8iLCJuYXppIiwibmF6aXMiLCJoZWlsIiwia2trIiwiZGljayIsImNvY2siLCJwdXNzeSIsImJvb2IiLCJib29icyIsInRpdHMiLCJhbmFsIiwic2V4Iiwic2V4ZSIsImN1bSIsImt5cyIsInB1dGUiLCJwdXRlcyIsInNhbGF1ZCIsImNvbm5lIiwicGQiLCJwZWRlIiwidGFwZXR0ZSIsImZkcCIsIm50bSIsIm5pcXVlIiwibmlxdWVyIiwidGFtZXJlIiwiYml0ZSIsInN1Y2UiLCJjaGllbm5lIiwibmVncmUiLCJuZWdybyIsImJpY290Iiwieml6aSIsImZvdXRyZSIsImJhdGFyZCIsIm1lcmRlIiwidmlvbCIsIm5hemllIiwiZmFnIiwiZmFncyIsInR3YXQiLCJ3YW5rIiwid2Fua2VyIiwiYm9sbG9ja3MiLCJwcmljayIsImJhc3RhcmQiLCJjdWwiLCJwb3JubyIsInh4eCIsImZjayIsImZ1ayIsImZraW5nIiwiZmNraW5nIiwic3RmdSJdfQ=="));
+function nameOk(s){
+  const L={"0":"o","1":"i","3":"e","4":"a","5":"s","7":"t","8":"b","@":"a","$":"s","!":"i","|":"i","€":"e"};
+  const sp=String(s||"").replace(/([a-z])([A-Z])/g,"$1 $2").normalize("NFKD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[0134578@$!|€]/g,c=>L[c]);
+  const words=sp.split(/[^a-z]+/).filter(Boolean), all=words.join(""), sq=x=>x.replace(/(.)\1+/g,"$1");
+  if(BADW.r.some(x=>all.includes(x)) || BADW.s.some(x=>all.includes(x) || sq(all).includes(sq(x)))) return false;
+  const W=new Set([...BADW.w, ...BADW.w.map(sq).filter(x=>x.length>=5)]), cand=[...words, all];
+  let run=""; for(const w of [...words,"--"]){ if(w.length===1) run+=w; else { if(run.length>1) cand.push(run); run=""; } }   // "s h i t"
+  return !cand.some(x=>W.has(x) || W.has(sq(x)));
+}
 function cleanNick(x) {
   const s = String(x || "").normalize("NFC").replace(/\s+/g, " ").trim();
   if (s.length < 3 || s.length > 20 || !/^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(s) || /miliadex|admin|modérat|moderat/i.test(s)) return null;
@@ -580,6 +592,7 @@ async function accountApi(request, env, url, ctx) {
     const f = await request.formData(), card = f.get("card"), thumb = f.get("thumb"), code = String(f.get("code") || ""), lid = String(f.get("lid") || "");
     const L = code.length <= 4000 ? readLook(code) : null;
     if (!/^[A-Za-z0-9_-]{1,40}$/.test(lid) || !L || !L.its.length || !card || typeof card === "string") return json({ error: "bad" }, 0, 400);
+    if (!nameOk(L.n)) return json({ error: "name" }, 0, 400);   // outfit names shown in the showcase: same check as pseudos
     const b = new Uint8Array(await card.arrayBuffer()), ty = sniff(b);
     if (!ty || b.length > 8 * 1024 * 1024) return json({ error: "bad" }, 0, 400);
     let th = null; if (thumb && typeof thumb !== "string") { const t = new Uint8Array(await thumb.arrayBuffer()); if (sniff(t) && t.length <= 300 * 1024) th = t; }
@@ -607,6 +620,7 @@ async function accountApi(request, env, url, ctx) {
   }
   if (op === "nick") {
     const n = cleanNick(body.nick); if (!n) return json({ error: "bad" }, 0, 400);
+    if (!nameOk(n)) return json({ error: "rude" }, 0, 400);   // the page checks it too: this is for calls made without the page
     const r = await users(env).setNick(me.u, n); if (r !== "ok") return json({ error: r }, 0, r === "taken" ? 409 : 400);
     await each(env, s => s.renameAuthor(me.u, n), null); dropShowCache(url.origin, ctx);
     return json(await makeSession(env, me.u, n));
