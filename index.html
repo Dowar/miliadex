@@ -1276,6 +1276,33 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .ask-ps .miss img{filter:grayscale(1) brightness(.55);opacity:.7}
 .ask-ps .cur{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .ask .row .btn{flex:1 1 150px}
+.own-dlg{width:min(470px,calc(100% - 32px))}
+.own-ic{display:grid;place-items:center;border:0;background:linear-gradient(160deg,#22b07f,#64d7a9);color:#fff}
+.own-ic svg{width:30px;height:30px}
+.oa-hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:13px;font-weight:650;color:var(--muted);margin-bottom:-6px}
+.oa-hd .linkbtn{font-size:13px}
+.oa-list{list-style:none;margin:0;padding:2px;display:grid;gap:6px;max-height:min(44vh,380px);overflow:auto;overscroll-behavior:contain}
+.oa-list label{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 10px 6px 6px;border-radius:12px;background:var(--raise);border:2px solid var(--line);cursor:pointer;transition:border-color .15s,opacity .15s}
+.oa-list input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.oa-list .th{width:44px;height:44px;border-radius:10px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,var(--rb,#5b479c),var(--ra,#2a2150))}
+.oa-list .th img{width:100%;height:100%;object-fit:contain}
+.oa-list .th svg{width:70%;height:70%}
+.oa-list .tx{min-width:0;display:grid}
+.oa-list b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oa-list small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oa-list .ck{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);color:transparent;transition:background .15s,border-color .15s,color .15s}
+.oa-list .ck svg{width:15px;height:15px}
+.oa-list input:checked ~ .ck{background:#22b07f;border-color:#22b07f;color:#fff}
+.oa-list label:has(input:checked){border-color:color-mix(in srgb,#22b07f 55%,var(--line))}
+.oa-list input:not(:checked) ~ .th,.oa-list input:not(:checked) ~ .tx{opacity:.5}
+.oa-list input:focus-visible ~ .ck{outline:2px solid var(--accent);outline-offset:2px}
+.own-all{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:99px;border:2px solid color-mix(in srgb,#22b07f 60%,var(--line));background:color-mix(in srgb,#22b07f 10%,transparent);color:var(--text);font:inherit;font-size:13px;font-weight:650;cursor:pointer;align-self:center}
+.own-all svg{width:14px;height:14px;color:#22b07f}
+.own-all:hover{border-color:#22b07f;background:color-mix(in srgb,#22b07f 18%,transparent)}
+.sv-ownl{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sv-oa{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;border:1.5px solid rgba(126,240,196,.5);background:rgba(126,240,196,.08);color:#7ef0c4;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.sv-oa svg{width:13px;height:13px}
+.sv-oa:hover{background:rgba(126,240,196,.16);border-color:#7ef0c4}
 .sh-wrap > .sh-msg.sr{position:absolute}
 /* "show in the showcase" switch, next to the share buttons */
 .pub-t{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none}
@@ -1550,7 +1577,7 @@ const T = {
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
   importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code, link or image",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
-  viaSet:n=>`Owned with the set ${n}`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
+  viaSet:n=>`Owned with the set ${n}`,oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
   ranksIntro:"Your rank follows your Vivid rating, like in the game: every set (each version) and every standalone cosmetic you own adds its Vivid value. A set's pieces are covered by the set's rating; interactions give none. Every 300 Vivid is one Raiment Collector level; the ranks below are reached at those levels.",
   yourPts:(a,b,l,lm)=>`Your Vivid: ${a} / ${b} · Raiment Collector Lv. ${l} / ${lm}`,maxed:"Everything collected. Legendary.",rankUp:r=>`New rank: ${r}!`,
@@ -1603,7 +1630,7 @@ const T = {
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
   importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu, lien ou image",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
-  viaSet:n=>`Obtenu avec le set ${n}`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
+  viaSet:n=>`Obtenu avec le set ${n}`,oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
   ranksIntro:"Ton rang suit ton Vivid rating, comme en jeu : chaque set (chaque version) et chaque cosmétique hors set obtenu ajoute sa valeur de Vivid. Les pièces d'un set sont couvertes par le Vivid du set ; les interactions n'en donnent pas. Tous les 300 Vivid, tu gagnes un niveau de Raiment Collector ; les rangs ci-dessous s'obtiennent à ces niveaux.",
   yourPts:(a,b,l,lm)=>`Ton Vivid : ${a} / ${b} · Raiment Collector niv. ${l} / ${lm}`,maxed:"Tout est à toi. Légendaire.",rankUp:r=>`Nouveau rang : ${r} !`,
@@ -2209,6 +2236,50 @@ function askSet(it, orbEl){
   };
   d.showModal ? d.showModal() : d.setAttribute("open",""); d.querySelector("[data-ask=set]").focus();
 }
+// mark every piece of an outfit as owned, after a confirmation that lists the missing ones (each can be unticked)
+function ownRefresh(){
+  renderHeader();
+  if(ui.tab==="outfits") renderOutfits(); else if(ui.tab==="show") renderShowGrid(); else { renderFilters(); renderList(); }
+  if($("shv").open) paintView(true);
+}
+function ownAllAsk(L, btn){
+  const its=lookItems(L).filter(it=>!has(it,"x")).sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0]));
+  if(!its.length){ toast(t("shAllOwned")); return; }
+  let d=$("ownAsk");
+  if(!d){ d=document.createElement("dialog"); d.id="ownAsk"; d.className="nick-dlg ask-dlg own-dlg"; d.setAttribute("aria-labelledby","oaT"); document.body.appendChild(d);
+    const boxes=()=>[...d.querySelectorAll("input[data-oa]")];
+    const sync=()=>{ const n=boxes().filter(x=>x.checked).length, go=d.querySelector("[data-oago]"), all=d.querySelector("[data-oaall]");
+      go.disabled=!n; go.textContent=t("oaGo")(n); all.textContent=t(n===boxes().length?"oaNone":"oaAll"); };
+    d.addEventListener("change", sync);
+    d.addEventListener("click", e=>{
+      if(e.target===d || e.target.closest("[data-oax]")){ d.close(); return; }
+      if(e.target.closest("[data-oaall]")){ const on=boxes().some(x=>!x.checked); boxes().forEach(x=>x.checked=on); sync(); return; }
+      if(e.target.closest("[data-oago]") && d._go){ const ids=boxes().filter(x=>x.checked).map(x=>x.dataset.oa); if(!ids.length) return;
+        const go=d._go; d._go=null; d.close(); go(ids); } });
+    d.addEventListener("close", ()=>{ d._go=null; }); }
+  const row=x=>{ const sl=slotsOf(x)[0];
+    return `<li class="r${x.r}"><label><input type="checkbox" checked data-oa="${esc(x.id)}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span>
+      <span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)}${x.r?" · "+"★".repeat(x.r):""}${x.set?" · "+esc(nm(x.set)):""}</small></span><span class="ck" aria-hidden="true">${ICON_CHECK}</span></label></li>`; };
+  d.innerHTML=`<div class="ask"><div class="ask-hd"><span class="ask-img own-ic" aria-hidden="true">${ICON_CHECK}</span>
+      <div><small>${esc((L.n||"").trim()||t("untitled"))}</small><h3 id="oaT">${esc(t("oaT"))}</h3></div>
+      <button type="button" class="dx" data-oax aria-label="${esc(t("close"))}">✕</button></div>
+    <p>${esc(t("oaTxt"))}</p>
+    <div class="oa-hd"><span>${esc(t("oaCount")(its.length))}</span><button type="button" class="linkbtn" data-oaall>${esc(t("oaNone"))}</button></div>
+    <ul class="oa-list">${its.map(row).join("")}</ul>
+    <div class="row"><button type="button" class="btn" data-oago>${esc(t("oaGo")(its.length))}</button><button type="button" class="btn ghost" data-oax>${esc(t("cutCancel"))}</button></div></div>`;
+  const r0=btn && btn.getBoundingClientRect ? btn.getBoundingClientRect() : null;
+  d._go = ids => {
+    const rk0=rankIdx(), lv0=lvOf(score()[0]), at=Date.now(); let n=0;
+    for(const id of ids){ const it=BYID.get(id); if(!it || has(it,"x")) continue; (state.owned[it.id]||(state.owned[it.id]={})).x=true; stamp(it.id+":x",at); n++; }
+    if(!n) return;
+    save(); ownRefresh(); toast("✓ "+t("oaDone")(n));
+    try{ navigator.vibrate && navigator.vibrate(12); }catch(e){}
+    const rk1=rankIdx();
+    if(rk1>rk0){ confetti(200); toast("✦ "+t("rankUp")(t("ranks")[rk1])); const h=$("hero"); h.classList.remove("levelup"); void h.offsetWidth; h.classList.add("levelup"); }
+    else { confetti(90, r0 && r0.width ? {getBoundingClientRect:()=>r0} : undefined); if(lvOf(score()[0])>lv0) toast("✦ "+t("lvUp")(lvOf(score()[0]))); }
+  };
+  d.showModal ? d.showModal() : d.setAttribute("open",""); d.querySelector("[data-oago]").focus();
+}
 function toggleCatch(it, s, orbEl, asked){
   if(!asked && s==="x" && it.kind==="comp" && it.set && !manual(it,"x") && !viaSet(it)
      && it.set.pieces.some(p=>p!==it && p.g===it.g && !has(p,"x"))){ askSet(it, orbEl); return; }
@@ -2602,7 +2673,7 @@ function renderOutfits(){
       <details class="mk"${SLOT_MK.some(s=>m[s])?" open":""}><summary>${esc(t("makeupT"))}</summary><div class="slots acc">${SLOT_MK.map(s=>tile(s,m,false)).join("")}</div></details>
     </div>
     <div class="b-foot">
-      <div class="b-sum"><b>${esc(t("ownedOf")(owned,items.length))}</b>${stars?` <span class="stars-sum" title="Vivid">${vivIcon()}${fmtN(stars)}</span>`:""}</div>
+      <div class="b-sum"><b>${esc(t("ownedOf")(owned,items.length))}</b>${stars?` <span class="stars-sum" title="Vivid">${vivIcon()}${fmtN(stars)}</span>`:""}${owned<items.length?`<button type="button" class="own-all" data-act="ownAll">${ICON_CHECK} ${esc(t("oaBtn"))}</button>`:""}</div>
       <div class="row">
         <button type="button" class="btn" data-act="save">${esc(look.id?t("updateLook"):t("saveLook"))}</button>
         <button type="button" class="btn ghost" data-act="share">${ICON_LINK} ${esc(t("share"))}</button>
@@ -3252,7 +3323,7 @@ function paintView(quiet){
       ${likeBtn}<button type="button" class="btn ghost" data-sv="gcode" title="${esc(t("gameTip"))}">${ICON_PAD} ${esc(t("gameCode"))}</button>${linkRow}${mine ? pubRow(v.L) : ownBtn}` : likeBtn+linkRow;
   const side = !v.ready ? `<div class="sv-sk" aria-hidden="true"><i></i><i></i><i></i></div>` : `
       ${uit && uit.nick ? `<p class="sv-by">${esc(t("shBy")(uit.nick))}</p>` : ""}${uit && uit.bn ? `<p class="sv-ban">${esc(t("pubBanned"))}</p>` : ""}<div class="sv-chips">${L?`<span>${L.g==="f"?"♀":"♂"} ${esc(t(L.g))}</span><span class="vv">${vivIcon()} ${fmtN(viv)} Vivid</span><span>${esc(t("shPieces")(its.length))}</span>${v.pic?`<span>${ICON_CAM} ${esc(t("shPhoto"))}</span>`:""}`:""}</div>
-      ${L?`<div class="sv-own${its.length&&own===its.length?" full":""}"><div class="sv-bar"><i style="width:${its.length?own/its.length*100:0}%"></i></div><span>${esc(its.length&&own===its.length?t("shAllOwned"):t("shOwned")(own,its.length))}</span></div>`:`<p class="sv-note">${esc(t("shNoData"))}</p>`}
+      ${L?`<div class="sv-own${its.length&&own===its.length?" full":""}"><div class="sv-bar"><i style="width:${its.length?own/its.length*100:0}%"></i></div><div class="sv-ownl"><span>${esc(its.length&&own===its.length?t("shAllOwned"):t("shOwned")(own,its.length))}</span>${own<its.length?`<button type="button" class="sv-oa" data-sv="ownall">${ICON_CHECK} ${esc(t("oaBtn"))}</button>`:""}</div></div>`:`<p class="sv-note">${esc(t("shNoData"))}</p>`}
       <div class="sv-act">${acts}</div>
       ${pcs?`<h3>${esc(t("shPiecesT"))}</h3><ul class="sv-pcs">${pcs}</ul>`:""}`;
   const stageKey=v.key+"|"+(v.url||"");
@@ -3274,6 +3345,7 @@ async function showAct(a){
   const v=vwItem(); if(!v) return;
   if(a==="prev") return showStep(-1);
   if(a==="next") return showStep(1);
+  if(a==="ownall"){ if(v.L) ownAllAsk(v.L, $("shv").querySelector('[data-sv="ownall"]')); return; }
   const closeV=()=>{ const d=$("shv"); if(d.open) d.close ? d.close() : d.removeAttribute("open"); };
   const goBuilder=()=>{ ui.tab="outfits"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="outfits")); renderHeader(); renderTab();
     window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); };
@@ -3905,6 +3977,7 @@ $("outfits").addEventListener("click", e=>{
   else if(act==="code") copyTxt(lookCode(look), t("copied"));
   else if(act==="gcode"){ const r=gameCode(look); if(!r){ toast(t("gameNone")); return; } copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
   else if(act==="fromSet") pickSet();
+  else if(act==="ownAll") ownAllAsk(look, a);
   else if(act==="surprise") surprise();
   else if(act==="clear"){ look.i=[]; look.p2=false; saveDraft(); renderOutfits(); }
   else if(act==="download") downloadLook();
