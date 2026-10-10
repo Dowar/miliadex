@@ -8,9 +8,9 @@
 //   POST /api/card; the Worker keeps it in Durable Objects (CardStore) and serves it at /card/<key>.jpg|png for that link.
 //   An outfit's picture is the image the site downloads, with the outfit and its in-game screenshot inside: people opening the
 //   link get "/#look=…&card=<key>", and the site reads the screenshot back from that picture.
-// Outfits Showcase: outfits shared by signed-in people with "Show in the Outfits Showcase" on, listed by GET /api/showcase
-//   (most liked or newest, small pictures inside the same response). The repo's images (showcase/) and the outfits the admin
-//   featured are the featured ones; featured outfits are never cleared.
+// Outfits Showcase: signed-in people share their saved outfits there (POST /api/show/publish, its own picture, updatable
+//   once a minute, removable by its owner); GET /api/showcase lists them (most liked or newest, small pictures inside the same
+//   response). Featured: the repo's images (showcase/) and the copies the admin makes of community outfits (frozen, never cleared).
 // Accounts: the Google account connected for Drive sync, checked with Google once (POST /api/auth), then a signed session;
 //   a pseudo (random at first) is shown on the outfits one shares; one like per account and outfit.
 // Admin: /a/<secret> is a 404 page, except for the site owner's Google account, checked with Google on every admin call.
@@ -244,7 +244,8 @@ async function showItem(env, origin, file) {
 // the US a second later), spread over SHARDS objects. Each keeps at most MAX_CARDS cards (4 × 1250 = about 5,000 in all)
 // and stays under BUDGET bytes (free plan: 1 GB per object, 5 GB per account): past either, the cards used least recently
 // go first, never a featured one. Cards unused for 6 months go too. One more object, "users", keeps the accounts.
-const SHARDS = 4, MAX_CARDS = 1250, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024, PAGE = 36;
+// Showcase entries (kind "s") are counted apart: MAX_SHOW per object, PER_USER per account, never expired, cleared last.
+const SHARDS = 4, MAX_CARDS = 1250, MAX_SHOW = 800, PER_USER = 30, COOLDOWN = 60e3, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024, PAGE = 36;
 const COLS = "k, code, lang, pt, pic, likes, nick, feat, th, thty";   // a showcase entry, with its small picture
 const NICK_A = ["Starry", "Lunar", "Velvet", "Crimson", "Azure", "Golden", "Misty", "Frosty", "Blooming", "Silent", "Radiant", "Moonlit", "Stellar", "Wild", "Gentle", "Amber"];
 const NICK_B = ["Manekin", "Manekina", "Stylist", "Wanderer", "Dreamer", "Seeker", "Muse", "Comet", "Petal", "Lantern", "Traveler", "Tailor", "Sparrow", "Ribbon", "Fable", "Nova"];
@@ -265,7 +266,7 @@ export class CardStore extends DurableObject {
       addCol("z INTEGER NOT NULL DEFAULT 0");
       sql.exec("UPDATE card SET z = COALESCE((SELECT SUM(length(b)) FROM card_part WHERE card_part.k = card.k), 0)");
     }
-    if (v < 3) { this.recount(); this.setMeta("schema", 3); }   // v3: the running count too (meta "count")
+    if (v < 3) this.setMeta("schema", 3);    // v3: the running counts (meta "count"): counted once the columns are all there (v6)
     if (v < 4) {                              // v4: the showcase (outfit code, in it or not, taken out by the admin, its small picture)
       for (const c of ["code TEXT", "lang TEXT", "pub INTEGER NOT NULL DEFAULT 0", "ban INTEGER NOT NULL DEFAULT 0", "pt INTEGER NOT NULL DEFAULT 0",
         "pic INTEGER NOT NULL DEFAULT 0", "th BLOB", "thty TEXT"]) addCol(c);
@@ -281,46 +282,49 @@ export class CardStore extends DurableObject {
       sql.exec("CREATE TABLE IF NOT EXISTS kv (k TEXT PRIMARY KEY, v TEXT NOT NULL)");
       this.setMeta("schema", 5);
     }
+    if (v < 6) {                              // v6: showcase entries apart from link pictures, last update, a featured copy's original
+      for (const c of ["kind TEXT", "ut INTEGER NOT NULL DEFAULT 0", "src TEXT"]) addCol(c);
+      sql.exec("UPDATE card SET kind = 's' WHERE pub = 1 OR feat = 1 OR ban = 1");
+      sql.exec("CREATE INDEX IF NOT EXISTS card_uid ON card (uid)");
+      this.recount(); this.setMeta("schema", 6);
+    }
   }
   meta(k) { const r = this.sql.exec("SELECT v FROM meta WHERE k = ?", k).toArray()[0]; return r ? r.v : 0; }
   setMeta(k, v) { this.sql.exec("INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, v); }
-  recount() { const r = this.sql.exec("SELECT COUNT(*) AS c, COALESCE(SUM(z), 0) AS s FROM card").toArray()[0]; this.setMeta("bytes", r.s); this.setMeta("count", r.c); return [r.s, r.c]; }
+  // bytes (all), count (link pictures), scount (showcase entries)
+  recount() {
+    const r = this.sql.exec("SELECT COALESCE(SUM(z), 0) AS z, COALESCE(SUM(kind IS NULL), 0) AS c, COALESCE(SUM(kind = 's'), 0) AS s FROM card").toArray()[0];
+    this.setMeta("bytes", r.z); this.setMeta("count", r.c); this.setMeta("scount", r.s); return [r.z, r.c];
+  }
   dropRow(k) { this.sql.exec("DELETE FROM card_part WHERE k = ?", k); this.sql.exec("DELETE FROM card WHERE k = ?", k); }
   drop(k) { this.dropRow(k); this.sql.exec("DELETE FROM lk WHERE k = ?", k); }
-  // least recently used first (never a featured one), until the cards weigh at most `room` bytes and number at most `most`
-  evict(total, count, room, most) {
+  // least recently used first (never a featured one), until the cards weigh at most `room` bytes and number at most `most`;
+  // link pictures, or showcase entries (show)
+  evict(total, count, room, most, show) {
     while (total > room || count > most) {
-      const old = this.sql.exec("SELECT k, z FROM card WHERE feat = 0 ORDER BY t LIMIT 32").toArray();
+      const old = this.sql.exec(`SELECT k, z FROM card WHERE feat = 0 AND kind IS ${show ? "'s'" : "NULL"} ORDER BY t LIMIT 32`).toArray();
       if (!old.length) break;
       for (const r of old) { this.drop(r.k); total -= r.z; count--; if (total <= room && count <= most) break; }
     }
     return [Math.max(0, total), Math.max(0, count)];
   }
-  // pictures are kept in 1.5 MB parts (a row holds at most 2 MB)
-  // o (outfits): {code, lang, pub, uid, nick (signed-in author), pic: has an in-game screenshot, th/thty: its small picture}
+  // link pictures, kept in 1.5 MB parts (a row holds at most 2 MB); o: {code, lang, pic}
   put(k, ty, b, o = {}) {
-    const now = Date.now(), th = o.th || null, size = b.byteLength + (th ? th.byteLength : 0);
+    const now = Date.now(), size = b.byteLength;
     let total = this.meta("bytes"), count = this.meta("count");
-    if (Math.random() < .02) {                 // now and then: forget cards unused for 6 months, recount
-      this.sql.exec("DELETE FROM lk WHERE k IN (SELECT k FROM card WHERE t < ? AND feat = 0)", now - KEEP);
-      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ? AND feat = 0)", now - KEEP);
-      this.sql.exec("DELETE FROM card WHERE t < ? AND feat = 0", now - KEEP);
+    if (Math.random() < .02) {                 // now and then: forget link pictures unused for 6 months, recount
+      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ? AND kind IS NULL AND feat = 0)", now - KEEP);
+      this.sql.exec("DELETE FROM card WHERE t < ? AND kind IS NULL AND feat = 0", now - KEEP);
       [total, count] = this.recount();
     }
-    const prev = this.sql.exec("SELECT z, ban, pub, pt, uid, nick, likes, feat FROM card WHERE k = ?", k).toArray()[0];
-    // featured, or in the showcase under someone else's name: the entry stays as it is (only the picture is refreshed)
-    const keep = prev && (prev.feat || (prev.pub && prev.uid && prev.uid !== o.uid));
-    const ban = prev ? prev.ban : 0, feat = prev ? prev.feat : 0, likes = prev ? prev.likes : 0;   // taken out by the admin: stays out
-    const pub = keep ? prev.pub : (o.pub && o.code && o.uid && !ban ? 1 : 0);
-    const uid = keep ? prev.uid : pub ? o.uid : null, nick = keep ? prev.nick : pub ? o.nick || null : null;
-    const pt = pub ? (prev && prev.pub && prev.pt) || now : 0;
+    const prev = this.sql.exec("SELECT z, kind FROM card WHERE k = ?", k).toArray()[0];
+    if (prev && prev.kind === "s") return true;   // a showcase entry from before entries had their own key: left as it is
     if (prev) { this.dropRow(k); total = Math.max(0, total - prev.z); count = Math.max(0, count - 1); }
     // full: make room for a few more at once (2% of the cards, ~10% of the bytes)
     if (count + 1 > MAX_CARDS || total + size > BUDGET) [total, count] = this.evict(total, count, BUDGET * .9 - size, MAX_CARDS - Math.ceil(MAX_CARDS * .02) - 1);
     const write = () => this.ctx.storage.transactionSync(() => {
-      let n = 0; for (let x = 0; x < b.byteLength; x += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(x, x + PART));
-      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pub, ban, pt, pic, th, thty, uid, nick, likes, feat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        k, now, ty, n, size, o.code || null, o.lang || null, pub, ban, pt, o.pic ? 1 : 0, th, th ? o.thty || "image/jpeg" : null, uid, nick, likes, feat);
+      let n = 0; for (let x = 0; x < size; x += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(x, x + PART));
+      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", k, now, ty, n, size, o.code || null, o.lang || null, o.pic ? 1 : 0);
     });
     try { write(); }
     catch (e) {                                // full anyway (SQLite's own overhead): clear a fifth more, try once again
@@ -330,6 +334,50 @@ export class CardStore extends DurableObject {
     this.setMeta("bytes", total + size); this.setMeta("count", count + 1);
     return true;
   }
+  // a showcase entry (its own key, its own picture): e = {code, lang, pic, uid, nick, th, thty, feat, src}
+  // its owner can replace it once a minute (its likes and its place stay); the admin's copies (feat) are written once
+  entryWrite(k, ty, b, e, prev) {
+    const now = Date.now(), th = e.th || null, size = b.byteLength + (th ? th.byteLength : 0);
+    let total = this.meta("bytes"), scount = this.meta("scount");
+    if (prev) { this.dropRow(k); total = Math.max(0, total - prev.z); scount = Math.max(0, scount - 1); }
+    if (scount + 1 > MAX_SHOW) [total, scount] = this.evict(total, scount, Infinity, MAX_SHOW - Math.ceil(MAX_SHOW * .02) - 1, true);
+    if (total + size > BUDGET) {               // short of room: link pictures go first, then the oldest entries
+      let count = this.meta("count"); [total, count] = this.evict(total, count, BUDGET * .9 - size, count); this.setMeta("count", count);
+      if (total + size > BUDGET) [total, scount] = this.evict(total, scount, BUDGET * .9 - size, scount, true);
+    }
+    this.ctx.storage.transactionSync(() => {
+      let n = 0; for (let x = 0; x < b.byteLength; x += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(x, x + PART));
+      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pub, ban, pt, pic, th, thty, uid, nick, likes, feat, kind, ut, src) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 0, ?, ?, ?, ?, ?, ?, ?, ?, 's', ?, ?)",
+        k, now, ty, n, size, e.code, e.lang || "en", prev ? prev.pt || now : now, e.pic ? 1 : 0, th, th ? e.thty || "image/jpeg" : null, e.uid || null, e.nick || null,
+        prev ? prev.likes : 0, e.feat ? 1 : 0, now, e.src || null);
+    });
+    this.setMeta("bytes", total + size); this.setMeta("scount", scount + 1);
+  }
+  publish(k, ty, b, e) {
+    const prev = this.sql.exec("SELECT z, uid, ban, likes, pt, ut, kind, feat FROM card WHERE k = ?", k).toArray()[0];
+    if (prev && (prev.kind !== "s" || prev.feat || (prev.uid && prev.uid !== e.uid))) return { error: "owner" };
+    if (prev && prev.ban) return { error: "ban" };
+    const since = prev ? Date.now() - prev.ut : Infinity;
+    if (since < COOLDOWN) return { error: "wait", wait: Math.ceil((COOLDOWN - since) / 1000) };
+    this.entryWrite(k, ty, b, e, prev || null);
+    return { ok: true, new: !prev };
+  }
+  // the owner takes it out (the admin's featured copy, if any, stays)
+  removeOwn(k, u) {
+    const r = this.sql.exec("SELECT z, uid, kind, feat FROM card WHERE k = ?", k).toArray()[0];
+    if (!r || r.kind !== "s" || r.feat || r.uid !== u) return false;
+    this.drop(k); this.setMeta("bytes", Math.max(0, this.meta("bytes") - r.z)); this.setMeta("scount", Math.max(0, this.meta("scount") - 1));
+    return true;
+  }
+  mine(u) { return this.sql.exec(`SELECT ${COLS}, ban, ut FROM card WHERE uid = ? AND kind = 's' AND feat = 0`, u).toArray(); }
+  countBy(u) { return this.sql.exec("SELECT COUNT(*) AS c FROM card WHERE uid = ? AND kind = 's' AND feat = 0", u).toArray()[0].c; }
+  // the admin features a community outfit: a frozen copy (the original stays in the community, still its owner's)
+  exportEntry(k) {
+    const r = this.sql.exec("SELECT ty, code, lang, pic, nick, uid, th, thty FROM card WHERE k = ? AND kind = 's'", k).toArray()[0];
+    if (!r || !r.code) return null;
+    const g = this.get(k); return g ? { ...r, b: g.b } : null;
+  }
+  putFeatured(k, x, src) { this.entryWrite(k, x.ty, x.b, { code: x.code, lang: x.lang, pic: x.pic, uid: x.uid, nick: x.nick, th: x.th, thty: x.thty, feat: 1, src }, null); return true; }
   has(k) {
     return this.sql.exec("SELECT 1 AS x FROM card WHERE k = ?", k).toArray().length > 0;
   }
@@ -367,12 +415,13 @@ export class CardStore extends DurableObject {
   }
   myLikes(u) { return this.sql.exec("SELECT k FROM lk WHERE u = ?", u).toArray().map(r => r.k); }
   renameAuthor(u, n) { this.sql.exec("UPDATE card SET nick = ? WHERE uid = ?", n, u); }
-  // an account deleted: its likes go, its outfits leave the showcase
+  // an account deleted: its likes go, its outfits leave the showcase (the admin's featured copies stay, without a name)
   forgetUser(u) {
     this.sql.exec("UPDATE card SET likes = MAX(0, likes - 1) WHERE k IN (SELECT k FROM lk WHERE u = ?)", u);
     this.sql.exec("DELETE FROM lk WHERE u = ?", u);
-    this.sql.exec("UPDATE card SET pub = 0, uid = NULL, nick = NULL WHERE uid = ? AND feat = 0", u);
+    for (const r of this.sql.exec("SELECT k FROM card WHERE uid = ? AND kind = 's' AND feat = 0", u).toArray()) this.drop(r.k);
     this.sql.exec("UPDATE card SET uid = NULL, nick = NULL WHERE uid = ?", u);
+    this.recount();
   }
   // accounts (object "users"): pseudo, unique whatever the case
   login(u) {
@@ -398,21 +447,21 @@ export class CardStore extends DurableObject {
     this.sql.exec("INSERT INTO kv (k, v) VALUES ('session', ?)", v); return v;
   }
   // admin
-  stats() { return this.sql.exec("SELECT COUNT(*) AS c, COALESCE(SUM(z), 0) AS z, COALESCE(SUM(pub), 0) AS p, COALESCE(SUM(ban), 0) AS b, COALESCE(SUM(feat), 0) AS f FROM card").toArray()[0]; }
+  stats() { return this.sql.exec("SELECT COALESCE(SUM(kind IS NULL), 0) AS c, COALESCE(SUM(kind = 's'), 0) AS s, COALESCE(SUM(z), 0) AS z, COALESCE(SUM(pub = 1 AND feat = 0), 0) AS p, COALESCE(SUM(ban), 0) AS b, COALESCE(SUM(feat), 0) AS f FROM card").toArray()[0]; }
   adminList(which, before, n) {
     const q = "SELECT k, code, lang, %AT% AS at, pic, z, ban, pub, feat, likes, nick FROM card WHERE %W% AND %AT% < ? ORDER BY %AT% DESC LIMIT ?";
-    const [at, w] = which === "ban" ? ["t", "ban = 1"] : which === "feat" ? ["pt", "feat = 1"] : ["pt", "pub = 1 AND feat = 0"];
+    const [at, w] = which === "ban" ? ["t", "ban = 1"] : which === "feat" ? ["pt", "feat = 1"] : ["pt", "kind = 's' AND pub = 1 AND feat = 0"];
     return this.sql.exec(q.replace(/%AT%/g, at).replace("%W%", w), before, n).toArray();
   }
+  // hide / show an entry · unfeature (a featured copy: deleted) · delete (the picture, whatever it is)
   moderate(k, op) {
-    const r = this.sql.exec("SELECT z, code FROM card WHERE k = ?", k).toArray()[0];
+    const r = this.sql.exec("SELECT z, code, kind, feat FROM card WHERE k = ?", k).toArray()[0];
     if (!r) return false;
-    const now = Date.now();
-    if (op === "hide") this.sql.exec("UPDATE card SET pub = 0, ban = 1, feat = 0 WHERE k = ?", k);
-    else if (op === "show") { if (!r.code) return false; this.sql.exec("UPDATE card SET ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", now, k); }
-    else if (op === "feature") { if (!r.code) return false; this.sql.exec("UPDATE card SET feat = 1, ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", now, k); }
-    else if (op === "unfeature") this.sql.exec("UPDATE card SET feat = 0, t = ? WHERE k = ?", now, k);
-    else if (op === "delete") { this.drop(k); this.setMeta("bytes", Math.max(0, this.meta("bytes") - r.z)); this.setMeta("count", Math.max(0, this.meta("count") - 1)); }
+    const now = Date.now(), gone = () => { this.drop(k); this.setMeta("bytes", Math.max(0, this.meta("bytes") - r.z)); const m = r.kind === "s" ? "scount" : "count"; this.setMeta(m, Math.max(0, this.meta(m) - 1)); };
+    if (op === "hide") { if (r.feat) gone(); else this.sql.exec("UPDATE card SET pub = 0, ban = 1, kind = 's' WHERE k = ?", k); }
+    else if (op === "show") { if (!r.code || r.kind !== "s") return false; this.sql.exec("UPDATE card SET ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", now, k); }
+    else if (op === "unfeature") { if (!r.feat) return false; gone(); }
+    else if (op === "delete") gone();
     else return false;
     return true;
   }
@@ -484,7 +533,8 @@ function cleanNick(x) {
   if (s.length < 3 || s.length > 20 || !/^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(s) || /miliadex|admin|modérat|moderat/i.test(s)) return null;
   return s;
 }
-// POST /api/auth (Google token) · /api/nick {nick} · /api/like {k, on} · /api/account/delete — the last three with the session
+// POST /api/auth (Google token) · /api/nick {nick} · /api/like {k, on} · /api/account/delete · /api/show/publish (form) ·
+// /api/show/remove {k} · /api/show/mine — all but the first with the session (x-session)
 async function accountApi(request, env, url, ctx) {
   if (request.method !== "POST") return notFound();
   const op = url.pathname.slice(5);
@@ -494,7 +544,30 @@ async function accountApi(request, env, url, ctx) {
     return json({ ...await makeSession(env, g.uid, n), likes });
   }
   const me = await readSession(env, request); if (!me) return json({ error: "session" }, 0, 401);
+  if (op === "show/publish") {               // card = the outfit image · thumb = its small picture · code · lang · lid (the saved outfit) · pic
+    const f = await request.formData(), card = f.get("card"), thumb = f.get("thumb"), code = String(f.get("code") || ""), lid = String(f.get("lid") || "");
+    const L = code.length <= 4000 ? readLook(code) : null;
+    if (!/^[A-Za-z0-9_-]{1,40}$/.test(lid) || !L || !L.its.length || !card || typeof card === "string") return json({ error: "bad" }, 0, 400);
+    const b = new Uint8Array(await card.arrayBuffer()), ty = sniff(b);
+    if (!ty || b.length > 8 * 1024 * 1024) return json({ error: "bad" }, 0, 400);
+    let th = null; if (thumb && typeof thumb !== "string") { const t = new Uint8Array(await thumb.arrayBuffer()); if (sniff(t) && t.length <= 300 * 1024) th = t; }
+    const k = (await sha256(`s|${me.u}|${lid}`)).slice(0, 32), s = store(env, k);
+    const r = await s.publish(k, ty, b.buffer, { code, lang: f.get("lang") === "fr" ? "fr" : "en", pic: f.get("pic") === "1", uid: me.u, nick: me.n, th: th && th.buffer, thty: th && sniff(th) });
+    if (r.error) return json(r, 0, r.error === "wait" ? 429 : 403);
+    if (r.new) {                             // at most PER_USER outfits in the showcase per account
+      const n = (await each(env, x => x.countBy(me.u), 0)).reduce((a, c) => a + c, 0);
+      if (n > PER_USER) { await s.removeOwn(k, me.u); return json({ error: "limit", max: PER_USER }, 0, 403); }
+    }
+    dropShowCache(url.origin, ctx);
+    return json({ ok: true, k, new: r.new });
+  }
+  if (op === "show/mine") return bundle({ items: (await each(env, s => s.mine(me.u), [])).flat().sort((a, b) => b.pt - a.pt), feat: [] }, 0);
   let body = {}; try { body = await request.json(); } catch (e) {}
+  if (op === "show/remove") {
+    const k = String(body.k || ""); if (!/^[0-9a-f]{32}$/.test(k)) return json({ error: "bad" }, 0, 400);
+    const ok = await store(env, k).removeOwn(k, me.u); if (ok) dropShowCache(url.origin, ctx);
+    return ok ? json({ ok: true }) : json({ error: "owner" }, 0, 403);
+  }
   if (op === "like") {
     const k = String(body.k || ""); if (!/^[0-9a-f]{32}$/.test(k)) return json({ error: "bad" }, 0, 400);
     const n = await store(env, k).like(k, me.u, !!body.on);
@@ -515,28 +588,23 @@ async function accountApi(request, env, url, ctx) {
 
 /* ---------- preview pictures ---------- */
 // POST /api/card?k=c|o&l=en|fr&c=<code>  body: the picture the page drew for that link, or (outfits) a form: card = the picture ·
-// thumb = its small square picture · pub = 1 to show it in the showcase (signed in: x-session) · pic = 1 with an in-game screenshot
+// pic = 1 with an in-game screenshot (a link picture never goes to the showcase: that is POST /api/show/publish)
 async function saveCard(request, env, url, ctx) {
   if (request.method !== "POST") return new Response("POST only", { status: 405 });
   const k = url.searchParams.get("k"), code = url.searchParams.get("c") || "", lang = url.searchParams.get("l") === "fr" ? "fr" : "en";
   if (!/^[co]$/.test(k) || code.length > 4000) return new Response("bad link", { status: 400 });
   const L = k === "o" ? readLook(code) : null, ok = k === "c" ? await readCol(code) : L;
   if (!ok) return new Response("bad link", { status: 400 });
-  let b, th = null, pub = false, pic = false;
+  let b, pic = false;
   if (/multipart\/form-data/i.test(request.headers.get("content-type") || "")) {
-    const f = await request.formData(), card = f.get("card"), thumb = f.get("thumb");
+    const f = await request.formData(), card = f.get("card");
     if (!card || typeof card === "string") return new Response("bad picture", { status: 400 });
-    b = new Uint8Array(await card.arrayBuffer());
-    if (thumb && typeof thumb !== "string") { const t = new Uint8Array(await thumb.arrayBuffer()); if (sniff(t) && t.length <= 300 * 1024) th = t; }
-    pub = f.get("pub") === "1"; pic = f.get("pic") === "1";
+    b = new Uint8Array(await card.arrayBuffer()); pic = f.get("pic") === "1";
   } else b = new Uint8Array(await request.arrayBuffer());
   const ty = sniff(b);
   if (!ty || b.length > 8 * 1024 * 1024) return new Response("bad picture", { status: 400 });
   const key = await cardKey(k, code, lang), s = store(env, key); if (!s) return new Response("no store", { status: 503 });
-  const me = k === "o" && pub ? await readSession(env, request) : null;   // the showcase takes signed-in people only
-  const o = k === "o" ? { code, lang, pub: !!me && L.its.length > 0, uid: me && me.u, nick: me && me.n, pic, th: th && th.buffer, thty: th && sniff(th) } : {};
-  await s.put(key, ty, b.buffer, o);
-  if (o.pub) dropShowCache(url.origin, ctx);
+  await s.put(key, ty, b.buffer, k === "o" ? { code, lang, pic } : {});
   return new Response(null, { status: 204 });
 }
 // is the picture there? The page sends it before the link is copied: previews still give it a moment before answering without it
@@ -575,12 +643,13 @@ function bundle(o, age) {
   const parts = []; let off = 0;
   const out = x => {
     const r = { k: x.k, c: x.code, l: x.lang || "en", t: x.pt, p: x.pic ? 1 : 0, lk: x.likes || 0, n: x.nick || "", f: x.feat ? 1 : 0 };
+    if (x.ban) r.b = 1; if (x.ut) r.u = x.ut;
     if (x.th) { const b = new Uint8Array(x.th); r.th = [off, b.length, x.thty || "image/jpeg"]; parts.push(b); off += b.length; }
     return r;
   };
   const js = enc.encode(JSON.stringify({ items: o.items.map(out), feat: (o.feat || []).map(out), next: o.next || null })), head = new Uint8Array(8);
   head.set([77, 76, 83, 49]); new DataView(head.buffer).setUint32(4, js.length);
-  return new Response(new Blob([head, js, ...parts]), { headers: { "content-type": "application/octet-stream", "cache-control": `public, max-age=${age}` } });
+  return new Response(new Blob([head, js, ...parts]), { headers: { "content-type": "application/octet-stream", "cache-control": age ? `public, max-age=${age}` : "no-store" } });
 }
 const showCacheKey = (origin, q) => new Request(origin + "/api/showcase?" + q);
 function dropShowCache(origin, ctx) {
@@ -625,7 +694,7 @@ async function adminApi(request, env, url, ctx) {
   const op = url.pathname.slice("/api/admin/".length);
   if (op === "me") {
     let people = 0; try { people = await users(env).userCount(); } catch (e) {}
-    return json({ ok: true, max: SHARDS * MAX_CARDS, budget: SHARDS * BUDGET, people, stats: await each(env, s => s.stats(), null) });
+    return json({ ok: true, max: SHARDS * MAX_CARDS, maxShow: SHARDS * MAX_SHOW, budget: SHARDS * BUDGET, people, stats: await each(env, s => s.stats(), null) });
   }
   if (op === "list") {
     const which = ["ban", "feat"].includes(body.which) ? body.which : "pub", before = Math.min(+body.before || 9e15, 9e15), N = 48;
@@ -635,7 +704,11 @@ async function adminApi(request, env, url, ctx) {
   if (op === "set") {
     const k = String(body.k || "");
     if (!/^[0-9a-f]{32}$/.test(k) || !["hide", "show", "delete", "feature", "unfeature"].includes(body.op)) return json({ ok: false }, 0, 400);
-    const ok = await store(env, k).moderate(k, body.op);
+    let ok = false;
+    if (body.op === "feature") {             // a frozen copy in Featured; the original stays in the community
+      const x = await store(env, k).exportEntry(k);
+      if (x) { const fk = (await sha256(`f|${k}|${Date.now()}`)).slice(0, 32); ok = await store(env, fk).putFeatured(fk, x, k); }
+    } else ok = await store(env, k).moderate(k, body.op);
     dropShowCache(url.origin, ctx);
     return json({ ok });
   }
@@ -655,7 +728,7 @@ export default {
       if (url.pathname === "/api/card") return await saveCard(request, env, url, ctx);
       if (url.pathname === "/api/showcase") return await showcaseList(env, url, ctx);
       if (url.pathname.startsWith("/api/admin/")) return await adminApi(request, env, url, ctx);
-      if (/^\/api\/(auth|nick|like|account\/delete)$/.test(url.pathname)) return await accountApi(request, env, url, ctx);
+      if (/^\/api\/(auth|nick|like|account\/delete|show\/(publish|remove|mine))$/.test(url.pathname)) return await accountApi(request, env, url, ctx);
       if (url.pathname.startsWith("/a/")) return await adminPage(env, origin);
       const cm = url.pathname.match(/^\/card\/([0-9a-f]{32})(?:\.(?:jpg|png|webp)|\/(thumb))$/);
       if (cm) return await sendCard(env, origin, cm[1], !!cm[2]);
@@ -681,6 +754,12 @@ export default {
         if (!L) return Response.redirect(origin + target, 302);
         const info = lookInfo(L), pic = await previewImage(env, origin, "o", arg, lang, bot);
         return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...pic, large: true, color: SITE_COLOR }, here, lookAt(pic.key), lang);
+      }
+      if (/^u-[0-9a-f]{32}$/.test(arg)) {   // a community outfit
+        const k = arg.slice(2); let e = null; try { e = await store(env, k).item(k); } catch (x) {}
+        const L = e && readLook(e.code); if (!L) return Response.redirect(origin + target, 302);
+        const title = TX[lang].show(L.n || "…") + (e.nick ? (lang === "fr" ? " · par " : " · by ") + e.nick : "");
+        return page({ title, desc: lookShort(L, lookInfo(L), lang), image: `${origin}/card/${k}.jpg`, w: 1080, h: 1350, large: true, color: SITE_COLOR }, here, target, lang);
       }
       const it = await showItem(env, origin, arg);
       if (!it) return Response.redirect(origin + target, 302);
