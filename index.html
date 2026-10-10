@@ -1101,25 +1101,10 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 #gdBtn[data-st="sync"]::after{background:#9fe6ff;animation:gdPulse 1s ease-in-out infinite}
 #gdBtn[data-st="auth"]::after,#gdBtn[data-st="err"]::after{background:#ffb84d}
 @keyframes gdPulse{50%{opacity:.35}}
-.gd{display:grid;gap:10px;padding:14px;border-radius:14px;background:var(--raise);border:1px solid var(--line)}
-.gd-h{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:start}
-.gd-ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
-.gd-ic svg{width:22px;height:22px}
-.gd-h h3{margin:0 0 2px;font-family:var(--serif);font-weight:650;font-size:16.5px}
-.gd-st{justify-self:end;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;white-space:nowrap;padding:5px 11px;border-radius:999px;background:var(--chip)}
-.gd-st i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.gd-st[data-st="ok"] i,.gd-st[data-st="idle"] i{background:var(--ok)}
-.gd-st[data-st="sync"] i{background:var(--accent);animation:gdPulse 1s ease-in-out infinite}
-.gd-st[data-st="auth"] i,.gd-st[data-st="err"] i{background:var(--warn)}
-.tools .gd-warn{color:var(--warn);font-weight:600}
 .gbtn{display:inline-flex;align-items:center;gap:12px;height:42px;padding:0 18px 0 12px;border-radius:999px;border:1px solid #dadce0;background:#fff;color:#1f1f1f;font-family:"Roboto","Figtree",system-ui,sans-serif;font-weight:600;font-size:14.5px;box-shadow:0 1px 2px rgba(60,64,67,.25);transition:box-shadow .2s,background .2s}
 .gbtn:hover{background:#f8f9fa;box-shadow:0 1px 3px rgba(60,64,67,.3),0 4px 10px rgba(60,64,67,.15)}
 .gbtn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
 .gbtn .g-logo{width:20px;height:20px;flex:none}
-.tools .gd-note{font-size:12.5px}
-.gd-note a{color:var(--accent);font-weight:600}
-.gd .btn:disabled{opacity:.5;cursor:not-allowed}
-@media (max-width:640px){ .gd-h{grid-template-columns:auto minmax(0,1fr)} .gd-st{grid-column:2;justify-self:start} }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -1621,7 +1606,6 @@ html.x404 body, html.xadm body{background:var(--screen)}
         <button class="btn ghost danger" id="bkReset" type="button"></button>
       </div>
       <textarea id="bkCode" aria-labelledby="bkPaste"></textarea>
-      <div class="gd" id="gd"></div>
       <div class="cache-row"><p id="cacheTxt"></p><button class="btn ghost" id="cacheBtn" type="button"></button></div>
       <input type="file" id="bkFile" accept="application/json,.json,.txt" hidden>
       </div></div>
@@ -1705,7 +1689,7 @@ const T = {
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   cardProfile:"Collector profile",cardDiscordO:n=>`Miliadex - ${n} outfit`,cardWait:"Preparing the preview picture…",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
-  bkTitle:"Save & backup",bkSum:"Backup file · Google Drive sync",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
+  bkTitle:"Save & backup",bkSum:"Backup file · code",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
   saved:"Backup file downloaded",copied:"Code copied",imported:"Collection imported",invalid:"That isn't a Miliadex backup",cleared:"Collection cleared",
   credits:"Images and data from the Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Free fan-made tool for every Traveler.",
@@ -1758,7 +1742,7 @@ const T = {
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   cardProfile:"Profil de collection",cardDiscordO:n=>`Miliadex - Tenue ${n}`,cardWait:"Préparation de l'image d'aperçu…",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
-  bkTitle:"Sauvegarde",bkSum:"Fichier de sauvegarde · synchro Google Drive",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
+  bkTitle:"Sauvegarde",bkSum:"Fichier ou code de sauvegarde",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
   saved:"Fichier de sauvegarde téléchargé",copied:"Code copié",imported:"Collection importée",invalid:"Ce n'est pas une sauvegarde Miliadex",cleared:"Collection effacée",
   credits:"Images et données du Genshin Impact Wiki (Fandom). Genshin Impact © HoYoverse. Outil de fan gratuit, pour tous les Voyageurs.",
@@ -4898,7 +4882,7 @@ const GD=(()=>{
     if(!(window.google && google.accounts && google.accounts.oauth2)){ loadGis().catch(()=>{}); return; }
     asking=true; lastAsk=Date.now(); ensureClient().requestAccessToken({prompt:"", hint:cfg.email||undefined});
   }
-  document.addEventListener("click", e=>{ if(e.target.closest && e.target.closest("#gdBtn,[data-gd]")) return; renew(); });
+  document.addEventListener("click", e=>{ if(e.target.closest && e.target.closest("#gdBtn,[data-gd],[data-am]")) return; renew(); });
   function disconnect(){ acctOut(); const v=tok&&tok.v; if(rt){ relay({revoke:rt}).catch(()=>{}); setRt(null); } clearTimeout(renewT); setTok(null); cfg={on:false,fid:"",at:0,md5:"",lt:0,email:""}; saveCfg(); clearTimeout(pushT); clearInterval(pollT); client=null;
     try{ if(v && window.google) google.accounts.oauth2.revoke(v, ()=>{}); }catch(e){} setStatus("off"); toast(t("gdOff")); }
   async function api(path, opt={}){
@@ -4970,25 +4954,17 @@ const GD=(()=>{
   document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && live()) sync(); });
   window.addEventListener("focus", ()=>{ if(live() && Date.now()-cfg.at>8000) sync(); });
   const ago=ms=>{ const sec=Math.round((Date.now()-ms)/1000); return sec<10 ? t("gdNow") : sec<60 ? t("gdSec")(sec) : sec<3600 ? t("gdMin")(Math.round(sec/60)) : new Date(ms).toLocaleString(ui.lang==="fr"?"fr-FR":"en-US",{hour:"2-digit",minute:"2-digit",day:"numeric",month:"short"}); };
+  // the header button (and the account window, which has the sync controls)
   function render(){
-    const box=$("gd"), btn=$("gdBtn"); if(!box) return;
+    const btn=$("gdBtn"); if(!btn) return;
     const st = status==="ok" ? t("gdOk")(ago(cfg.at)) : status==="idle" && cfg.at ? t("gdOk")(ago(cfg.at)) : t("gdSt")[status]||"";
     btn.hidden=!usable; btn.dataset.st=status;
     btn.title = cfg.on ? `${signedIn() ? ACCT.n+" · " : ""}${t("amKick")} · Google Drive · ${st}${err?" · "+err:""}` : t("amInT"); btn.setAttribute("aria-label", btn.title);
     renderMe();
     acctRefresh();
-    box.innerHTML=`<div class="gd-h"><span class="gd-ic" aria-hidden="true">${ICON_DRIVE}</span><div><h3>${esc(t("gdTitle"))}</h3><p>${esc(cfg.on?t("gdStay"):t("gdText"))}</p></div>${cfg.on?`<span class="gd-st" data-st="${status}"><i></i>${esc(st)}</span>`:""}</div>
-      ${err?`<p class="gd-warn">${esc(err)}</p>`:""}
-      ${cfg.on && cfg.email ? `<p class="gd-note">${esc(t("gdAs")(cfg.email))}</p>`:""}
-      ${cfg.on && signedIn() ? `<p class="gd-note gd-acct">${esc(t("acIn")(ACCT.n))} · <button type="button" class="linkbtn" data-acct>${esc(t("acMine"))}</button></p>`:""}
-      ${cfg.on ? `<div class="row">${status==="auth"?`<button class="gbtn" type="button" data-gd="connect">${ICON_G}<span>${esc(t("gdReconnect"))}</span></button>`:`<button class="btn" type="button" data-gd="sync"${status==="sync"?" disabled":""}>${esc(t("gdSyncNow"))}</button>`}<button class="btn ghost" type="button" data-gd="off">${esc(t("gdDisconnect"))}</button></div>`
-        : `<div class="row"><button class="gbtn" type="button" data-gd="connect"${usable?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>${usable?"":`<p class="gd-note">${esc(t("gdLocal"))}</p>`}`}
-      <p class="gd-note"><a href="${ROOT}privacy.html" target="_blank" rel="noopener">${esc(t("gdPriv"))}</a></p>`;
   }
   // a click on "sync now" or the cloud renews the token first when needed (that click is what lets Google's popup open)
   const act=()=>{ if(!cfg.on || status==="auth" || (!fresh() && !(relayOn && rt))) connect(); else if(status!=="sync") sync(); };
-  $("gd").addEventListener("click", e=>{ const b=e.target.closest("[data-gd]"); if(!b) return; const a=b.dataset.gd;
-    if(a==="connect") connect(); else if(a==="sync") act(); else if(a==="off") disconnect(); });
   $("gdBtn").addEventListener("click", ()=>acctOpen(signedIn() && nickRandom(ACCT.n)));   // signed out: what signing in gives · signed in: the account window (pseudo field first while it's the random one)
   let bc=null;
   function init(){
