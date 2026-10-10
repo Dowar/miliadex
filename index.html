@@ -1504,7 +1504,7 @@ const T = {
   imgTip:"Open an image downloaded from the Miliadex, or drop it here",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image doesn't carry a Miliadex outfit (only images downloaded from the Miliadex do, as the original file)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
   scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
-  cardProfile:"Collector profile",cardFull:n=>n>1?"Full sets":"Full set",cardMore:n=>`+${n} more`,cardRemix:"Open it to remix it in My Outfits",cardDiscordO:n=>`Miliadex - ${n} outfit`,
+  cardProfile:"Collector profile",cardFull:n=>n>1?"Full sets":"Full set",cardMore:n=>`+${n} more`,cardRemix:"Open it to remix it in My Outfits",cardDiscordO:n=>`Miliadex - ${n} outfit`,cardWait:"Preparing the preview picture…",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
   bkTitle:"Save & backup",bkSum:"Backup file · Google Drive sync",bkText:"Your collection saves automatically in this browser. Download a backup file to keep it safe or move it to another device.",
   bkSave:"Download backup",bkLoad:"Import a file",bkCopy:"Copy code",bkPaste:"Import code",bkReset:"Uncheck everything",bkArm:"Click again to confirm",bkPh:"Paste a backup code here, then press “Import code”",
@@ -1557,7 +1557,7 @@ const T = {
   imgTip:"Ouvre une image téléchargée depuis le Miliadex, ou dépose-la ici",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image ne contient pas de tenue Miliadex (seules les images téléchargées depuis le Miliadex en ont, en fichier d'origine)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
   scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
-  cardProfile:"Profil de collection",cardFull:n=>n>1?"Sets complets":"Set complet",cardMore:n=>`+${n} autres`,cardRemix:"Ouvre-la pour la remixer dans Mes tenues",cardDiscordO:n=>`Miliadex - Tenue ${n}`,
+  cardProfile:"Profil de collection",cardFull:n=>n>1?"Sets complets":"Set complet",cardMore:n=>`+${n} autres`,cardRemix:"Ouvre-la pour la remixer dans Mes tenues",cardDiscordO:n=>`Miliadex - Tenue ${n}`,cardWait:"Préparation de l'image d'aperçu…",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
   bkTitle:"Sauvegarde",bkSum:"Fichier de sauvegarde · synchro Google Drive",bkText:"Ta collection s'enregistre automatiquement dans ce navigateur. Télécharge un fichier de sauvegarde pour la garder en sécurité ou la retrouver sur un autre appareil.",
   bkSave:"Télécharger la sauvegarde",bkLoad:"Importer un fichier",bkCopy:"Copier le code",bkPaste:"Importer un code",bkReset:"Tout décocher",bkArm:"Clique encore pour confirmer",bkPh:"Colle un code de sauvegarde ici, puis « Importer un code »",
@@ -3180,8 +3180,8 @@ async function shPrepare(){
   const url=colUrl(code), nm=SHARE.clean(ui.shName).replace(/[\\\[\]]/g,"\\$&");
   // Discord masked link: the message shows "Miliadex - Name Profile" instead of the long link
   const st=collStats(state.owned, ui.g), who=SHARE.clean(ui.shName);
-  pushCard("c", code, ()=>shareCardCol(st, who));
-  return shReady={url, code, md:`[${nm?`Miliadex - ${nm} Profile`:"Miliadex Profile"}](${url})`};
+  const card=pushCard("c", code, ()=>shareCardCol(st, who));
+  return shReady={url, code, card, md:`[${nm?`Miliadex - ${nm} Profile`:"Miliadex Profile"}](${url})`};
 }
 function openShare(theirs){
   const d=$("shc"), mine=!theirs, name = mine ? SHARE.clean(ui.shName) : theirs.name;
@@ -3204,10 +3204,9 @@ $("shc").addEventListener("click", async e=>{ const d=$("shc");
   const b=e.target.closest("[data-sc]"); if(!b) return;
   const r=shReady||await shPrepare(); if(!r) return;
   const dc=b.dataset.sc==="discord", txt=dc?r.md:r.url;
-  try{ await navigator.clipboard.writeText(txt); toast("✓ "+t(dc?"scCopiedD":"linkCopied")); }
-  catch(err){ // no clipboard access: show the text ready to copy by hand
+  copyLater(txt, r.card, t(dc?"scCopiedD":"linkCopied"), txt=>{ // no clipboard access: show the text ready to copy by hand
     let ta=d.querySelector(".sc-raw"); if(!ta){ ta=document.createElement("textarea"); ta.className="sc-raw"; ta.readOnly=true; ta.rows=4; d.querySelector(".sc-act").after(ta); }
-    ta.value=txt; ta.focus(); ta.select(); }
+    ta.value=txt; ta.focus(); ta.select(); });
 });
 let shNameT=0;
 $("shc").addEventListener("input", e=>{ if(e.target.id!=="scName") return;
@@ -3215,16 +3214,34 @@ $("shc").addEventListener("input", e=>{ if(e.target.id!=="scName") return;
   shReady=null; clearTimeout(shNameT); shNameT=setTimeout(shPrepare,200); });
 /* ---------- share pictures: the card Discord shows for a /c/ or /o/ link — drawn here with the site's own look, kept by the site's Worker ---------- */
 const CARD_V=1;   // same as CARD_V in worker/index.js: bump both when the card design changes
-const cardDone=new Set();
-async function pushCard(k, code, draw){
-  if(!/^https?:$/.test(location.protocol)) return;
+const cardJobs=new Map();   // link → the picture on its way (true once the site has it)
+function pushCard(k, code, draw){
+  if(!/^https?:$/.test(location.protocol)) return Promise.resolve(false);
   const lang=ui.lang==="fr"?"fr":"en", id=k+"|"+lang+"|"+code;
-  if(cardDone.has(id)) return; cardDone.add(id);
+  if(cardJobs.has(id)) return cardJobs.get(id);
+  const job=(async()=>{
+    try{
+      const cv=await draw(), b=cv && await toBlobP(cv,"image/jpeg",.88); if(!b) throw new Error("no picture");
+      const r=await fetch("/api/card?k="+k+"&l="+lang+"&c="+encodeURIComponent(code),{method:"POST",body:b,headers:{"content-type":"image/jpeg"}});
+      if(!r.ok) throw new Error("card upload "+r.status);
+      return true;
+    }catch(e){ console.warn("Miliadex: preview picture not sent", e); cardJobs.delete(id); return false; }
+  })();
+  cardJobs.set(id, job); return job;
+}
+// copy a share link once its preview picture has reached the site (a link pasted too early would show the plain banner in Discord);
+// the copy starts within the click (ClipboardItem with a promise), so browsers that need a click for the clipboard still allow it
+async function copyLater(txt, ready, msg, onFail){
+  const wait=Promise.race([Promise.resolve(ready).catch(()=>false), new Promise(r=>setTimeout(r,8000))]);
+  let slow=setTimeout(()=>{ slow=0; toast(t("cardWait")); },500);
+  const done=ok=>{ if(slow) clearTimeout(slow); if(ok) toast("✓ "+msg); };
   try{
-    const cv=await draw(), b=cv && await toBlobP(cv,"image/jpeg",.88); if(!b) throw new Error("no picture");
-    const r=await fetch("/api/card?k="+k+"&l="+lang+"&c="+encodeURIComponent(code),{method:"POST",body:b,headers:{"content-type":"image/jpeg"}});
-    if(!r.ok) throw new Error("card upload "+r.status);
-  }catch(e){ cardDone.delete(id); }
+    if(window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
+      await navigator.clipboard.write([new ClipboardItem({"text/plain": wait.then(()=>new Blob([txt],{type:"text/plain"}))})]); done(true); return true; }
+  }catch(e){}
+  await wait;
+  try{ await navigator.clipboard.writeText(txt); done(true); return true; }
+  catch(e){ done(false); if(onFail) onFail(txt); return false; }
 }
 const rgbaOf=(hex,a)=>{ const n=parseInt(hex.slice(1),16); return `rgba(${n>>16},${n>>8&255},${n&255},${a})`; };
 async function cardFonts(){ try{ await Promise.all(['700 30px "Chakra Petch"','650 50px Fraunces','700 22px Figtree','600 22px Figtree','500 20px Figtree'].map(f=>document.fonts.load(f))); }catch(e){} }
@@ -3346,8 +3363,9 @@ async function shareCardLook(L){
 // sharing an outfit: its link (and the picture behind its preview)
 function shareLook(L, discord){
   const code=lookCode(L), url=shareUrl("o",code), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
-  pushCard("o", code, ()=>shareCardLook(L));
-  return copyTxt(discord ? `[${t("cardDiscordO")(name)}](${url})` : url, t(discord?"scCopiedD":"linkCopied"));
+  const ready=pushCard("o", code, ()=>shareCardLook(L));
+  return copyLater(discord ? `[${t("cardDiscordO")(name)}](${url})` : url, ready, t(discord?"scCopiedD":"linkCopied"),
+    txt=>{ const inp=$("lkCode"); if(inp){ inp.value=txt; inp.focus(); inp.select(); } });
 }
 function readCol(){
   const mm=location.hash.match(/col=([A-Za-z0-9._-]+)/); if(!mm) return false;

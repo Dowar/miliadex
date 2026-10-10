@@ -216,7 +216,7 @@ ${tags}
 <script>location.replace(${JSON.stringify(target).replace(/</g, "\\u003c")})</script>
 </head><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#140d33;color:#efeaff;font:16px system-ui,sans-serif">
 <a href="${esc(target)}" style="color:#c58cff">${esc(T.open)} →</a></body></html>`;
-  return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=600", "x-robots-tag": "noindex" } });
+  return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": p.brief ? "public, max-age=60" : "public, max-age=600", "x-robots-tag": "noindex" } });
 }
 
 async function showItem(env, origin, file) {
@@ -243,6 +243,9 @@ export class CardStore extends DurableObject {
     if (Math.random() < .02) this.sql.exec("DELETE FROM cards WHERE t < ?", Date.now() - 183 * 864e5);
     return true;
   }
+  has(k) {
+    return this.sql.exec("SELECT 1 AS x FROM cards WHERE k = ?", k).toArray().length > 0;
+  }
   get(k) {
     const r = this.sql.exec("SELECT ty, b FROM cards WHERE k = ?", k).toArray()[0];
     if (r && Math.random() < .05) this.sql.exec("UPDATE cards SET t = ? WHERE k = ?", Date.now(), k);
@@ -267,10 +270,24 @@ async function saveCard(request, env, url) {
   await s.put(await cardKey(k, code, lang), ty, b.buffer);
   return new Response(null, { status: 204 });
 }
-// GET /card/<key>.jpg  the picture; it may still be on its way (the page draws it while the link is pasted), so wait a little
+// is the picture there? The page sends it as the link is copied: give it a few seconds before answering without it
+async function cardThere(env, key, tries = 9) {
+  const s = store(env);
+  for (let i = 0; s && i < tries; i++) {
+    try { if (await s.has(key)) return true; } catch (e) { return false; }
+    if (i < tries - 1) await new Promise(res => setTimeout(res, 650));
+  }
+  return false;
+}
+// the preview's picture: the card when the site has it, the site banner otherwise (so a card address never stands for the banner)
+async function previewImage(env, origin, k, code, lang) {
+  const key = await cardKey(k, code, lang);
+  return await cardThere(env, key) ? { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630 } : { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
+}
+// GET /card/<key>.jpg  the picture
 async function sendCard(env, origin, key) {
   const s = store(env);
-  for (let i = 0; s && i < 10; i++) {
+  for (let i = 0; s && i < 3; i++) {
     let r = null; try { r = await s.get(key); } catch (e) {}
     if (r) return new Response(r.b, { headers: { "content-type": r.ty, "cache-control": "public, max-age=31536000, immutable" } });
     await new Promise(res => setTimeout(res, 700));
@@ -297,14 +314,13 @@ export default {
       if (kind === "c") {
         const target = "/#col=" + arg, c = await readCol(arg);
         if (!c) return Response.redirect(origin + target, 302);
-        const card = `${origin}/card/${await cardKey("c", arg, lang)}.jpg`;
-        return page({ ...colShort(c, lang), image: card, large: true, w: 1200, h: 630 }, here, target, lang);
+        return page({ ...colShort(c, lang), ...await previewImage(env, origin, "c", arg, lang), large: true }, here, target, lang);
       }
       if (kind === "o") {
         const target = "/#look=" + arg, L = readLook(arg);
         if (!L) return Response.redirect(origin + target, 302);
-        const info = lookInfo(L), card = `${origin}/card/${await cardKey("o", arg, lang)}.jpg`;
-        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), image: card, large: true, w: 1200, h: 630, color: SITE_COLOR }, here, target, lang);
+        const info = lookInfo(L);
+        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...await previewImage(env, origin, "o", arg, lang), large: true, color: SITE_COLOR }, here, target, lang);
       }
       const target = "/#show=" + encodeURIComponent(arg), it = await showItem(env, origin, arg);
       if (!it) return Response.redirect(origin + target, 302);
