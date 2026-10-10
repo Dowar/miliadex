@@ -183,6 +183,16 @@ async function cardKey(k, code, lang) {
   const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${CARD_V}`));
   return [...new Uint8Array(d)].slice(0, 16).map(b => b.toString(16).padStart(2, "0")).join("");
 }
+// short links: /o/<10 letters or digits> for an outfit, /c/<…> for a collection. The key is a hash of what the link stands for (the same
+// share gives the same link, and nobody can aim a share at someone else's link); the picture is kept under it, and the code in a
+// table of its own, so the link still opens the outfit or the collection once its picture is gone. "salt": the outfit's screenshot id
+const B62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", SHORT = /^[0-9A-Za-z]{10}$/;
+async function shortKey(k, code, lang, salt) {
+  const d = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${salt || ""}|${CARD_V}`)));
+  let n = 0n; for (let i = 0; i < 8; i++) n = n << 8n | BigInt(d[i]);
+  let s = ""; for (let i = 0; i < 10; i++) { s += B62[Number(n % 62n)]; n /= 62n; }
+  return s;
+}
 // with a card picture, the text stays short: the picture carries the details
 function colShort(c, lang) {
   const T = TX[lang], st = collStats(c), N = n => fmt(n, lang);
@@ -245,6 +255,7 @@ async function showItem(env, origin, file) {
 // and stays under BUDGET bytes (free plan: 1 GB per object, 5 GB per account): past either, the cards used least recently
 // go first, never a featured one. Cards unused for 6 months go too. One more object, "users", keeps the accounts.
 // Showcase entries (kind "s") are counted apart: MAX_SHOW per object, PER_USER per account, never expired, cleared last.
+const MAX_LINKS = 50000;   // short links per object (a few hundred bytes each): past that, the ones opened least recently go
 const SHARDS = 4, MAX_CARDS = 1250, MAX_SHOW = 800, PER_USER = 30, COOLDOWN = 60e3, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024, PAGE = 36;
 const COLS = "k, code, lang, pt, pic, likes, nick, feat, th, thty";   // a showcase entry, with its small picture
 const NICK_A = ["Starry", "Lunar", "Velvet", "Crimson", "Azure", "Golden", "Misty", "Frosty", "Blooming", "Silent", "Radiant", "Moonlit", "Stellar", "Wild", "Gentle", "Amber"];
@@ -288,6 +299,11 @@ export class CardStore extends DurableObject {
       sql.exec("CREATE INDEX IF NOT EXISTS card_uid ON card (uid)");
       this.recount(); this.setMeta("schema", 6);
     }
+    if (v < 7) {                              // v7: short links (what each one stands for, kept when its picture goes)
+      sql.exec("CREATE TABLE IF NOT EXISTS link (k TEXT PRIMARY KEY, kind TEXT NOT NULL, code TEXT NOT NULL, lang TEXT NOT NULL, pic INTEGER NOT NULL DEFAULT 0, t INTEGER NOT NULL)");
+      sql.exec("CREATE INDEX IF NOT EXISTS link_t ON link (t)");
+      this.setMeta("lcount", sql.exec("SELECT COUNT(*) AS c FROM link").toArray()[0].c); this.setMeta("schema", 7);
+    }
   }
   meta(k) { const r = this.sql.exec("SELECT v FROM meta WHERE k = ?", k).toArray()[0]; return r ? r.v : 0; }
   setMeta(k, v) { this.sql.exec("INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, v); }
@@ -308,7 +324,7 @@ export class CardStore extends DurableObject {
     }
     return [Math.max(0, total), Math.max(0, count)];
   }
-  // link pictures, kept in 1.5 MB parts (a row holds at most 2 MB); o: {code, lang, pic}
+  // link pictures, kept in 1.5 MB parts (a row holds at most 2 MB); o: {code, lang, pic, link: "o" | "c" for a short link}
   put(k, ty, b, o = {}) {
     const now = Date.now(), size = b.byteLength;
     let total = this.meta("bytes"), count = this.meta("count");
@@ -322,9 +338,11 @@ export class CardStore extends DurableObject {
     if (prev) { this.dropRow(k); total = Math.max(0, total - prev.z); count = Math.max(0, count - 1); }
     // full: make room for a few more at once (2% of the cards, ~10% of the bytes)
     if (count + 1 > MAX_CARDS || total + size > BUDGET) [total, count] = this.evict(total, count, BUDGET * .9 - size, MAX_CARDS - Math.ceil(MAX_CARDS * .02) - 1);
+    const newLink = !!o.link && !this.sql.exec("SELECT 1 AS x FROM link WHERE k = ?", k).toArray().length;
     const write = () => this.ctx.storage.transactionSync(() => {
       let n = 0; for (let x = 0; x < size; x += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(x, x + PART));
       this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", k, now, ty, n, size, o.code || null, o.lang || null, o.pic ? 1 : 0);
+      if (o.link) this.sql.exec("INSERT OR REPLACE INTO link (k, kind, code, lang, pic, t) VALUES (?, ?, ?, ?, ?, ?)", k, o.link, o.code, o.lang || "en", o.pic ? 1 : 0, now);
     });
     try { write(); }
     catch (e) {                                // full anyway (SQLite's own overhead): clear a fifth more, try once again
@@ -332,7 +350,19 @@ export class CardStore extends DurableObject {
       [total, count] = this.evict(total, count, total * .8 - size, count); write();
     }
     this.setMeta("bytes", total + size); this.setMeta("count", count + 1);
+    if (newLink) this.linkRoom(this.meta("lcount") + 1);
     return true;
+  }
+  // short links: at most MAX_LINKS, the ones opened least recently go first (2% at once)
+  linkRoom(n) {
+    if (n > MAX_LINKS) { const cut = n - MAX_LINKS + Math.ceil(MAX_LINKS * .02); this.sql.exec("DELETE FROM link WHERE k IN (SELECT k FROM link ORDER BY t LIMIT ?)", cut); n -= cut; }
+    this.setMeta("lcount", n);
+  }
+  linkGet(k) {
+    const r = this.sql.exec("SELECT kind, code, lang, pic, t FROM link WHERE k = ?", k).toArray()[0];
+    if (!r) return null;
+    const now = Date.now(); if (now - r.t > 864e5) this.sql.exec("UPDATE link SET t = ? WHERE k = ?", now, k);   // still opened: keep it
+    return { kind: r.kind, code: r.code, lang: r.lang, pic: !!r.pic, card: this.has(k) };
   }
   // a showcase entry (its own key, its own picture): e = {code, lang, pic, uid, nick, th, thty, feat, src}
   // its owner can replace it once a minute (its likes and its place stay); the admin's copies (feat) are written once
@@ -467,12 +497,12 @@ export class CardStore extends DurableObject {
   }
 }
 // a card's object follows its key; the first one keeps the name of the single object used before (its cards stay readable)
-const shardOf = key => parseInt(key[0], 16) % SHARDS;
+const shardOf = key => (key.length === 32 ? parseInt(key[0], 16) : key.charCodeAt(key.length - 1)) % SHARDS;
 const shardName = n => n ? "cards-" + n : "cards";
 const store = (env, key) => env.CARDS ? env.CARDS.get(env.CARDS.idFromName(shardName(shardOf(key)))) : null;
 const shards = env => env.CARDS ? Array.from({ length: SHARDS }, (_, n) => env.CARDS.get(env.CARDS.idFromName(shardName(n)))) : [];
 const users = env => env.CARDS ? env.CARDS.get(env.CARDS.idFromName("users")) : null;
-const legacy = (env, key) => env.CARDS && shardOf(key) ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
+const legacy = (env, key) => env.CARDS && key.length === 32 && shardOf(key) ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
 // every card object at once; one that fails counts as empty
 const each = (env, f, empty) => Promise.all(shards(env).map(async s => { try { return await f(s); } catch (e) { return empty; } }));
 const sniff = b => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff ? "image/jpeg"
@@ -592,7 +622,8 @@ async function accountApi(request, env, url, ctx) {
 async function saveCard(request, env, url, ctx) {
   if (request.method !== "POST") return new Response("POST only", { status: 405 });
   const k = url.searchParams.get("k"), code = url.searchParams.get("c") || "", lang = url.searchParams.get("l") === "fr" ? "fr" : "en";
-  if (!/^[co]$/.test(k) || code.length > 4000) return new Response("bad link", { status: 400 });
+  const short = url.searchParams.get("x") === "1", salt = url.searchParams.get("s") || "";   // x=1: a short link (its key comes back)
+  if (!/^[co]$/.test(k) || code.length > 4000 || salt.length > 64 || !/^[A-Za-z0-9_-]*$/.test(salt)) return new Response("bad link", { status: 400 });
   const L = k === "o" ? readLook(code) : null, ok = k === "c" ? await readCol(code) : L;
   if (!ok) return new Response("bad link", { status: 400 });
   let b, pic = false;
@@ -603,9 +634,9 @@ async function saveCard(request, env, url, ctx) {
   } else b = new Uint8Array(await request.arrayBuffer());
   const ty = sniff(b);
   if (!ty || b.length > 8 * 1024 * 1024) return new Response("bad picture", { status: 400 });
-  const key = await cardKey(k, code, lang), s = store(env, key); if (!s) return new Response("no store", { status: 503 });
-  await s.put(key, ty, b.buffer, k === "o" ? { code, lang, pic } : {});
-  return new Response(null, { status: 204 });
+  const key = short ? await shortKey(k, code, lang, salt) : await cardKey(k, code, lang), s = store(env, key); if (!s) return new Response("no store", { status: 503 });
+  await s.put(key, ty, b.buffer, { code, lang, pic, link: short ? k : null });
+  return short ? json({ k: key }) : new Response(null, { status: 204 });
 }
 // is the picture there? The page sends it before the link is copied: previews still give it a moment before answering without it
 async function cardThere(env, key, tries) {
@@ -622,6 +653,37 @@ async function previewImage(env, origin, k, code, lang, bot) {
   const key = await cardKey(k, code, lang);
   if (!await cardThere(env, key, bot ? 5 : 1)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
   return k === "o" ? { image: `${origin}/card/${key}.jpg`, w: 1080, h: 1350, key } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630, key };
+}
+// what a short link stands for: {kind, code, lang, pic, card}. Kept in the edge cache for a week (it never changes), so a link
+// opened again and again reads the storage once; bots get a few tries (the link may be pasted as its picture is still on its way)
+const linkCacheKey = (origin, k) => new Request(origin + "/__link/" + k);
+async function linkOf(env, origin, key, ctx, tries = 1) {
+  const ck = linkCacheKey(origin, key), cache = typeof caches !== "undefined" ? caches.default : null;
+  if (cache) { const hit = await cache.match(ck).catch(() => null); if (hit) try { return await hit.json(); } catch (e) {} }
+  const s = store(env, key); let r = null;
+  for (let i = 0; s && i < tries && !r; i++) {
+    try { r = await s.linkGet(key); } catch (e) { return null; }
+    if (!r && i < tries - 1) await new Promise(res => setTimeout(res, 600));
+  }
+  if (r && cache) { const p = cache.put(ck, new Response(JSON.stringify(r), { headers: { "content-type": "application/json", "cache-control": "public, max-age=604800" } })).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(p); }
+  return r;
+}
+// /o/<short> and /c/<short>: a person goes straight to the site with the code; a link preview gets the card
+async function shortLink(request, env, ctx, url, kind, key) {
+  const origin = url.origin, person = isPerson(request), bot = isBot(request);
+  const r = await linkOf(env, origin, key, ctx, person ? 1 : bot ? 5 : 1);
+  if (!r || r.kind !== kind) return new Response(null, { status: 302, headers: { location: origin + "/#" + kind + "=" + key, "cache-control": "no-store" } });   // the page says it's gone
+  const lang = r.lang === "fr" ? "fr" : "en";
+  const target = kind === "c" ? "/#col=" + r.code : "/#look=" + r.code + (lang === "fr" ? "&l=fr" : "") + "&p=" + (r.pic ? "1&card=" + key : "0");
+  if (person) return new Response(null, { status: 302, headers: { location: origin + target, "cache-control": "no-store" } });
+  const here = origin + url.pathname;
+  const img = r.card ? { image: `${origin}/card/${key}.jpg`, w: kind === "o" ? 1080 : 1200, h: kind === "o" ? 1350 : 630 } : { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
+  if (kind === "c") {
+    const c = await readCol(r.code); if (!c) return Response.redirect(origin + target, 302);
+    return page({ ...colShort(c, lang), ...img, large: true }, here, target, lang);
+  }
+  const L = readLook(r.code); if (!L) return Response.redirect(origin + target, 302);
+  return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, lookInfo(L), lang), ...img, large: true, color: SITE_COLOR }, here, target, lang);
 }
 // GET /card/<key>.png|jpg  the picture (cards can be replaced: the same outfit shared again with another screenshot)
 // GET /card/<key>/thumb    its small square picture (admin page), the picture itself for cards sent without one
@@ -727,16 +789,23 @@ export default {
     try {
       if (url.pathname === "/api/card") return await saveCard(request, env, url, ctx);
       if (url.pathname === "/api/showcase") return await showcaseList(env, url, ctx);
+      if (url.pathname === "/api/link") {   // GET ?k=<short key>: what a short link stands for (when one reaches the page some other way)
+        const k = url.searchParams.get("k") || "", r = SHORT.test(k) ? await linkOf(env, origin, k, ctx) : null;
+        return r ? json({ k, kind: r.kind, code: r.code, lang: r.lang, pic: r.pic }, 86400) : json({ error: "gone" }, 0, 404);
+      }
       if (url.pathname.startsWith("/api/admin/")) return await adminApi(request, env, url, ctx);
       if (/^\/api\/(auth|nick|like|account\/delete|show\/(publish|remove|mine))$/.test(url.pathname)) return await accountApi(request, env, url, ctx);
       if (url.pathname.startsWith("/a/")) return await adminPage(env, origin);
-      const cm = url.pathname.match(/^\/card\/([0-9a-f]{32})(?:\.(?:jpg|png|webp)|\/(thumb))$/);
+      const cm = url.pathname.match(/^\/card\/([0-9a-f]{32}|[0-9A-Za-z]{10})(?:\.(?:jpg|png|webp)|\/(thumb))$/);
       if (cm) return await sendCard(env, origin, cm[1], !!cm[2]);
     } catch (e) { return new Response("error", { status: 500 }); }
     const m = url.pathname.match(/^\/([cos])\/([^/]+)\/?$/);
     if (!m) return env.ASSETS.fetch(request);
     const [, kind, raw] = m;
     let arg = raw; try { arg = decodeURIComponent(raw); } catch (e) {}
+    if ((kind === "o" || kind === "c") && SHORT.test(arg)) {   // short links (a long link's code is never exactly 10 letters or digits)
+      try { return await shortLink(request, env, ctx, url, kind, arg); } catch (e) { return Response.redirect(origin + "/", 302); }
+    }
     // where the site takes over: the outfit's language and "has an in-game screenshot" ride along, the page works out the rest
     const p = url.searchParams.get("p"), lookAt = card => "/#look=" + arg + (lang === "fr" ? "&l=fr" : "") + (p === "0" || p === "1" ? "&p=" + p : "") + (card ? "&card=" + card : "");
     const target = kind === "c" ? "/#col=" + arg : kind === "o" ? lookAt("") : "/#show=" + encodeURIComponent(arg);
