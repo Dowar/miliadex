@@ -3090,7 +3090,7 @@ async function showAct(a){
       catch(e){ toast(t("dlFail")); } return; }
     if(a==="edit"){ loadSaved(L); closeV(); goBuilder(); } return; }
   const it=v.it;
-  if(a==="link" || a==="discord"){ const url=shareUrl("s", encodeURIComponent(it.name)), n=showName(it).replace(/[\\\[\]]/g,"\\$&");
+  if(a==="link" || a==="discord"){ const url=shareUrl("s", encodeURIComponent(showBase(it.name))), n=showName(it).replace(/[\\\[\]]/g,"\\$&");
     return copyTxt(a==="discord" ? `[${t("cardDiscordO")(n)}](${url})` : url, t(a==="discord"?"scCopiedD":"linkCopied")); }
   if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
   const m=await showMeta(it); if(!m) return;
@@ -3137,7 +3137,8 @@ function readShowHash(){
 const TAB_PATH={sets:"sets",comp:"cosmetics",outfits:"outfits",show:"showcase"}, PATH_TAB={sets:"sets",cosmetics:"comp",outfits:"outfits",showcase:"show"};
 const catSlug = c => slug(c==="Multi" ? "multi-part" : c);
 const showBase = n => String(n).replace(/\.[a-z0-9]+$/i,"");
-const showFind = n => n ? (SHOW.items||[]).find(x=>x.name===n || showBase(x.name)===n) || null : null;
+// by file name, or by name without extension (links made before an image changed format: …/witchy-garden.png → witchy-garden.jpg)
+const showFind = n => n ? (SHOW.items||[]).find(x=>x.name===n) || (SHOW.items||[]).find(x=>showBase(x.name)===showBase(n)) || null : null;
 function routeNow(){
   const d=$("det"), v=$("shv");
   if(v.open && VW.src==="show" && VW.keys[VW.i]) return "/showcase/"+encodeURIComponent(showBase(VW.keys[VW.i]));

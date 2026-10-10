@@ -226,15 +226,18 @@ async function showItem(env, origin, file) {
     const r = await env.ASSETS.fetch(new Request(origin + "/showcase/index.json"));
     if (!r.ok) return null;
     const idx = await r.json();
-    return (idx.items || []).find(x => x.file === file) || null;
+    // by file name, or without the extension: links keep working when an image changes format (witchy-garden.png → .jpg)
+    const base = n => String(n).replace(/\.[a-z0-9]+$/i, ""), items = idx.items || [];
+    return items.find(x => x.file === file) || items.find(x => base(x.file) === base(file)) || null;
   } catch (e) { return null; }
 }
 
 /* ---------- preview pictures ---------- */
 // Cards live in SQLite-backed Durable Objects (strongly consistent: a card sent from Paris is there for Discord's fetch from
-// the US a second later). Free plan: 5 GB for the account and 1 GB per object, so the cards are spread over SHARDS objects,
-// each kept under BUDGET: past it, the cards used least recently go first. Cards unused for 6 months go too.
-const SHARDS = 4, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024;
+// the US a second later), spread over SHARDS objects. Each keeps at most MAX_CARDS cards (4 × 1250 = about 5,000 in all)
+// and stays under BUDGET bytes (free plan: 1 GB per object, 5 GB per account): past either, the cards used least recently
+// go first. Cards unused for 6 months go too.
+const SHARDS = 4, MAX_CARDS = 1250, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024;
 export class CardStore extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
@@ -244,37 +247,39 @@ export class CardStore extends DurableObject {
     sql.exec("CREATE TABLE IF NOT EXISTS card_part (k TEXT NOT NULL, i INTEGER NOT NULL, b BLOB NOT NULL, PRIMARY KEY (k, i))");
     sql.exec("CREATE INDEX IF NOT EXISTS card_t ON card (t)");
     sql.exec("CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v INTEGER NOT NULL)");
-    if (this.meta("schema") < 2) {            // v2: each card's size (z) and the running total (meta "bytes")
+    const v = this.meta("schema");
+    if (v < 2) {                              // v2: each card's size (z) and the running total (meta "bytes")
       sql.exec("ALTER TABLE card ADD COLUMN z INTEGER NOT NULL DEFAULT 0");
       sql.exec("UPDATE card SET z = COALESCE((SELECT SUM(length(b)) FROM card_part WHERE card_part.k = card.k), 0)");
-      this.recount(); this.setMeta("schema", 2);
     }
+    if (v < 3) { this.recount(); this.setMeta("schema", 3); }   // v3: the running count too (meta "count")
   }
   meta(k) { const r = this.sql.exec("SELECT v FROM meta WHERE k = ?", k).toArray()[0]; return r ? r.v : 0; }
   setMeta(k, v) { this.sql.exec("INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, v); }
-  recount() { const s = this.sql.exec("SELECT COALESCE(SUM(z), 0) AS s FROM card").toArray()[0].s; this.setMeta("bytes", s); return s; }
+  recount() { const r = this.sql.exec("SELECT COUNT(*) AS c, COALESCE(SUM(z), 0) AS s FROM card").toArray()[0]; this.setMeta("bytes", r.s); this.setMeta("count", r.c); return [r.s, r.c]; }
   drop(k) { this.sql.exec("DELETE FROM card_part WHERE k = ?", k); this.sql.exec("DELETE FROM card WHERE k = ?", k); }
-  // least recently used first, until the cards weigh at most `room` bytes
-  evict(total, room) {
-    while (total > room) {
+  // least recently used first, until the cards weigh at most `room` bytes and number at most `most`
+  evict(total, count, room, most) {
+    while (total > room || count > most) {
       const old = this.sql.exec("SELECT k, z FROM card ORDER BY t LIMIT 32").toArray();
-      if (!old.length) return 0;
-      for (const r of old) { this.drop(r.k); total -= r.z; if (total <= room) break; }
+      if (!old.length) return [0, 0];
+      for (const r of old) { this.drop(r.k); total -= r.z; count--; if (total <= room && count <= most) break; }
     }
-    return Math.max(0, total);
+    return [Math.max(0, total), Math.max(0, count)];
   }
   // pictures are kept in 1.5 MB parts (a row holds at most 2 MB; an outfit PNG with its screenshot can weigh several MB)
   put(k, ty, b) {
     const now = Date.now(), size = b.byteLength;
-    let total = this.meta("bytes");
+    let total = this.meta("bytes"), count = this.meta("count");
     if (Math.random() < .02) {                 // now and then: forget cards unused for 6 months, recount
       this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ?)", now - KEEP);
       this.sql.exec("DELETE FROM card WHERE t < ?", now - KEEP);
-      total = this.recount();
+      [total, count] = this.recount();
     }
     const prev = this.sql.exec("SELECT z FROM card WHERE k = ?", k).toArray()[0];
-    if (prev) { this.drop(k); total = Math.max(0, total - prev.z); }
-    if (total + size > BUDGET) total = this.evict(total, BUDGET * .9 - size);   // make room for ~10% more at once
+    if (prev) { this.drop(k); total = Math.max(0, total - prev.z); count = Math.max(0, count - 1); }
+    // full: make room for a few more at once (2% of the cards, ~10% of the bytes)
+    if (count + 1 > MAX_CARDS || total + size > BUDGET) [total, count] = this.evict(total, count, BUDGET * .9 - size, MAX_CARDS - Math.ceil(MAX_CARDS * .02) - 1);
     const write = () => this.ctx.storage.transactionSync(() => {
       let n = 0; for (let o = 0; o < size; o += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(o, o + PART));
       this.sql.exec("INSERT INTO card (k, t, ty, n, z) VALUES (?, ?, ?, ?, ?)", k, now, ty, n, size);
@@ -282,9 +287,9 @@ export class CardStore extends DurableObject {
     try { write(); }
     catch (e) {                                // full anyway (SQLite's own overhead): clear a fifth more, try once again
       if (!/full/i.test(String(e && e.message))) throw e;
-      total = this.evict(total, total * .8 - size); write();
+      [total, count] = this.evict(total, count, total * .8 - size, count); write();
     }
-    this.setMeta("bytes", total + size);
+    this.setMeta("bytes", total + size); this.setMeta("count", count + 1);
     return true;
   }
   has(k) {
