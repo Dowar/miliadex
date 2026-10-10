@@ -1954,7 +1954,7 @@ const RING = (()=>{ let ticks=""; for(let i=0;i<60;i++){ const a=i*6*Math.PI/180
 const NODE_SVG = lab => `<svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17" fill="rgba(12,8,32,.92)" stroke="rgba(255,255,255,.16)" stroke-width="3.2"/><circle class="na" cx="22" cy="22" r="17" fill="none" stroke="url(#ng)" stroke-width="3.2" stroke-linecap="round" transform="rotate(-90 22 22)" stroke-dasharray="0 120"/><text x="22" y="26" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="${lab.length>2?10:12}" fill="currentColor">${lab}</text></svg>`;
 // Chronal Nexus top-ups share Genesis Crystal tiers: best rate 6,480 + 1,600 = 8,080 for $99.99 / 99,99 €
 const CUR = () => ui.lang==="fr" ? {code:"EUR", per:99.99/8080, p:"99,99 €"} : {code:"USD", per:99.99/8080, p:"$99.99"};
-const showMoney = () => !ui.noMoney;   // "show the value in euros / dollars" (account value page): off keeps Chronal Nexus only, everywhere
+const showMoney = () => ui.money===true;   // "show the value in euros / dollars" (account value page), off unless chosen: Chronal Nexus only, everywhere
 const money = cn => new Intl.NumberFormat(ui.lang==="fr"?"fr-FR":"en-US",{style:"currency",currency:CUR().code,maximumFractionDigits:0}).format(cn*CUR().per);
 let shownWorth=-1;
 function renderWorth(){
@@ -2474,7 +2474,7 @@ function openValue(quiet){
   } else { d.querySelectorAll(".rv").forEach(x=>x.classList.add("in")); }
 }
 $("worth").addEventListener("click", ()=>openValue());
-$("val").addEventListener("change", e=>{ if(e.target.id!=="vpCur") return; ui.noMoney=!e.target.checked; saveUI(); renderWorth(); openValue(true); const c=$("vpCur"); if(c) c.focus(); });
+$("val").addEventListener("change", e=>{ if(e.target.id!=="vpCur") return; ui.money=e.target.checked; saveUI(); renderWorth(); openValue(true); const c=$("vpCur"); if(c) c.focus(); });
 $("val").addEventListener("click", e=>{ const d=$("val");
   if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
   const op=e.target.closest("[data-open]"); if(op) openDetail(op.dataset.open); });
