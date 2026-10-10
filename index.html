@@ -1288,17 +1288,30 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .ask-ps .miss img{filter:grayscale(1) brightness(.55);opacity:.7}
 .ask-ps .cur{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .ask .row .btn{flex:1 1 150px}
-/* the pseudo in the header, above the rank */
-.me-chip{display:inline-flex;align-items:center;gap:7px;max-width:100%;margin:0 0 6px;padding:3px 11px 3px 3px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(10,6,30,.35);color:#fff;font:650 13px var(--body);cursor:pointer;transition:background .2s,border-color .2s}
-.me-chip[hidden]{display:none}
-.me-chip:hover{background:rgba(255,255,255,.12)}
-.me-av{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#c58cff,#5fd3ff);font-size:12px;font-weight:800;color:#140f2a}
-.me-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.me-chip svg{flex:none;width:13px;height:13px;opacity:.65}
-.me-chip.rnd{border-color:rgba(255,224,138,.65);box-shadow:0 0 16px rgba(255,200,90,.28)}
-.me-go{flex:none;font-size:11.5px;font-weight:800;color:#ffe08a;white-space:nowrap}
-.me-go::before{content:"· "}
-@media (max-width:640px){ .me-chip.rnd .me-n{display:none} .me-chip.rnd .me-go::before{content:none} }   /* narrow: the random pseudo gives way to the nudge */
+/* the cloud button once signed in: the pseudo */
+#gdBtn.me{width:auto;max-width:230px;display:inline-flex;align-items:center;gap:7px;padding:3px 12px 3px 3px;border-radius:999px;font:650 13px var(--body);color:#fff}
+#gdBtn.me:hover{transform:none}
+#gdBtn.me .me-av{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#c58cff,#5fd3ff);font-size:13px;font-weight:800;color:#140f2a}
+#gdBtn.me .me-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#gdBtn.me .me-go{flex:none;font-size:11.5px;font-weight:800;color:#ffe08a;white-space:nowrap}
+#gdBtn.me.rnd .me-n{display:none}
+#gdBtn.me.rnd{border-color:rgba(255,224,138,.7);box-shadow:0 0 16px rgba(255,200,90,.3)}
+#gdBtn.me::after{left:23px;right:auto;top:1px}
+/* mid widths: the pill shrinks to its avatar, and the account value takes its own line (the language switch used to be cut off) */
+@media (min-width:641px) and (max-width:1060px){
+  #gdBtn.me{width:36px;max-width:none;padding:0;justify-content:center}
+  #gdBtn.me .me-n,#gdBtn.me .me-go{display:none}
+  #gdBtn.me::after{left:auto;right:1px;top:1px}
+  #gdBtn.me.rnd{box-shadow:0 0 0 2px #ffe08a,0 0 14px rgba(255,200,90,.45)}
+}
+@media (min-width:641px) and (max-width:900px){ .brand{flex-wrap:wrap;row-gap:10px} .worth{order:3;margin-left:0;flex-basis:100%} }
+@media (max-width:640px){
+  #gdBtn.me{width:34px;max-width:none;padding:0;justify-content:center}
+  #gdBtn.me .me-n,#gdBtn.me .me-go{display:none}
+  #gdBtn.me .me-av{width:26px;height:26px;font-size:12px}
+  #gdBtn.me::after{left:auto;right:0;top:0}
+  #gdBtn.me.rnd{box-shadow:0 0 0 2px #ffe08a,0 0 14px rgba(255,200,90,.45)}
+}
 /* account window */
 .acct-dlg{width:min(450px,calc(100% - 32px))}
 .am-av{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:800 21px var(--body);color:#140f2a;background:linear-gradient(135deg,#c58cff,#5fd3ff)}
@@ -1553,7 +1566,7 @@ html.x404 body, html.xadm body{background:var(--screen)}
           <button type="button" class="hbtn" id="bgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/><path d="M17.5 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke="none"/></svg></button>
           <div class="seg" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="fr">FR</button></div>
         </div>
-        <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><button type="button" class="me-chip" id="meChip" hidden></button><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo">i</button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
+        <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo">i</button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
         <div class="xp"><div class="xp-bar"><i id="xpFill"></i></div><div class="xp-txt" id="xpTxt"></div></div>
       </div>
     </div>
@@ -4961,7 +4974,8 @@ const GD=(()=>{
     const box=$("gd"), btn=$("gdBtn"); if(!box) return;
     const st = status==="ok" ? t("gdOk")(ago(cfg.at)) : status==="idle" && cfg.at ? t("gdOk")(ago(cfg.at)) : t("gdSt")[status]||"";
     btn.hidden=!usable; btn.dataset.st=status;
-    btn.title = cfg.on ? `${t("amKick")} · Google Drive · ${st}${err?" · "+err:""}` : t("amInT"); btn.setAttribute("aria-label", btn.title);
+    btn.title = cfg.on ? `${signedIn() ? ACCT.n+" · " : ""}${t("amKick")} · Google Drive · ${st}${err?" · "+err:""}` : t("amInT"); btn.setAttribute("aria-label", btn.title);
+    renderMe();
     acctRefresh();
     box.innerHTML=`<div class="gd-h"><span class="gd-ic" aria-hidden="true">${ICON_DRIVE}</span><div><h3>${esc(t("gdTitle"))}</h3><p>${esc(cfg.on?t("gdStay"):t("gdText"))}</p></div>${cfg.on?`<span class="gd-st" data-st="${status}"><i></i>${esc(st)}</span>`:""}</div>
       ${err?`<p class="gd-warn">${esc(err)}</p>`:""}
@@ -4975,7 +4989,7 @@ const GD=(()=>{
   const act=()=>{ if(!cfg.on || status==="auth" || (!fresh() && !(relayOn && rt))) connect(); else if(status!=="sync") sync(); };
   $("gd").addEventListener("click", e=>{ const b=e.target.closest("[data-gd]"); if(!b) return; const a=b.dataset.gd;
     if(a==="connect") connect(); else if(a==="sync") act(); else if(a==="off") disconnect(); });
-  $("gdBtn").addEventListener("click", ()=>acctOpen());   // signed out: what signing in gives · signed in: the account window
+  $("gdBtn").addEventListener("click", ()=>acctOpen(signedIn() && nickRandom(ACCT.n)));   // signed out: what signing in gives · signed in: the account window (pseudo field first while it's the random one)
   let bc=null;
   function init(){
     render();
@@ -5035,11 +5049,13 @@ function nameOk(s){
 const NICK_RE=/^(Starry|Lunar|Velvet|Crimson|Azure|Golden|Misty|Frosty|Blooming|Silent|Radiant|Moonlit|Stellar|Wild|Gentle|Amber)(Manekin|Manekina|Stylist|Wanderer|Dreamer|Seeker|Muse|Comet|Petal|Lantern|Traveler|Tailor|Sparrow|Ribbon|Fable|Nova)\d{2,4}$/;
 const nickRandom = n => NICK_RE.test(n||"");   // the pseudo the site picked at sign-up (same lists as the server)
 const ICON_PEN=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z"/></svg>`;
+// the header's cloud button: Google sign-in while signed out, the pseudo once signed in (its dot still tells the sync status)
+const ICON_CLOUD=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg>`;
 function renderMe(){
-  const b=$("meChip"); if(!b) return; const on=signedIn(); b.hidden=!on; if(!on) return;
-  const rnd=nickRandom(ACCT.n); b.classList.toggle("rnd", rnd);
-  b.innerHTML=`<span class="me-av" aria-hidden="true">${esc((ACCT.n||"?").trim().charAt(0).toUpperCase())}</span><span class="me-n">${esc(ACCT.n)}</span>${rnd?`<span class="me-go">${esc(t("meChange"))}</span>`:ICON_PEN}`;
-  b.title=t("amKick"); b.setAttribute("aria-label", `${t("amKick")} : ${ACCT.n}`);
+  const b=$("gdBtn"); if(!b) return; const on=signedIn(), rnd=on && nickRandom(ACCT.n), key=on ? ACCT.n+"|"+rnd+"|"+ui.lang : "";
+  b.classList.toggle("me", on); b.classList.toggle("rnd", rnd);
+  if(b.dataset.me===key) return; b.dataset.me=key;
+  b.innerHTML = on ? `<span class="me-av" aria-hidden="true">${esc((ACCT.n||"?").trim().charAt(0).toUpperCase())}</span><span class="me-n">${esc(ACCT.n)}</span>${rnd?`<span class="me-go">${esc(t("meChange"))}</span>`:""}` : ICON_CLOUD;
 }
 function acctOpen(nick){
   let d=$("acctDlg");
@@ -5116,7 +5132,7 @@ document.addEventListener("click", e=>{ const g=e.target.closest && e.target.clo
 
 const R0=routeBoot(); readShowHash(); readHash(); readCol(); renderAll(); applyBg(); syncPills(); GD.init();   // links in the address are read before renderAll rewrites it
 if(GD.on()) acctEnsure(); else acctOut();
-renderMe(); $("meChip").addEventListener("click", ()=>acctOpen(true));
+renderMe();
 if(R0 && R0.det && !$("shc").open) openDetail(R0.det);
 // start the ambient loops once the first render has settled
 window.addEventListener("load", ()=>{ const go=()=>document.body.classList.add("ready"); (window.requestIdleCallback ? requestIdleCallback(go,{timeout:2500}) : setTimeout(go,1200)); });
