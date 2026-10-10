@@ -168,7 +168,7 @@ function fit(lines, listLine, at = lines.length) {
   return lines.join("\n");
 }
 
-const CARD_V = 1;   // same as CARD_V in index.html: bump both when the card design changes
+const CARD_V = 2;   // same as CARD_V in index.html: bump both when the card design changes
 const pctOf = st => st.tot && st.got === st.tot ? 100 : Math.floor(st.pct * 100);
 async function cardKey(k, code, lang) {
   const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${CARD_V}`));
@@ -235,21 +235,34 @@ export class CardStore extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     this.sql = ctx.storage.sql;
-    this.sql.exec("CREATE TABLE IF NOT EXISTS cards (k TEXT PRIMARY KEY, t INTEGER NOT NULL, ty TEXT NOT NULL, b BLOB NOT NULL)");
-    this.sql.exec("CREATE INDEX IF NOT EXISTS cards_t ON cards (t)");
+    this.sql.exec("DROP TABLE IF EXISTS cards");   // first version (one row per card, 2 MB cap)
+    this.sql.exec("CREATE TABLE IF NOT EXISTS card (k TEXT PRIMARY KEY, t INTEGER NOT NULL, ty TEXT NOT NULL, n INTEGER NOT NULL)");
+    this.sql.exec("CREATE TABLE IF NOT EXISTS card_part (k TEXT NOT NULL, i INTEGER NOT NULL, b BLOB NOT NULL, PRIMARY KEY (k, i))");
+    this.sql.exec("CREATE INDEX IF NOT EXISTS card_t ON card (t)");
   }
+  // pictures are kept in 1.5 MB parts (a row holds at most 2 MB; an outfit PNG with its screenshot can weigh several MB)
   put(k, ty, b) {
-    this.sql.exec("INSERT OR REPLACE INTO cards (k, t, ty, b) VALUES (?, ?, ?, ?)", k, Date.now(), ty, b);
-    if (Math.random() < .02) this.sql.exec("DELETE FROM cards WHERE t < ?", Date.now() - 183 * 864e5);
+    const CH = 1536 * 1024, now = Date.now();
+    this.sql.exec("DELETE FROM card_part WHERE k = ?", k);
+    let n = 0; for (let o = 0; o < b.byteLength; o += CH, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(o, o + CH));
+    this.sql.exec("INSERT OR REPLACE INTO card (k, t, ty, n) VALUES (?, ?, ?, ?)", k, now, ty, n);
+    if (Math.random() < .02) {
+      const old = now - 183 * 864e5;
+      this.sql.exec("DELETE FROM card_part WHERE k IN (SELECT k FROM card WHERE t < ?)", old);
+      this.sql.exec("DELETE FROM card WHERE t < ?", old);
+    }
     return true;
   }
   has(k) {
-    return this.sql.exec("SELECT 1 AS x FROM cards WHERE k = ?", k).toArray().length > 0;
+    return this.sql.exec("SELECT 1 AS x FROM card WHERE k = ?", k).toArray().length > 0;
   }
   get(k) {
-    const r = this.sql.exec("SELECT ty, b FROM cards WHERE k = ?", k).toArray()[0];
-    if (r && Math.random() < .05) this.sql.exec("UPDATE cards SET t = ? WHERE k = ?", Date.now(), k);
-    return r ? { ty: r.ty, b: r.b } : null;
+    const r = this.sql.exec("SELECT ty FROM card WHERE k = ?", k).toArray()[0];
+    if (!r) return null;
+    const parts = this.sql.exec("SELECT b FROM card_part WHERE k = ? ORDER BY i", k).toArray().map(x => new Uint8Array(x.b));
+    const out = new Uint8Array(parts.reduce((a, p) => a + p.length, 0)); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; }
+    if (Math.random() < .05) this.sql.exec("UPDATE card SET t = ? WHERE k = ?", Date.now(), k);
+    return { ty: r.ty, b: out.buffer };
   }
 }
 const store = env => env.CARDS ? env.CARDS.get(env.CARDS.idFromName("cards")) : null;
@@ -265,7 +278,7 @@ async function saveCard(request, env, url) {
   const ok = k === "c" ? await readCol(code) : readLook(code);
   if (!ok) return new Response("bad link", { status: 400 });
   const b = new Uint8Array(await request.arrayBuffer()), ty = sniff(b);
-  if (!ty || b.length > 900 * 1024) return new Response("bad picture", { status: 400 });
+  if (!ty || b.length > 8 * 1024 * 1024) return new Response("bad picture", { status: 400 });
   const s = store(env); if (!s) return new Response("no store", { status: 503 });
   await s.put(await cardKey(k, code, lang), ty, b.buffer);
   return new Response(null, { status: 204 });
@@ -280,9 +293,11 @@ async function cardThere(env, key, tries = 9) {
   return false;
 }
 // the preview's picture: the card when the site has it, the site banner otherwise (so a card address never stands for the banner)
+// collection: a 1200 × 630 card (JPEG) · outfit: the picture the site downloads, 1080 × 1350 PNG with the outfit inside
 async function previewImage(env, origin, k, code, lang) {
   const key = await cardKey(k, code, lang);
-  return await cardThere(env, key) ? { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630 } : { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
+  if (!await cardThere(env, key)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
+  return k === "o" ? { image: `${origin}/card/${key}.png`, w: 1080, h: 1350 } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630 };
 }
 // GET /card/<key>.jpg  the picture
 async function sendCard(env, origin, key) {
@@ -309,7 +324,7 @@ export default {
     if (!m) return env.ASSETS.fetch(request);
     const [, kind, raw] = m;
     let arg = raw; try { arg = decodeURIComponent(raw); } catch (e) {}
-    const here = origin + url.pathname + (lang === "fr" ? "?l=fr" : "");
+    const here = origin + url.pathname + url.search;
     try {
       if (kind === "c") {
         const target = "/#col=" + arg, c = await readCol(arg);
@@ -326,7 +341,7 @@ export default {
       if (!it) return Response.redirect(origin + target, 302);
       const title = TX[lang].show(it.name || arg.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ").trim());
       const L = it.look ? readLook(it.look) : null, img = it.view || it.thumb ? origin + "/showcase/" + (it.view || it.thumb).split("/").map(encodeURIComponent).join("/") + (it.v ? "?v=" + it.v : "") : origin + "/showcase/" + encodeURIComponent(it.file);
-      const desc = L ? lookLines(L, lookInfo(L), lang, it.pic ? `📸 ${TX[lang].photo}` : "") : `🪄 ${TX[lang].remix}`;
+      const desc = L ? lookShort(L, lookInfo(L), lang) : `🪄 ${TX[lang].remix}`;
       return page({ title, desc, image: img, large: true, color: SITE_COLOR }, here, target, lang);
     } catch (e) {
       return Response.redirect(origin + "/", 302);
