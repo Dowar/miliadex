@@ -485,6 +485,13 @@ button{cursor:pointer}
 .vp-money::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,245,210,.5) 50%,transparent 65%);transform:translateX(-120%);animation:vpGlare 5s 2.2s ease-in-out infinite}
 .vp-money b{font-family:var(--tech);font-size:22px;font-weight:700;color:#ffe7a8}
 .vp-money small{font-size:12.5px;color:#d8cfae}
+.vp-cur{margin-top:12px;display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:#cfc6ff;cursor:pointer;user-select:none}
+.vp-cur input{position:absolute;opacity:0;pointer-events:none}
+.vp-cur .tg{flex:none;width:34px;height:20px;border-radius:999px;background:rgba(255,255,255,.18);position:relative;transition:background .2s}
+.vp-cur .tg::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.vp-cur input:checked + .tg{background:#d9a24f}
+.vp-cur input:checked + .tg::after{transform:translateX(14px)}
+.vp-cur input:focus-visible + .tg{outline:2px solid #ffe08a;outline-offset:2px}
 .vp-eq{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px}
 .vp-eq span{padding:5px 12px;border-radius:999px;background:var(--vc);border:1px solid var(--vl);font-size:13px;color:#ddd6ff}
 .vp-eq b{font-family:var(--tech);font-weight:700;color:#fff}
@@ -1583,7 +1590,7 @@ const T = {
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
   importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code or link",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
-  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
+  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",vpCurL:"Show the value in dollars",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
   ranksIntro:"Your rank follows your Vivid rating, like in the game: every set (each version) and every standalone cosmetic you own adds its Vivid value. A set's pieces are covered by the set's rating; interactions give none. Every 300 Vivid is one Raiment Collector level; the ranks below are reached at those levels.",
   yourPts:(a,b,l,lm)=>`Your Vivid: ${a} / ${b} · Raiment Collector Lv. ${l} / ${lm}`,maxed:"Everything collected. Legendary.",rankUp:r=>`New rank: ${r}!`,
@@ -1636,7 +1643,7 @@ const T = {
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
   importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu ou lien",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
-  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
+  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",vpCurL:"Afficher la valeur en euros",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
   ranksIntro:"Ton rang suit ton Vivid rating, comme en jeu : chaque set (chaque version) et chaque cosmétique hors set obtenu ajoute sa valeur de Vivid. Les pièces d'un set sont couvertes par le Vivid du set ; les interactions n'en donnent pas. Tous les 300 Vivid, tu gagnes un niveau de Raiment Collector ; les rangs ci-dessous s'obtiennent à ces niveaux.",
   yourPts:(a,b,l,lm)=>`Ton Vivid : ${a} / ${b} · Raiment Collector niv. ${l} / ${lm}`,maxed:"Tout est à toi. Légendaire.",rankUp:r=>`Nouveau rang : ${r} !`,
@@ -1947,12 +1954,13 @@ const RING = (()=>{ let ticks=""; for(let i=0;i<60;i++){ const a=i*6*Math.PI/180
 const NODE_SVG = lab => `<svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17" fill="rgba(12,8,32,.92)" stroke="rgba(255,255,255,.16)" stroke-width="3.2"/><circle class="na" cx="22" cy="22" r="17" fill="none" stroke="url(#ng)" stroke-width="3.2" stroke-linecap="round" transform="rotate(-90 22 22)" stroke-dasharray="0 120"/><text x="22" y="26" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="${lab.length>2?10:12}" fill="currentColor">${lab}</text></svg>`;
 // Chronal Nexus top-ups share Genesis Crystal tiers: best rate 6,480 + 1,600 = 8,080 for $99.99 / 99,99 €
 const CUR = () => ui.lang==="fr" ? {code:"EUR", per:99.99/8080, p:"99,99 €"} : {code:"USD", per:99.99/8080, p:"$99.99"};
+const showMoney = () => !ui.noMoney;   // "show the value in euros / dollars" (account value page): off keeps Chronal Nexus only, everywhere
 const money = cn => new Intl.NumberFormat(ui.lang==="fr"?"fr-FR":"en-US",{style:"currency",currency:CUR().code,maximumFractionDigits:0}).format(cn*CUR().per);
 let shownWorth=-1;
 function renderWorth(){
   const [own,all]=worth(), el=$("worth");
-  el.innerHTML=`${cnIcon()}<span class="w-txt"><b id="wNum">${fmtN(own)}</b><small>${esc(t("worthL"))} · ≈ ${esc(money(own))}</small></span><svg class="w-go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  el.title=t("vpOpen"); el.setAttribute("aria-label", `${t("worthL")} : ${fmtN(own)} Chronal Nexus, ≈ ${money(own)}. ${t("vpOpen")}`);
+  el.innerHTML=`${cnIcon()}<span class="w-txt"><b id="wNum">${fmtN(own)}</b><small>${esc(t("worthL"))}${showMoney()?` · ≈ ${esc(money(own))}`:""}</small></span><svg class="w-go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  el.title=t("vpOpen"); el.setAttribute("aria-label", `${t("worthL")} : ${fmtN(own)} Chronal Nexus${showMoney()?`, ≈ ${money(own)}`:""}. ${t("vpOpen")}`);
   if(shownWorth>=0 && shownWorth!==own && !matchMedia("(prefers-reduced-motion: reduce)").matches){ const from=shownWorth, t0=performance.now(), nEl=$("wNum");
     const step=n=>{ const k=Math.min(1,(n-t0)/700), e=1-Math.pow(1-k,3); nEl.textContent=fmtN(from+(own-from)*e); if(k<1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
   shownWorth=own;
@@ -2426,7 +2434,7 @@ function openValue(quiet){
     ["o4",VP_COL.o4,lbl.o4,eq("10 ×&nbsp;160",fmtN(1600)),hd.o4],["o3",VP_COL.o3,lbl.o3,eq("1 ×&nbsp;160",fmtN(160)),hd.o3],
     ["s",VP_COL.s,lbl.s,`<em>${esc(t("vpShop"))}</em>`,hd.s],["none","rgba(255,255,255,.3)",t("vpZero"),`${cnIcon()}0`,t("vpZeroH")],
     ["rate","#ffe08a",t("vpRate"),`${cnIcon()}${fmtN(8080)}<em>=</em>${esc(C.p)}`,t("vpRateD")]]
-    .map(([k,c,l,e,p],i)=>`<div class="vp-f${A}" style="--c:${c};animation-delay:${i*70}ms;--dl2:${250+i*70}ms"><div class="k">${k==="ode"||k==="rate"||k==="none"?"":`<i class="vp-sw" style="--c:${c}"></i>`}${esc(l)}</div><div class="eq">${e}</div><p>${esc(p)}</p></div>`).join("");
+    .filter(f=>f[0]!=="rate" || showMoney()).map(([k,c,l,e,p],i)=>`<div class="vp-f${A}" style="--c:${c};animation-delay:${i*70}ms;--dl2:${250+i*70}ms"><div class="k">${k==="ode"||k==="rate"||k==="none"?"":`<i class="vp-sw" style="--c:${c}"></i>`}${esc(l)}</div><div class="eq">${e}</div><p>${esc(p)}</p></div>`).join("");
   const orbs = anim ? `<i class="vp-orb" style="--in:-14px;--sp:7s;--oc:#9fe6ff"></i><i class="vp-orb o2" style="--in:4px;--sp:11s;--oc:#ffe08a"></i><i class="vp-orb" style="--in:-30px;--sp:17s;--oc:#c58cff"></i>` : "";
   const numStr=fmtN(tot);
   d.classList.toggle("quiet", !anim);
@@ -2435,7 +2443,8 @@ function openValue(quiet){
     <div class="vp-scroll">
       <section class="vp-hero"><h2>${esc(t("vpSub"))}</h2><div class="vp-gem" id="vpGem"><i class="vp-rays"></i><i class="vp-halo"></i><i class="vp-ring"></i>${orbs}${cnIcon()}</div>
         <div class="vp-num${anim?"":" lit"}" id="vpNumW"><b id="vpNum" aria-label="${esc(numStr)}"><span aria-hidden="true" style="display:contents">${odometer(numStr, !anim || !tot)}</span></b><span class="lab">${esc(t("vpCN"))}</span></div>
-        <div class="vp-money"><b>≈ ${esc(money(tot))}</b><small>${esc(t("vpRateS")(C.p))}</small></div>
+        ${showMoney()?`<div class="vp-money"><b>≈ ${esc(money(tot))}</b><small>${esc(t("vpRateS")(C.p))}</small></div>`:""}
+        <label class="vp-cur"><input type="checkbox" id="vpCur"${showMoney()?" checked":""}><span class="tg" aria-hidden="true"></span><span>${esc(t("vpCurL"))}</span></label>
         <div class="vp-eq ${RV}"><span class="${A.trim()}" style="animation-delay:.5s">≈ ${t("vpOdes")(fmtN(tot/160))}</span><span class="${A.trim()}" style="animation-delay:.62s">${t("vpPacks")(fmtD(tot/8080,1))}</span><span class="${A.trim()}" style="animation-delay:.74s">${t("vpPaid")(fmtN(D.setsN+D.compN))}</span></div></section>
       ${bar}
       <section class="vp-card ${RV}"><h3>${esc(t("vpSrc"))}</h3><div class="vp-rows">${rows}</div></section>
@@ -2465,6 +2474,7 @@ function openValue(quiet){
   } else { d.querySelectorAll(".rv").forEach(x=>x.classList.add("in")); }
 }
 $("worth").addEventListener("click", ()=>openValue());
+$("val").addEventListener("change", e=>{ if(e.target.id!=="vpCur") return; ui.noMoney=!e.target.checked; saveUI(); renderWorth(); openValue(true); const c=$("vpCur"); if(c) c.focus(); });
 $("val").addEventListener("click", e=>{ const d=$("val");
   if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
   const op=e.target.closest("[data-open]"); if(op) openDetail(op.dataset.open); });
@@ -3653,7 +3663,7 @@ function shCard(st,name){
       <div class="sc-who"><small>${esc(t("scOf"))}</small><h2 id="scWho">${esc(name||t("scAnon"))}</h2><p><b>${esc(t("ranks")[ri])}</b><span>${esc(t("lvShort"))} ${st.lv}</span></p></div></div>
     <div class="sc-main"><div class="sc-ring" role="img" aria-label="${esc(pctTxt(st)+" "+t("scDone"))}">${ring}<div class="mid"><b>${esc(pctTxt(st))}</b><small>${esc(t("scDone"))}</small></div></div>
       <div class="sc-kpis"><div class="sc-kpi"><span class="k">${vivIcon()}${esc(t("vividL"))}</span><b>${fmtN(st.vg)}</b><small>/ ${fmtN(st.vt)}</small></div>
-        <div class="sc-kpi"><span class="k">${cnIcon()}${esc(t("worthL"))}</span><b>${fmtN(st.worth)}</b><small>≈ ${esc(money(st.worth))}</small></div></div></div>
+        <div class="sc-kpi"><span class="k">${cnIcon()}${esc(t("worthL"))}</span><b>${fmtN(st.worth)}</b>${showMoney()?`<small>≈ ${esc(money(st.worth))}</small>`:""}</div></div></div>
     <div class="sc-bars">${bar(t("sets"),st.sg,st.st,"s")}${bar(t("comp"),st.cg,st.ct,"c")}${bar(t("sc5"),st.g5,st.t5,"g")}</div>
     <div class="sc-top"><h3>${esc(t("scTop"))}</h3><div class="sc-ths">${thumbs}</div></div>
     <div class="sc-foot"><span>MILIADEX</span><span>${esc(t("scWear")(st.g))}</span></div></article>`;
@@ -3667,7 +3677,7 @@ async function shPrepare(){
   const url=colUrl(code), key=shortKeyOf("c", code, ui.lang==="fr"?"fr":"en", ""), nm=SHARE.clean(ui.shName).replace(/[\\\[\]]/g,"\\$&");
   // Discord masked link: the message shows "Miliadex - Name Profile" instead of the long link
   const st=collStats(state.owned, ui.g), who=SHARE.clean(ui.shName);
-  const card=pushCard("c", code, ()=>shareCardCol(st, who), {short:true});
+  const card=pushCard("c", code, ()=>shareCardCol(st, who), {short:true, fp:showMoney()?"":"cn"});   // the picture changes with the setting
   return shReady={url, key, code, card, md:u=>`[${nm?`Miliadex - ${nm} Profile`:"Miliadex Profile"}](${u})`};
 }
 function openShare(theirs){
@@ -3810,7 +3820,7 @@ async function shareCardCol(st,name){
     const vw=cardText(c,val,x+22,y+100,{font:F_TECH,size:44,min:30,maxW:w-150,fill:"#fff"});
     cardText(c,sub,x+22+vw+10,y+100,{font:F_BODY,size:20,min:14,maxW:w-54-vw,fill:"#b9b0e6"}); };
   kpi(360,vimg,t("vividL"),fmtN(st.vg),"/ "+fmtN(st.vt));
-  kpi(764,cimg,t("worthL"),fmtN(st.worth),"≈ "+money(st.worth));
+  kpi(764,cimg,t("worthL"),fmtN(st.worth),showMoney() ? "≈ "+money(st.worth) : "Chronal Nexus");
   // bars
   const bar=(y,lab,a,b,col)=>{ const x0=360, x1=W-P, tx=x0+200, tw=x1-tx-160;
     cardText(c,lab,x0,y+8,{font:F_BODY,size:20,fill:"#e6e0ff",maxW:190});
