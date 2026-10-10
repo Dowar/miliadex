@@ -736,6 +736,11 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 .cv-wrap.loading::after{opacity:1}
 #lkCv{display:block;width:100%;height:auto;max-width:100%}
 .b-preview .btn{display:flex;align-items:center;justify-content:center;gap:8px}
+.oc-box{display:grid;gap:8px}
+.oc-box .btn{text-align:center}
+.oc-box .btn svg{width:18px;height:18px;flex:none}
+.oc-hint{margin:2px 2px 0;display:grid;grid-template-columns:16px minmax(0,1fr);gap:7px;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.oc-hint svg{width:16px;height:16px;margin-top:1px;color:var(--accent)}
 .b-preview.drag .cv-wrap{outline:3px dashed var(--accent);outline-offset:4px}
 .pic-add{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:2px dashed var(--line);border-radius:14px;background:transparent;color:var(--text);text-align:left;transition:border-color .15s,background .15s}
 .pic-add:hover,.b-preview.drag .pic-add{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent)}
@@ -1571,14 +1576,14 @@ const ODEB=[["Candlelit Revelry",["Fervent Fighter","Mystic Forest","Sonic Ruins
 /* ---------- i18n ---------- */
 const T = {
  en:{sub:"Miliastra Wonderland collection tracker",sets:"Sets",comp:"Cosmetics",search:"Search a set or cosmetic…",both:"Both",f:"Manekina",m:"Manekin",
-  sortL:"Sort by",download:"Download image",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Image downloaded · open it again in the Miliadex to edit this outfit",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device and out of backups. It only leaves inside the image you download and the preview picture of links you share (both reopen the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
+  sortL:"Sort by",download:"Download Miliadex outfit card",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Miliadex outfit card downloaded · import it again to get this outfit back",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device and out of backups. It only leaves inside the image you download and the preview picture of links you share (both reopen the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
   saveLook:"Save outfit",updateLook:"Update outfit",share:"Share link",copyCode:"Copy code",clear:"Clear",myLooks:"My outfits",noLooks:"No saved outfits yet. Build one above, then press “Save outfit”.",
   ownedOf:(a,b)=>`${a}/${b} pieces owned`,pick:n=>`Choose: ${n}`,pickSet:"Choose a set",equip:"Equip",equipped:"Equipped",addPiece:"Add",none:"Remove",ownedOnly:"Owned only",searchPh:"Search…",included:"Included",
   sharedT:"Outfit shared with you",saveShared:"Save to my outfits",dismiss:"Dismiss",linkCopied:"Link copied",lookSaved:"Outfit saved",lookDeleted:"Outfit deleted",del:"Delete",
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
-  importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code, link or image",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
+  importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code or link",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
-  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
+  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
   ranksIntro:"Your rank follows your Vivid rating, like in the game: every set (each version) and every standalone cosmetic you own adds its Vivid value. A set's pieces are covered by the set's rating; interactions give none. Every 300 Vivid is one Raiment Collector level; the ranks below are reached at those levels.",
   yourPts:(a,b,l,lm)=>`Your Vivid: ${a} / ${b} · Raiment Collector Lv. ${l} / ${lm}`,maxed:"Everything collected. Legendary.",rankUp:r=>`New rank: ${r}!`,
@@ -1611,7 +1616,7 @@ const T = {
   shFail:"The showcase couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
   shEdit:"Edit in My Outfits",shEditMine:"Edit",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
   shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't in the showcase anymore.",
-  imgTip:"Open an image downloaded from the Miliadex, or drop it here",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image doesn't carry a Miliadex outfit (only images downloaded from the Miliadex do, as the original file)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
+  imgTip:"Open a Miliadex outfit card (the image downloaded from the Miliadex), or drop it on the preview",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image isn’t a Miliadex outfit card (use the original file downloaded from the Miliadex)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
   scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   cardProfile:"Collector profile",cardDiscordO:n=>`Miliadex - ${n} outfit`,cardWait:"Preparing the preview picture…",
@@ -1624,14 +1629,14 @@ const T = {
   typeN:{o:"Outfit",k:"Makeup & hair",i:"Interactions"},
   catN:{"Hairstyle":"Hairstyles","Headwear":"Headwear","Top":"Tops","Bottom":"Bottoms","Top;Bottom":"One-piece outfits","Multi":"Multi-part outfits","Eye Accessory":"Eyewear","Face Accessory":"Face accessories","Tail Accessory":"Tails","Footwear":"Footwear","Earrings":"Earrings","Neck Accessory":"Neck accessories","Back Accessory":"Back accessories","Wrist Accessory":"Wrist accessories","Leg Accessory":"Leg accessories","Pendant":"Pendants","Skin Tone":"Skin tones","Eye Shape":"Eye shapes","Iris":"Irises","Eyebrows":"Eyebrows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lipstick","Expression":"Expressions","Action":"Actions","Effects":"Effects"}},
  fr:{sub:"Toutes les tenues de Miliastra Wonderland",sets:"Sets",comp:"Cosmétiques",search:"Chercher un set ou un cosmétique…",both:"Les deux",f:"Manekina",m:"Manekin",
-  sortL:"Trier",download:"Télécharger l'image",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Image téléchargée · rouvre-la dans le Miliadex pour modifier la tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil et hors des sauvegardes. Elle ne part que dans l'image que tu télécharges et dans l'image d'aperçu des liens que tu partages (les deux rouvrent la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
+  sortL:"Trier",download:"Télécharger la carte de tenue Miliadex",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Carte de tenue Miliadex téléchargée · importe-la pour retrouver cette tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil et hors des sauvegardes. Elle ne part que dans l'image que tu télécharges et dans l'image d'aperçu des liens que tu partages (les deux rouvrent la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
   saveLook:"Enregistrer la tenue",updateLook:"Mettre à jour",share:"Partager le lien",copyCode:"Copier le code",clear:"Vider",myLooks:"Mes tenues",noLooks:"Aucune tenue enregistrée. Compose-en une ci-dessus, puis « Enregistrer la tenue ».",
   ownedOf:(a,b)=>`${a}/${b} pièces obtenues`,pick:n=>`Choisir : ${n}`,pickSet:"Choisir un set",equip:"Équiper",equipped:"Équipé",addPiece:"Ajouter",none:"Retirer",ownedOnly:"Obtenus uniquement",searchPh:"Chercher…",included:"Inclus",
   sharedT:"Tenue partagée avec toi",saveShared:"Ajouter à mes tenues",dismiss:"Fermer",linkCopied:"Lien copié",lookSaved:"Tenue enregistrée",lookDeleted:"Tenue supprimée",del:"Supprimer",
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
-  importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu, lien ou image",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
+  importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu ou lien",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
-  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
+  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
   ranksIntro:"Ton rang suit ton Vivid rating, comme en jeu : chaque set (chaque version) et chaque cosmétique hors set obtenu ajoute sa valeur de Vivid. Les pièces d'un set sont couvertes par le Vivid du set ; les interactions n'en donnent pas. Tous les 300 Vivid, tu gagnes un niveau de Raiment Collector ; les rangs ci-dessous s'obtiennent à ces niveaux.",
   yourPts:(a,b,l,lm)=>`Ton Vivid : ${a} / ${b} · Raiment Collector niv. ${l} / ${lm}`,maxed:"Tout est à toi. Légendaire.",rankUp:r=>`Nouveau rang : ${r} !`,
@@ -1664,7 +1669,7 @@ const T = {
   shFail:"La vitrine n'a pas pu être chargée pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
   shEdit:"Modifier dans Mes tenues",shEditMine:"Modifier",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
   shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus dans la vitrine.",
-  imgTip:"Ouvre une image téléchargée depuis le Miliadex, ou dépose-la ici",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image ne contient pas de tenue Miliadex (seules les images téléchargées depuis le Miliadex en ont, en fichier d'origine)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
+  imgTip:"Ouvre une carte de tenue Miliadex (l’image téléchargée depuis le Miliadex), ou dépose-la sur l’aperçu",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image n’est pas une carte de tenue Miliadex (utilise le fichier d’origine téléchargé depuis le Miliadex)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
   scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   cardProfile:"Profil de collection",cardDiscordO:n=>`Miliadex - Tenue ${n}`,cardWait:"Préparation de l'image d'aperçu…",
@@ -2241,7 +2246,7 @@ function askSet(it, orbEl){
 function ownRefresh(){
   renderHeader();
   if(ui.tab==="outfits") renderOutfits(); else if(ui.tab==="show") renderShowGrid(); else { renderFilters(); renderList(); }
-  if($("shv").open) paintView(true);
+  if($("shv").open){ if(VW.src==="imp") impRender(); paintView(true); }   // an imported outfit's card is drawn again with the new checkmarks
 }
 function ownAllAsk(L, btn){
   const its=lookItems(L).filter(it=>!has(it,"x")).sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0]));
@@ -2648,6 +2653,8 @@ function lookCard(L){
 }
 const ICON_PAD=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6.5h8a3.5 3.5 0 0 1 3.4 4.3l-.9 3.6a2 2 0 0 1-3.4.9L11.6 14H8.4l-1.5 1.3a2 2 0 0 1-3.4-.9l-.9-3.6A3.5 3.5 0 0 1 6 6.5Z"/><path d="M7 9.2v2.4M5.8 10.4h2.4"/><circle cx="13.4" cy="9.6" r=".6" fill="currentColor"/><circle cx="14.8" cy="11.2" r=".6" fill="currentColor"/></svg>`;
 const ICON_DL=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v10M6 9l4 4 4-4M4 16h12"/></svg>`;
+const ICON_UP=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13V3M6 7l4-4 4 4M4 16h12"/></svg>`;
+const ICON_INFO=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5"/><circle cx="10" cy="6.3" r=".6" fill="currentColor"/></svg>`;
 function renderOutfits(){
   const box=$("outfits");
   if(box.dataset.lang!==ui.lang || !$("lkCv")){
@@ -2656,7 +2663,9 @@ function renderOutfits(){
       <div class="builder">
         <div class="b-preview" id="lkPrev"><div class="cv-wrap"><canvas id="lkCv" width="1080" height="1350" role="img" aria-label="${esc(t("lookPreview"))}"></canvas></div>
           <div id="lkPic"></div>
-          <button type="button" class="btn" data-act="download">${ICON_DL} ${esc(t("download"))}</button></div>
+          <div class="oc-box"><button type="button" class="btn" data-act="download">${ICON_DL} ${esc(t("download"))}</button>
+            <button type="button" class="btn ghost" data-act="imgImp" title="${esc(t("imgTip"))}">${ICON_UP} ${esc(t("ocImp"))}</button>
+            <p class="oc-hint">${ICON_INFO}<span>${esc(t("ocHint"))}</span></p></div></div>
         <div class="b-edit" id="lkEdit"></div>
       </div>
       <div id="lkList"></div>`;
@@ -2684,7 +2693,7 @@ function renderOutfits(){
       ${location.protocol==="file:"?`<p class="b-note">${esc(t("localNote"))}</p>`:""}
     </div>`;
   const looks=state.looks||[];
-  $("lkList").innerHTML = `<div class="lk-head"><h2>${esc(t("myLooks"))} <small>${looks.length}</small></h2><form class="lk-imp" id="lkImp"><input id="lkCode" autocomplete="off" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importLook"))}"><button class="btn ghost" type="submit">${esc(t("importLook"))}</button><button type="button" class="btn ghost lk-img" data-act="imgImp" title="${esc(t("imgTip"))}">${ICON_IMG}<span>${esc(t("imgImp"))}</span></button></form></div>
+  $("lkList").innerHTML = `<div class="lk-head"><h2>${esc(t("myLooks"))} <small>${looks.length}</small></h2><form class="lk-imp" id="lkImp"><input id="lkCode" autocomplete="off" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importLook"))}"><button class="btn ghost" type="submit">${esc(t("importLook"))}</button></form></div>
     <div class="looks">${looks.length ? looks.slice().reverse().map(lookCard).join("") : `<p class="empty-l">${esc(t("noLooks"))}</p>`}</div>`;
   hydratePics(box);
   scheduleDraw();
@@ -2950,18 +2959,30 @@ async function storeOutfitPic(r){
   await PicDB.put({id, src:r.bl.src||r.bl.cut, cut:r.bl.cut, crop:r.bl.src?pm.crop:null, auto:!!pm.auto, w:pm.w||0, h:pm.h||0, t:Date.now()});
   return {id, on:pm.on!==false};
 }
-async function lookFromImage(file){ const r=await readOutfitPng(file); return r ? {L:r.L, pic:await storeOutfitPic(r)} : null; }
+/* ---------- imported outfits (a Miliadex outfit card, a code, a link): shown in the outfit window first, like a showcase outfit,
+   to keep, edit, download or share — the outfit being edited stays as it is until "Edit" is chosen ---------- */
+const IMP={L:null, url:null, own:false, from:"", saved:null, tok:0};
+function impStage(url){ if(IMP.own && IMP.url) URL.revokeObjectURL(IMP.url); IMP.url=url; IMP.own=!!url; const d=$("shv"); if(d.open && VW.src==="imp") paintView(); }
+function impRender(){ const L=IMP.L, tok=IMP.tok;
+  lookCanvas(L).then(cv=>toBlobP(cv,"image/jpeg",LOOK_Q)).then(b=>{ if(b && tok===IMP.tok) impStage(URL.createObjectURL(b)); }).catch(()=>{}); }
+// from: "card" | "code" | "game" | "link"; url: a picture to show; card: a link's preview key (or its promise), to get the in-game screenshot back.
+// The window draws the card itself, with this visitor's own checkmarks
+function openImported(L, from, url, card){
+  impStage(null); IMP.L=L; IMP.from=from; IMP.saved=null; IMP.tok++;
+  if(url) impStage(url); else if(card) Promise.resolve(card).then(k=>k ? lookFromCard(k, L) : false).then(ok=>{ if(!ok && IMP.L===L && !IMP.url) impRender(); });
+  else impRender();
+  if(ui.tab!=="outfits"){ ui.tab="outfits"; saveUI(); renderHeader(); renderTab(); }
+  openView("imp", ["imp"], 0);
+}
+const impSaved = () => !!IMP.L && ((IMP.saved && (state.looks||[]).some(x=>x.id===IMP.saved)) || showSaved({L:IMP.L}));
 async function openLookImage(file){
-  let r=null; try{ r=await lookFromImage(file); }catch(e){ console.warn("Miliadex: unreadable outfit image", e); }
+  let r=null; try{ r=await readOutfitPng(file); }catch(e){ console.warn("Miliadex: unreadable outfit image", e); }
   if(!r) return false;
-  const {L,pic}=r;
-  shared=Object.assign({},L,pic?{pic:pic.id,picOn:pic.on}:{});
-  look={id:null,n:L.n,g:L.g,i:L.i.slice(),pic:pic?pic.id:null,picOn:pic?pic.on:true}; saveDraft();
-  if(ui.tab!=="outfits"){ ui.tab="outfits"; saveUI(); renderHeader(); renderTab(); } else renderOutfits();
-  toast("✓ "+t("imgIn")(!!pic));
-  window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"});
+  const pic=await storeOutfitPic(r);
+  openImported(Object.assign({}, r.L, pic?{pic:pic.id, picOn:pic.on}:{}), "card");
   return true;
 }
+
 
 /* codes & links */
 // links people share always point at the public site (from workers.dev too), so they get their rich preview
@@ -3063,7 +3084,7 @@ const linkFetch = key => fetch(ROOT+"api/link?k="+key).then(r=>r.ok?r.json():nul
 function openShortLook(key){
   ui.tab="outfits";
   linkFetch(key).then(r=>{ const L=r && r.kind==="o" && parseLook(r.code); if(!L){ toast(t("linkGone")); return; }
-    shared=L; look={id:null,n:L.n,g:L.g,i:L.i.slice()}; saveDraft(); if(ui.tab==="outfits") renderOutfits(); if(r.pic) lookFromCard(key, L); });
+    openImported(L, "link", null, r.pic ? key : null); });
 }
 function readHash(){
   const h=location.hash, sm=h.match(/[#&]o=([0-9A-Za-z]{10})(?:&|$)/);
@@ -3072,11 +3093,10 @@ function readHash(){
   const cm=h.match(/[&#]card=([0-9a-f]{32}|[0-9A-Za-z]{10})(?:&|$)/), pm=h.match(/[&#]p=([01])/), lang=/[&#]l=fr(&|$)/.test(h) ? "fr" : "en";
   try{ history.replaceState(null,"",location.href.split("#")[0]); }catch(e){}
   const L=parseLook(mm[1]); if(!L){ toast(t("badLook")); return false; }
-  shared=L; look={id:null,n:L.n,g:L.g,i:L.i.slice()}; saveDraft(); ui.tab="outfits";
+  ui.tab="outfits";
   // the in-game screenshot rides in the link's preview picture, found by the same key the server uses (no lookup needed);
   // fetched only when the link says the outfit has one (links made before that don't say: try)
-  if(pm && pm[1]==="0") return true;
-  if(cm) lookFromCard(cm[1], L); else cardKeyOf("o", mm[1], lang).then(k=>{ if(k) lookFromCard(k, L); });
+  openImported(L, "link", null, pm && pm[1]==="0" ? null : cm ? cm[1] : cardKeyOf("o", mm[1], lang));
   return true;
 }
 // a short link's key, worked out like the Worker does (shortKey): 10 letters/digits from a hash of what the link stands for
@@ -3090,18 +3110,16 @@ async function cardKeyOf(k, code, lang){
   try{ const d=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${CARD_V}`));
     return [...new Uint8Array(d)].slice(0,16).map(b=>b.toString(16).padStart(2,"0")).join(""); }catch(e){ return null; }
 }
-// a share link's preview picture is the outfit image the site downloads: it carries the in-game screenshot, put it back
+// a share link's preview picture is the outfit card the site downloads: it carries the in-game screenshot, put it back
+// false when there's none
 async function lookFromCard(key, L){
-  const same=x=>x && x.g===L.g && x.i.join()===L.i.join();
-  const want=()=>shared===L || (look.id===null && !look.pic && same(look));
+  const same=x=>x && x.g===L.g && x.i.join()===L.i.join(), want=()=>IMP.L===L;
   try{
-    const res=await fetch(ROOT+"card/"+key+".jpg"); if(!res.ok || !want()) return;
-    const r=await readOutfitPng(await res.blob()); if(!r || !r.bl.cut || !same(r.L) || !want()) return;
-    const pic=await storeOutfitPic(r); if(!pic) return;
-    if(shared===L){ L.pic=pic.id; L.picOn=pic.on; }
-    if(look.id===null && !look.pic && same(look)){ look.pic=pic.id; look.picOn=pic.on; saveDraft(); }
-    if(ui.tab==="outfits") renderOutfits();
-  }catch(e){ console.warn("Miliadex: no in-game screenshot from the link", e); }
+    const res=await fetch(ROOT+"card/"+key+".jpg"); if(!res.ok || res.headers.get("x-miliadex")==="no-card" || !want()) return false;
+    const b=await res.blob(), r=await readOutfitPng(b); if(!r || !r.bl.cut || !same(r.L) || !want()) return false;
+    const pic=await storeOutfitPic(r); if(!pic || !want()) return false;
+    L.pic=pic.id; L.picOn=pic.on; impRender(); return true;
+  }catch(e){ console.warn("Miliadex: no in-game screenshot from the link", e); return false; }
 }
 /* ---------- Outfits Showcase: outfit images from the repo's showcase/ folder (listed through the GitHub API, served by the site itself) ---------- */
 const SHOW_REPO="Dowar/miliadex", SHOW_DIR=ROOT+"showcase", SHOW_KEY="miliadex-showcase", SHOW_TTL=10*60e3;
@@ -3314,6 +3332,8 @@ function mineUrl(L){
 }
 function vwItem(){
   const k=VW.keys[VW.i];
+  if(VW.src==="imp"){ const L=IMP.L; if(!L) return null;
+    return {kind:"imp", key:"i:"+IMP.tok, title:(L.n||"").trim()||t("untitled"), L, ready:true, pic:!!(L.pic && L.picOn!==false), url:IMP.url}; }
   if(VW.src==="mine"){ const L=(state.looks||[]).find(x=>x.id===k); if(!L) return null;
     return {kind:"mine", key:"m:"+L.id, title:(L.n||"").trim()||t("untitled"), L, ready:true, pic:!!L.pic, url:mineUrl(L)}; }
   const it=showByName(k); if(!it) return null; const m=it.meta; if(m===undefined) showMeta(it);
@@ -3332,7 +3352,7 @@ function paintView(quiet){
   const n=VW.keys.length, L=v.L, its=L?lookItems(L):[], own=its.filter(it=>has(it,"x")).length, viv=lookViv(its);
   const pcs = its.slice().sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0])).map(x=>{ const o=has(x,"x"), sl=slotsOf(x)[0];
       return `<li class="${o?"own":""} r${x.r}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span><span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)} · ${"★".repeat(x.r||0)}</small></span><span class="ok" aria-label="${o?"✓":""}">${o?"✓":""}</span></li>`; }).join("");
-  const mine=v.kind==="mine", saved=!mine && L && showSaved(v.m), uit=!mine && v.it && v.it.user ? v.it : null, liked=uit && signedIn() && likedSet().has(uit.k);
+  const mine=v.kind==="mine", saved=v.kind==="imp" ? impSaved() : !mine && L && showSaved(v.m), uit=!mine && v.it && v.it.user ? v.it : null, liked=uit && signedIn() && likedSet().has(uit.k);
   const likeBtn = uit ? `<button type="button" class="btn ghost sv-like${liked?" on":""}" data-sv="like" aria-pressed="${!!liked}">♥ ${fmtN(uit.lk||0)} · ${esc(t("likeL"))}</button>` : "";
   const ownBtn = uit && !uit.feat && signedIn() && mySids().has(uit.k) ? `<button type="button" class="btn ghost" data-sv="unpub">${esc(t("pubOff"))}</button>` : "";
   const linkRow=`<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button><button type="button" class="btn ghost" data-sv="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button></div>`;
@@ -3354,7 +3374,7 @@ function paintView(quiet){
       <span class="sv-count">${VW.i+1} / ${n}</span>`:""}
       <button type="button" class="dx sv-x" data-close aria-label="${esc(t("close"))}">✕</button>
     </div>
-    <aside class="sv-side"><div class="sv-top"><span class="vp-kick">${esc(t(mine?"outfits":"showT"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
+    <aside class="sv-side"><div class="sv-top"><span class="vp-kick">${esc(t(mine?"outfits":v.kind==="imp"?(IMP.from==="link"?"sharedT":"impT"):"showT"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
       <h2 id="svTitle">${esc(v.title)}</h2><div class="sv-body">${side}</div></aside>`;
 }
 function showStep(k){ const n=VW.keys.length; if(n<2) return; VW.i=(VW.i+k+n)%n; paintView(); syncUrl("replace"); const im=$("shv").querySelector(".sv-img"); if(im) im.classList.add(k>0?"in-r":"in-l"); }
@@ -3367,6 +3387,21 @@ async function showAct(a){
   const closeV=()=>{ const d=$("shv"); if(d.open) d.close ? d.close() : d.removeAttribute("open"); };
   const goBuilder=()=>{ ui.tab="outfits"; saveUI(); $("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.tab==="outfits")); renderHeader(); renderTab();
     window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); };
+  if(v.kind==="imp"){ const L=v.L;
+    if(a==="edit"){ const S=IMP.saved && (state.looks||[]).find(x=>x.id===IMP.saved);
+      if(S) loadSaved(S); else { shared=null; look={id:null,n:L.n,g:L.g,i:L.i.slice(),pic:L.pic||null,picOn:L.picOn!==false,p2:!!L.p2}; saveDraft(); }
+      closeV(); goBuilder(); toast("✓ "+t("shOpened")); return; }
+    if(a==="save"){ if(impSaved()) return; state.looks=state.looks||[];
+      const S={id:Date.now().toString(36), n:(L.n||"").trim().slice(0,60)||`${t("untitled")} #${state.looks.length+1}`, g:L.g, i:L.i.slice(), t:Date.now()};
+      if(L.pic){ S.pic=L.pic; S.picOn=L.picOn!==false; } if(L.p2) S.p2=true;
+      state.looks.push(S); IMP.saved=S.id; save(); renderHeader(); if(ui.tab==="outfits") renderOutfits(); paintView(true); toast("✓ "+t("shAdded"));
+      const b=$("shv").querySelector('[data-sv="save"]'); if(b) confetti(36, b); return; }
+    if(a==="link" || a==="discord") return shareLook(L, a==="discord");
+    if(a==="gcode"){ const r=gameCode(L); if(!r){ toast(t("gameNone")); return; } return copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
+    if(a==="dl"){ try{ const out=await lookImage(L); if(!out) throw new Error("no image");
+        const u=URL.createObjectURL(out), x=document.createElement("a"); x.href=u; x.download=(slug(L.n||"")||"miliadex-outfit")+".jpg"; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }
+      catch(e){ toast(t("dlFail")); } }
+    return; }
   if(v.kind==="mine"){ const L=v.L;
     if(a==="pub") return publishLook(L);
     if(a==="unpub") return unpublish(L.pub && L.pub.k);
@@ -3987,7 +4022,7 @@ $("outfits").addEventListener("submit", async e=>{ if(e.target.id!=="lkImp") ret
   if(sm){ const r=await linkFetch(sm[1]); L=r && r.kind==="o" && parseLook(r.code); if(L && r.pic) pic=sm[1]; if(!L){ toast(t("linkGone")); return; } }
   else L=parseLook(v)||lookFromGame(v);
   if(!L){ toast(t("badLook")); return; }
-  shared=L; look={id:null,n:L.n,g:L.g,i:L.i.slice()}; saveDraft(); renderOutfits(); if(pic) lookFromCard(pic, L); if(L.game) toast("✓ "+t("gameIn")(L.game.n,L.game.miss)); window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); });
+  openImported(L, L.game ? "game" : sm ? "link" : "code", null, pic); $("lkCode").value=""; if(L.game) toast("✓ "+t("gameIn")(L.game.n,L.game.miss)); window.scrollTo({top:$("outfits").getBoundingClientRect().top+scrollY-10,behavior:reduce()?"auto":"smooth"}); });
 let delT=null;
 $("outfits").addEventListener("click", e=>{
   const un=e.target.closest("[data-unslot]"); if(un){ unplace(un.dataset.unslot); saveDraft(); renderOutfits(); return; }
@@ -4049,7 +4084,7 @@ function picImage(id){
   return PICC.get(id);
 }
 async function gcPics(){
-  const keep=new Set(["bg", look.pic, ...(state.looks||[]).map(L=>L.pic)].filter(Boolean));
+  const keep=new Set(["bg", look.pic, IMP.L && IMP.L.pic, ...(state.looks||[]).map(L=>L.pic)].filter(Boolean));
   for(const k of await PicDB.keys()) if(!keep.has(k)){ await PicDB.del(k); const im=PICR.get(k); if(im) URL.revokeObjectURL(im._url); PICR.delete(k); PICC.delete(k); }
 }
 function hydratePics(root){ (root||document).querySelectorAll("img[data-pic]").forEach(async im=>{ const p=await picImage(im.dataset.pic); if(p) im.src=p._url; else im.remove(); }); }
