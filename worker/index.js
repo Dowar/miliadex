@@ -334,11 +334,12 @@ async function cardThere(env, key, tries) {
   try { const l = legacy(env, key); return !!l && await l.has(key); } catch (e) { return false; }
 }
 // the preview's picture: the card when the site has it, the site banner otherwise (so a card address never stands for the banner)
-// collection: a 1200 × 630 card (JPEG) · outfit: the picture the site downloads, 1080 × 1350 PNG with the outfit inside
+// collection: a 1200 × 630 card (JPEG) · outfit: the picture the site downloads, 1080 × 1350 JPEG with the outfit inside
+// (outfit cards sent before October 2026 are PNG: served with their own type)
 async function previewImage(env, origin, k, code, lang, bot) {
   const key = await cardKey(k, code, lang);
   if (!await cardThere(env, key, bot ? 9 : 1)) return { image: `${origin}/og-banner.png`, w: 1200, h: 400, brief: true };
-  return k === "o" ? { image: `${origin}/card/${key}.png`, w: 1080, h: 1350, key } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630, key };
+  return k === "o" ? { image: `${origin}/card/${key}.jpg`, w: 1080, h: 1350, key } : { image: `${origin}/card/${key}.jpg`, w: 1200, h: 630, key };
 }
 // GET /card/<key>.png|jpg  the picture (cards can be replaced: the same outfit shared again with another screenshot)
 async function sendCard(env, origin, key) {

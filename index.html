@@ -1443,7 +1443,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 <dialog id="shc" aria-labelledby="scTitle"></dialog>
 <dialog id="shv" aria-labelledby="svTitle"></dialog>
 <input type="file" id="picFile" accept="image/*" hidden>
-<input type="file" id="lookImgFile" accept="image/png" hidden>
+<input type="file" id="lookImgFile" accept="image/jpeg,image/png" hidden>
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 
@@ -2688,12 +2688,12 @@ async function lookCanvas(L){
 }
 async function downloadLook(){
   await drawLook();
-  const png=await toBlobP($("lkCv"),"image/png"); if(!png){ toast(t("dlFail")); return; }
-  let out=png; try{ out=await lookPng(png, look); }catch(e){ console.warn("Miliadex: outfit data not added to the image", e); }
-  const a=document.createElement("a"); a.href=URL.createObjectURL(out); a.download=(slug(look.n||"")||"miliadex-outfit")+".png";
+  const out=await lookImage(look, $("lkCv")); if(!out){ toast(t("dlFail")); return; }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(out); a.download=(slug(look.n||"")||"miliadex-outfit")+".jpg";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast("✓ "+t("dlDone"));
 }
-/* outfit images carry their outfit: extra PNG chunks (the pieces, the in-game screenshot and its framing) that the Miliadex reads back */
+/* outfit images carry their outfit (the pieces, the in-game screenshot and its framing), which the Miliadex reads back:
+   JPEG now (APP15 segments), PNG for the images made before (an "mlDx" chunk) */
 const PNGX=(()=>{
   const CT=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; CT[n]=c>>>0; }
   const crc=b=>{ let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=CT[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; };
@@ -2712,20 +2712,57 @@ const PNGX=(()=>{
   async function find(blob,type){ const b=await bytes(blob); if(!isPng(b)) return null; for(const c of chunks(b)) if(c.ty===type) return c.data; return null; }
   return {chunk,text,add,find,cat,bytes};
 })();
-// "mlDx" chunk: "MLDX" · version 1 · JSON length (u32) · JSON {look, pic, b:[{k,t,n}]} · the picture files listed in b, back to back
-async function lookPng(png, L){
+// JPEG: the outfit data split over APP15 segments ("MLDX" · part · parts · bytes), the title in XMP and a comment
+const JPGX=(()=>{
+  const te=new TextEncoder(), PART=65000, isJpg=b=>b.length>3 && b[0]===0xFF && b[1]===0xD8;
+  function seg(m,data){ if(data.length>65533) throw new Error("JPEG segment too big"); const o=new Uint8Array(data.length+4);
+    o[0]=0xFF; o[1]=m; o[2]=(data.length+2)>>8; o[3]=(data.length+2)&255; o.set(data,4); return o; }
+  function* segs(b){ let p=2;
+    while(p+4<=b.length){ if(b[p]!==0xFF) return; const m=b[p+1];
+      if(m===0xFF){ p++; continue; } if(m===0x01 || (m>=0xD0 && m<=0xD8)){ p+=2; continue; } if(m===0xDA || m===0xD9) return;
+      const n=(b[p+2]<<8)|b[p+3]; if(n<2 || p+2+n>b.length) return; yield {m,data:b.subarray(p+4,p+2+n),end:p+2+n}; p+=2+n; } }
+  const xe=v=>String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const alt=v=>`<rdf:Alt><rdf:li xml:lang="x-default">${xe(v)}</rdf:li></rdf:Alt>`;
+  const xmp=(title,desc)=>te.encode(`http://ns.adobe.com/xap/1.0/\0<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?><x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xmp="http://ns.adobe.com/xap/1.0/"><dc:title>${alt(title)}</dc:title><dc:description>${alt(desc)}</dc:description><xmp:CreatorTool>Miliadex.com</xmp:CreatorTool></rdf:Description></rdf:RDF></x:xmpmeta><?xpacket end="r"?>`);
+  function parts(data){ const n=Math.max(1,Math.ceil(data.length/PART)), out=[];
+    for(let i=0;i<n;i++){ const h=new Uint8Array([77,76,68,88,i>>8,i&255,n>>8,n&255]); out.push(seg(0xEF,PNGX.cat([h,data.subarray(i*PART,(i+1)*PART)]))); }
+    return out; }
+  // right after the JFIF header
+  async function add(blob,title,desc,data){ const b=await PNGX.bytes(blob); if(!isJpg(b)) return blob;
+    let at=2; for(const x of segs(b)){ if(x.m===0xE0) at=x.end; break; }
+    return new Blob([b.subarray(0,at), seg(0xE1,xmp(title,desc)), ...parts(data), seg(0xFE,te.encode(desc)), b.subarray(at)],{type:"image/jpeg"}); }
+  async function data(blob){ const b=await PNGX.bytes(blob); if(!isJpg(b)) return null; const got=[]; let n=0;
+    for(const x of segs(b)){ const d=x.data; if(x.m===0xEF && d.length>8 && d[0]===77 && d[1]===76 && d[2]===68 && d[3]===88){ got[(d[4]<<8)|d[5]]=d.subarray(8); n=(d[6]<<8)|d[7]; } }
+    if(!n || got.length!==n) return null; for(let i=0;i<n;i++) if(!got[i]) return null;
+    return PNGX.cat(got); }
+  return {add,data,segs};
+})();
+// the in-game screenshot files ride along re-encoded as WebP when that's clearly lighter (same size in pixels, so the framing still fits)
+async function slimBlob(bl, q){
+  if(!bl || bl.type==="image/webp" || bl.size<6e4) return bl;
+  try{ const c=await blobToCanvas(bl); const w=c && await toBlobP(c,"image/webp",q); return w && w.type==="image/webp" && w.size<bl.size*.85 ? w : bl; }
+  catch(e){ return bl; }
+}
+// the outfit data: "MLDX" · version 1 · JSON length (u32) · JSON {look, pic, b:[{k,t,n}]} · the picture files listed in b, back to back
+async function lookFile(img, L){
   const meta={look:lookCode(L), b:[]}, parts=[], rec=L.pic ? await PicDB.get(L.pic) : null;
   if(rec && rec.cut){ meta.pic={crop:rec.crop||null, auto:!!rec.auto, w:rec.w||0, h:rec.h||0, on:L.picOn!==false};
-    for(const [k,bl] of [["cut",rec.cut],["src",rec.src]]){ if(!bl || (k==="src" && bl.size>4e6)) continue;
+    for(const [k,b0] of [["cut",rec.cut],["src",rec.src]]){ const bl=await slimBlob(b0, k==="src"?.85:.88); if(!bl || (k==="src" && bl.size>4e6)) continue;
       const by=await PNGX.bytes(bl); meta.b.push({k,t:bl.type||"image/jpeg",n:by.length}); parts.push(by); } }
   const js=new TextEncoder().encode(JSON.stringify(meta)), head=new Uint8Array(9);
   head.set([77,76,68,88,1]); new DataView(head.buffer).setUint32(5,js.length);
-  const name=(L.n||"").trim()||t("untitled");
-  return PNGX.add(png,[PNGX.text("Title",name), PNGX.text("Software","Miliadex.com"),
-    PNGX.text("Description",`${name} · Miliadex outfit · https://miliadex.com/o/${meta.look}`), PNGX.chunk("mlDx",PNGX.cat([head,js,...parts]))]);
+  const data=PNGX.cat([head,js,...parts]), name=(L.n||"").trim()||t("untitled"), desc=`${name} · Miliadex outfit · https://miliadex.com/o/${meta.look}`;
+  if(img.type==="image/jpeg") return JPGX.add(img, name, desc, data);
+  return PNGX.add(img,[PNGX.text("Title",name), PNGX.text("Software","Miliadex.com"), PNGX.text("Description",desc), PNGX.chunk("mlDx",data)]);
 }
-async function readOutfitPng(blob){
-  const d=await PNGX.find(blob,"mlDx"); if(!d || d.length<9 || String.fromCharCode(...d.subarray(0,4))!=="MLDX" || d[4]!==1) return null;
+// the outfit image people download and share: JPEG (accepted everywhere, about 10× lighter than PNG, close to WebP quality) with the outfit inside
+const LOOK_Q=.92;
+async function lookImage(L, cv){
+  const jpg=await toBlobP(cv || await lookCanvas(L),"image/jpeg",LOOK_Q); if(!jpg) return null;
+  try{ return await lookFile(jpg, L); }catch(e){ console.warn("Miliadex: outfit data not added to the image", e); return jpg; }
+}
+async function readOutfitPng(blob){   // JPEG or PNG
+  const d=await PNGX.find(blob,"mlDx") || await JPGX.data(blob); if(!d || d.length<9 || String.fromCharCode(...d.subarray(0,4))!=="MLDX" || d[4]!==1) return null;
   const n=new DataView(d.buffer,d.byteOffset,d.byteLength).getUint32(5), meta=JSON.parse(new TextDecoder().decode(d.subarray(9,9+n)));
   const L=parseLook(meta.look); if(!L) return null;
   const bl={}; let p=9+n; for(const x of meta.b||[]){ bl[x.k]=new Blob([d.slice(p,p+x.n)],{type:x.t}); p+=x.n; }
@@ -2858,7 +2895,7 @@ async function lookFromCard(key, L){
   const same=x=>x && x.g===L.g && x.i.join()===L.i.join();
   const want=()=>shared===L || (look.id===null && !look.pic && same(look));
   try{
-    const res=await fetch(ROOT+"card/"+key+".png"); if(!res.ok || !want()) return;
+    const res=await fetch(ROOT+"card/"+key+".jpg"); if(!res.ok || !want()) return;
     const r=await readOutfitPng(await res.blob()); if(!r || !r.bl.cut || !same(r.L) || !want()) return;
     const pic=await storeOutfitPic(r); if(!pic) return;
     if(shared===L){ L.pic=pic.id; L.picOn=pic.on; }
@@ -2989,7 +3026,7 @@ const MINEIMG=new Map();   // saved outfit → rendered card image (object URL),
 function mineUrl(L){
   const k=L.id+":"+(L.t||0), c=MINEIMG.get(k); if(c) return c.url||null;
   const e={url:null}; MINEIMG.set(k,e);
-  lookCanvas(L).then(cv=>toBlobP(cv,"image/png")).then(b=>{ if(!b) return; e.url=URL.createObjectURL(b);
+  lookCanvas(L).then(cv=>toBlobP(cv,"image/jpeg",LOOK_Q)).then(b=>{ if(!b) return; e.url=URL.createObjectURL(b);
     const d=$("shv"); if(d.open && VW.src==="mine" && VW.keys[VW.i]===L.id) paintView(); }).catch(()=>{});
   return null;
 }
@@ -3048,8 +3085,8 @@ async function showAct(a){
   if(v.kind==="mine"){ const L=v.L;
     if(a==="link" || a==="discord") return shareLook(L, a==="discord");
     if(a==="gcode"){ const r=gameCode(L); if(!r){ toast(t("gameNone")); return; } return copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
-    if(a==="dl"){ try{ const png=await toBlobP(await lookCanvas(L),"image/png"); let out=png; try{ out=await lookPng(png,L); }catch(e){}
-        const u=URL.createObjectURL(out), x=document.createElement("a"); x.href=u; x.download=(slug(L.n||"")||"miliadex-outfit")+".png"; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }
+    if(a==="dl"){ try{ const out=await lookImage(L); if(!out) throw new Error("no image");
+        const u=URL.createObjectURL(out), x=document.createElement("a"); x.href=u; x.download=(slug(L.n||"")||"miliadex-outfit")+".jpg"; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }
       catch(e){ toast(t("dlFail")); } return; }
     if(a==="edit"){ loadSaved(L); closeV(); goBuilder(); } return; }
   const it=v.it;
@@ -3391,8 +3428,8 @@ async function shareCardCol(st,name){
 // sharing an outfit: its link (and the picture behind its preview)
 function shareLook(L, discord){
   const code=lookCode(L), url=shareUrl("o",code), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
-  // the preview shows the outfit exactly as the site downloads it (PNG with the outfit inside, so it can be opened back in the Miliadex)
-  const ready=pushCard("o", code, async()=>{ const png=await toBlobP(await lookCanvas(L),"image/png"); try{ return await lookPng(png,L); }catch(e){ return png; } });
+  // the preview shows the outfit exactly as the site downloads it (JPEG with the outfit inside, so it can be opened back in the Miliadex)
+  const ready=pushCard("o", code, async()=>{ const b=await lookImage(L); if(!b) throw new Error("no picture"); return b; });
   return copyLater(discord ? `[${t("cardDiscordO")(name)}](${url})` : url, ready, t(discord?"scCopiedD":"linkCopied"),
     txt=>{ const inp=$("lkCode"); if(inp){ inp.value=txt; inp.focus(); inp.select(); } });
 }
@@ -3608,7 +3645,7 @@ async function blobToCanvas(blob, maxSide){
 }
 async function takeFile(file){
   if(!file || !/^image\//.test(file.type||"")){ toast(t("picBad")); return; }
-  if(!CR.on && /png/i.test(file.type) && await openLookImage(file)) return;
+  if(!CR.on && /png|jpe?g/i.test(file.type) && await openLookImage(file)) return;
   const c=await blobToCanvas(file, 2048); if(!c){ toast(t("picBad")); return; }
   openCut(c, null);
 }

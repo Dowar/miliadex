@@ -5,7 +5,7 @@ Copies the site from the repository root into dist/ and prepares the Outfits Sho
   dist/showcase/index.json   list of outfits (read from the data each Miliadex image carries)
   dist/showcase/_t/*.webp    square thumbnails for the gallery cards (~30-50 KB)
   dist/showcase/_v/*.webp    lighter full images for the detail page (~150-250 KB)
-The original PNGs are published untouched: they are what Download / Edit / Add to My Outfits read.
+The original images (JPEG, or PNG for the older ones) are published untouched: they are what Download / Edit / Add to My Outfits read.
 Runs without Pillow too (no thumbnails then: the site falls back to the original images).
 
 It also writes worker/embed-data.json: the catalog read from index.html, which the Worker (worker/index.js)
@@ -55,9 +55,36 @@ def png_chunks(data):
         p += 12 + n
 
 
+def jpeg_data(data):
+    """The outfit data of a Miliadex JPEG: APP15 segments "MLDX" · part (u16) · parts (u16) · bytes."""
+    if data[:2] != b"\xff\xd8":
+        return None
+    p, got, n = 2, {}, 0
+    while p + 4 <= len(data) and data[p] == 0xFF:
+        m = data[p + 1]
+        if m == 0xFF:
+            p += 1
+            continue
+        if m == 0x01 or 0xD0 <= m <= 0xD8:
+            p += 2
+            continue
+        if m in (0xDA, 0xD9):
+            break
+        size = struct.unpack(">H", data[p + 2:p + 4])[0]
+        d = data[p + 4:p + 2 + size]
+        if m == 0xEF and len(d) > 8 and d[:4] == b"MLDX":
+            i, n = struct.unpack(">HH", d[4:8])
+            got[i] = d[8:]
+        p += 2 + size
+    if not n or any(i not in got for i in range(n)):
+        return None
+    return b"".join(got[i] for i in range(n))
+
+
 def outfit_of(data):
-    """The outfit a Miliadex image carries ("mlDx" chunk): look code, name, wear, screenshot or not."""
-    for ty, d in png_chunks(data):
+    """The outfit a Miliadex image carries (JPEG APP15 segments, or the "mlDx" chunk of older PNGs): look code, name, wear, screenshot or not."""
+    j = jpeg_data(data)
+    for ty, d in ([("mlDx", j)] if j else png_chunks(data)):
         if ty != "mlDx" or len(d) < 9 or d[:4] != b"MLDX" or d[4] != 1:
             continue
         n = struct.unpack(">I", d[5:9])[0]
