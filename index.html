@@ -1154,20 +1154,6 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .lk-imp .lk-img svg{width:19px;height:19px}
 .lk-imp.drag{outline:2px dashed var(--accent);outline-offset:4px;border-radius:14px}
 /* ---------- Outfits Showcase ---------- */
-.sh-hero{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:20px;border-radius:22px;padding:26px 28px;color:#f3efff;background:radial-gradient(120% 150% at 0% 0%,#4a35a0 0%,#271c62 45%,#140d33 100%);box-shadow:0 14px 40px rgba(20,10,60,.25),inset 0 1px 0 rgba(255,255,255,.14)}
-.sh-sky{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.sh-sky .aur{opacity:.42}
-.sh-ht{flex:1;min-width:0}
-.sh-kick{font-family:var(--tech);font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#b9adf5}
-.sh-hero h2{margin:4px 0 8px;font-family:var(--serif);font-weight:650;font-size:clamp(26px,3.4vw,38px);line-height:1.08;background:linear-gradient(92deg,#fff2c9,#ffc36b 35%,#f0b8ff 68%,#9fe6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sh-hero h2 small{display:inline-block;vertical-align:middle;margin-left:4px;font-family:var(--tech);font-size:14px;font-weight:700;-webkit-text-fill-color:#e4ddff;color:#e4ddff;padding:3px 11px;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
-.sh-hero h2 small:empty{display:none}
-.sh-hero p{margin:0;max-width:62ch;color:#d6ceff;font-size:14.5px}
-.sh-deco{flex:none;position:relative;width:156px;height:112px;margin-right:6px}
-.sh-deco i{position:absolute;width:66px;height:82px;border-radius:12px;border:1px solid rgba(255,255,255,.32);background:linear-gradient(160deg,rgba(255,255,255,.24),rgba(255,255,255,.04));box-shadow:0 12px 26px rgba(5,2,20,.45);animation:shFloat 6s ease-in-out infinite}
-.sh-deco i:nth-child(1){left:0;top:20px;transform:rotate(-12deg)}
-.sh-deco i:nth-child(2){left:45px;top:2px;z-index:1;background:linear-gradient(160deg,rgba(255,210,122,.55),rgba(197,140,255,.25));animation-delay:-2s}
-.sh-deco i:nth-child(3){left:90px;top:22px;transform:rotate(13deg);animation-delay:-4s}
 @keyframes shFloat{50%{translate:0 -6px}}
 .sh-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 16px}
 .sh-tools .sh-q{flex:1 1 240px;max-width:420px}
@@ -1235,6 +1221,56 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 @keyframes shPulse{50%{opacity:.4}}
 .sh-card.sk{cursor:default}
 .sh-grid.msg{display:block}
+.sh-wrap{display:grid;gap:30px}
+.sh-sec{display:grid;gap:12px;min-width:0}
+.sh-h{display:flex;align-items:center;gap:8px;margin:0;font-family:var(--serif);font-weight:650;font-size:22px;color:var(--text)}
+.sh-h small{font-family:var(--tech);font-size:13px;font-weight:700;color:var(--muted);padding:2px 9px;border-radius:999px;background:var(--chip)}
+.sh-star{color:#f2b33d;text-shadow:0 0 12px rgba(255,200,90,.55)}
+.sh-hs{margin:-6px 0 2px;color:var(--muted);font-size:14px}
+.sh-none{margin:0;padding:22px 16px;border:2px dashed var(--line);border-radius:18px;color:var(--muted);text-align:center}
+.sh-more{justify-self:center;margin-top:4px}
+.sh-wrap > .sh-msg.sr{position:absolute}
+/* "show in the showcase" switch, next to the share buttons */
+.pub-t{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none}
+.pub-t input{position:absolute;opacity:0;pointer-events:none}
+.pub-t .tg{flex:none;width:32px;height:19px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}
+.pub-t .tg::after{content:"";position:absolute;top:2.5px;left:2.5px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.pub-t input:checked + .tg{background:var(--ok)}
+.pub-t input:checked + .tg::after{transform:translateX(13px)}
+.pub-t input:checked ~ span:last-child{color:var(--text)}
+.pub-t input:focus-visible + .tg{outline:2px solid var(--accent);outline-offset:2px}
+.sv-row > .pub-t{grid-column:1/-1;margin-top:2px}
+/* admin address: "page not found" for everyone but the owner */
+html.x404 body > :not(#p404):not(#toasts), html.xadm body > :not(#padmin):not(#toasts){display:none!important}
+html.x404 body, html.xadm body{background:var(--screen)}
+#p404 a.btn,#padmin a.btn{text-decoration:none}
+#p404{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.p404-in{display:grid;justify-items:center;gap:10px;text-align:center;max-width:420px}
+.p404-n{font-family:var(--tech);font-size:clamp(64px,14vw,110px);line-height:1;letter-spacing:.06em;background:linear-gradient(92deg,#c58cff,#5fd3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.p404-in h1{margin:0;font-family:var(--serif);font-weight:650;font-size:26px}
+.p404-in p{margin:0 0 8px;color:var(--muted)}
+#padmin{max-width:1180px;margin:0 auto;padding:22px 16px 60px;display:grid;gap:16px}
+.adm-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.adm-top h1{margin:2px 0 0;font-family:var(--serif);font-weight:650;font-size:28px}
+.adm-stats{display:flex;flex-wrap:wrap;gap:8px}
+.adm-stats span{padding:8px 12px;border-radius:12px;background:var(--card);border:2px solid var(--line);font-size:14px;color:var(--muted)}
+.adm-stats b{color:var(--text);font-family:var(--tech)}
+.adm-seg{justify-self:start;background:var(--chip);--seg-on:var(--accent)}
+.adm-seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.adm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.adm-card{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start;padding:10px;border-radius:16px;background:var(--card);border:2px solid var(--line)}
+.adm-th{grid-row:span 2;display:block;width:84px;height:84px;border-radius:12px;overflow:hidden;background:#140d33}
+.adm-th img{width:100%;height:100%;object-fit:cover;display:block}
+.adm-tx{display:grid;gap:3px;min-width:0}
+.adm-tx b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-tx small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.adm-act{display:flex;flex-wrap:wrap;gap:6px}
+.adm-act .btn{padding:6px 10px;font-size:13px}
+.adm-del.armed{background:#d6455d;color:#fff;border-color:#d6455d}
+.adm-none{grid-column:1/-1;margin:0;padding:30px 16px;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px}
+.adm-more{justify-self:center}
+.adm-busy{display:grid;place-items:center;margin:0;padding:20px}
+.adm-busy .spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
 .sh-msg{display:grid;justify-items:center;gap:12px;text-align:center;padding:48px 16px;border:2px dashed var(--line);border-radius:20px;color:var(--muted)}
 .sh-msg b{color:var(--text);font-size:16px;font-weight:600}
 .sh-msg-ic{font-size:30px;color:var(--accent)}
@@ -1315,9 +1351,6 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   .tab{width:auto;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding:8px 12px}
   .tab b{font-size:15px;max-width:100%}
   .tab span{font-size:11.5px}
-  .sh-hero{padding:18px 18px 20px}
-  .sh-deco{display:none}
-  .sh-hero p{font-size:13.5px}
   .sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .sh-card{border-radius:18px;padding:5px}
   .sh-frame{border-radius:13px}
@@ -1338,7 +1371,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   .sh-mine > span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sh-sort select{width:100%;font-size:13px;padding:9px 8px}
 }
-@media (prefers-reduced-motion:reduce){ .sh-card,.sh-img,.sh-deco i,.sv-img,.sv-bar i{animation:none!important} .sh-card{transform:none!important} }
+@media (prefers-reduced-motion:reduce){ .sh-card,.sh-img,.sv-img,.sv-bar i{animation:none!important} .sh-card{transform:none!important} }
 /* save & backup: folded by default */
 .tools{gap:0}
 .tools-h{margin:0}
@@ -1499,7 +1532,7 @@ const T = {
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
   imgImp:"Import with image",showT:"Outfits Showcase",shKick:"Miliadex gallery",shSub:"Outfits made with the Miliadex. Open one to remix it, keep it in My Outfits or download it.",shSearch:"Search an outfit or a piece",shAll:"All",shMine:"I own every piece",
-  shSort:"Sort",shSorts:{repo:"Showcase order",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
+  shSort:"Sort",shSorts:{repo:"Showcase order",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shFeat:"Featured",shComm:"Community",shCommSub:"Outfits players chose to show when they shared their link.",shCommEmpty:"No shared outfits yet: share yours from My Outfits with “Show in the Outfits Showcase” on.",shCommFail:"Shared outfits couldn’t be loaded.",shMore:"Show more",shPubL:"Show in the Outfits Showcase",shPubTip:"When you copy a link to an outfit, it also appears in the Outfits Showcase (its name, pieces and in-game screenshot).",shPubDone:" · in the Outfits Showcase",nf404:"Page not found",nf404s:"This page doesn’t exist or has moved.",nf404b:"Back to the Miliadex",admT:"Showcase moderation",admSite:"Back to the site",admImgs:"pictures",admMB:"MB",admPub:"in the showcase",admBan:"taken out",admTabPub:"In the showcase",admTabBan:"Taken out",admHide:"Take out",admShow:"Put back",admDel:"Delete picture",admSure:"Sure? Click again",admNone:"Nothing here.",admDone:"Done",admFail:"That didn’t work",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
   shFail:"The showcase couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
   shEdit:"Edit in My Outfits",shEditMine:"Edit",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
   shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't in the showcase anymore.",
@@ -1552,7 +1585,7 @@ const T = {
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
   imgImp:"Importer avec une image",showT:"Vitrine de tenues",shKick:"Galerie Miliadex",shSub:"Des tenues créées avec le Miliadex. Ouvre-en une pour la modifier, la garder dans Mes tenues ou la télécharger.",shSearch:"Chercher une tenue ou une pièce",shAll:"Toutes",shMine:"Je possède tout",
-  shSort:"Trier",shSorts:{repo:"Ordre de la vitrine",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
+  shSort:"Trier",shSorts:{repo:"Ordre de la vitrine",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shFeat:"En vedette",shComm:"Communauté",shCommSub:"Les tenues que les joueurs ont choisi de montrer en partageant leur lien.",shCommEmpty:"Aucune tenue partagée pour l'instant : partage la tienne depuis Mes tenues avec « Montrer dans la vitrine » activé.",shCommFail:"Impossible de charger les tenues partagées.",shMore:"Afficher plus",shPubL:"Montrer dans la vitrine",shPubTip:"Quand tu copies le lien d'une tenue, elle apparaît aussi dans la vitrine (nom, pièces et capture en jeu).",shPubDone:" · visible dans la vitrine",nf404:"Page introuvable",nf404s:"Cette page n'existe pas ou a été déplacée.",nf404b:"Retour au Miliadex",admT:"Modération de la vitrine",admSite:"Retour au site",admImgs:"images",admMB:"Mo",admPub:"dans la vitrine",admBan:"retirées",admTabPub:"Dans la vitrine",admTabBan:"Retirées",admHide:"Retirer",admShow:"Remettre",admDel:"Supprimer l'image",admSure:"Sûr ? Reclique",admNone:"Rien ici.",admDone:"Fait",admFail:"Ça n'a pas marché",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
   shFail:"La vitrine n'a pas pu être chargée pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
   shEdit:"Modifier dans Mes tenues",shEditMine:"Modifier",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
   shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus dans la vitrine.",
@@ -2505,6 +2538,7 @@ function renderOutfits(){
         <button type="button" class="btn ghost" data-act="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button>
         <button type="button" class="btn ghost" data-act="gcode" title="${esc(t("gameTip"))}">${ICON_PAD} ${esc(t("gameCode"))}</button>
       </div>
+      ${/^https?:$/.test(location.protocol)?pubToggle():""}
       ${location.protocol==="file:"?`<p class="b-note">${esc(t("localNote"))}</p>`:""}
     </div>`;
   const looks=state.looks||[];
@@ -2905,13 +2939,15 @@ async function lookFromCard(key, L){
 }
 /* ---------- Outfits Showcase: outfit images from the repo's showcase/ folder (listed through the GitHub API, served by the site itself) ---------- */
 const SHOW_REPO="Dowar/miliadex", SHOW_DIR=ROOT+"showcase", SHOW_KEY="miliadex-showcase", SHOW_TTL=10*60e3;
-const SHOW={items:null, state:"idle", f:{q:"",g:"",mine:false,sort:"repo"}, view:[], vi:0, pending:null, tok:0};
+const SHOW={items:null, state:"idle", f:{q:"",g:"",mine:false,sort:"repo"}, view:[], vi:0, pending:null, tok:0, users:null, unext:null, ustate:"idle"};
 try{ const c=JSON.parse(localStorage.getItem(SHOW_KEY)||"null"); if(c && Array.isArray(c.list)) SHOW.items=c.list.map((x,i)=>({name:x.name,sha:x.sha,size:x.size,i})); }catch(e){}
-const showUrl = it => SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,10):"");   // the original file (carries the full outfit)
-const showThumb = it => it.thumb ? SHOW_DIR+"/"+it.thumb.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
-const showView = it => it.view ? SHOW_DIR+"/"+it.view.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
-const showName = it => (it.meta && it.meta.L.n) || it.name.replace(/\.[a-z0-9]+$/i,"").replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
-const showByName = n => (SHOW.items||[]).find(x=>x.name===n);
+// featured: the images of the repo's showcase/ folder · community (it.user): outfits shared with "Show in the Outfits Showcase"
+const showUrl = it => it.user ? ROOT+"card/"+it.k+".jpg" : SHOW_DIR+"/"+encodeURIComponent(it.name)+(it.sha?"?v="+it.sha.slice(0,10):"");   // the original file (carries the full outfit)
+const showThumb = it => it.user ? ROOT+"card/"+it.k+"/thumb" : it.thumb ? SHOW_DIR+"/"+it.thumb.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
+const showView = it => it.user ? showUrl(it) : it.view ? SHOW_DIR+"/"+it.view.split("/").map(encodeURIComponent).join("/")+(it.sha?"?v="+it.sha.slice(0,10):"") : showUrl(it);
+const showName = it => (it.meta && it.meta.L.n) || (it.user ? t("untitled") : "") || it.name.replace(/\.[a-z0-9]+$/i,"").replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
+const showAll = () => (SHOW.items||[]).concat(SHOW.users||[]);
+const showByName = n => showAll().find(x=>x.name===n);
 function showStats(m){ const its=lookItems(m.L); return {n:its.length, own:its.filter(it=>has(it,"x")).length, viv:lookViv(its), its}; }
 const showPct = it => { if(!it.meta) return -1; const s=showStats(it.meta); return s.n ? s.own/s.n : 0; };
 const sameIds = (a,b) => a.length===b.length && a.every(x=>b.includes(x));
@@ -2946,11 +2982,37 @@ async function showLoad(force){
   }catch(e){ console.warn("Miliadex: showcase list unavailable", e); if(c && Array.isArray(c.list)){ showSet(c.list); SHOW.state="ok"; } else SHOW.state="fail"; }
   showLoaded();
 }
+function showBadge(){ const sp=$("tab-show") && $("tab-show").querySelector("span"); if(!sp) return;
+  const n=(SHOW.items||[]).length+(SHOW.users||[]).length; sp.textContent = SHOW.items || SHOW.users ? n+(SHOW.unext?"+":"") : "✦"; }
 function showLoaded(){
-  const sp=$("tab-show") && $("tab-show").querySelector("span"); if(sp) sp.textContent=SHOW.items?SHOW.items.length:"✦";
+  showBadge();
   if(ui.tab==="show") renderShowGrid();
   (SHOW.items||[]).forEach(it=>showMeta(it));   // read every outfit in the background: filters and cards fill in as they arrive
-  if(SHOW.pending){ const n=SHOW.pending; SHOW.pending=null; const it=showFind(n); if(it) openShowView(it.name); else toast(t("shGone")); }
+  if(SHOW.pending){ const n=SHOW.pending; SHOW.pending=null; showOpenName(n); }
+  if(SHOW.ustate==="idle") usersLoad(false);
+}
+// community: outfits people chose to show when sharing, newest first, 48 at a time (the outfit rides in the list: nothing to read per card)
+const userItem = x => { const L=x && x.c && parseLook(x.c); if(!L || !L.i.length || !/^[0-9a-f]{32}$/.test(x.k)) return null;
+  return {name:"u-"+x.k, user:true, k:x.k, code:x.c, lang:x.l==="fr"?"fr":"en", t:+x.t||0, i:0, meta:{L, pic:!!x.p, full:null}}; };
+async function usersLoad(more){
+  if(!/^https?:$/.test(location.protocol)){ SHOW.users=SHOW.users||[]; SHOW.ustate="off"; return; }
+  if(SHOW.ustate==="loading") return; SHOW.ustate="loading"; if(more && ui.tab==="show") renderShowGrid();
+  try{ const r=await fetch(ROOT+"api/showcase"+(more && SHOW.unext ? "?before="+SHOW.unext : ""), {cache:"no-cache"}); if(!r.ok) throw new Error("HTTP "+r.status);
+    const j=await r.json(), list=more ? (SHOW.users||[]).slice() : [], have=new Set(list.map(x=>x.code));
+    for(const x of (j.items||[])){ const it=userItem(x); if(it && !have.has(it.code)){ have.add(it.code); const o=(SHOW.users||[]).find(y=>y.name===it.name); list.push(o||it); } }
+    list.forEach((x,i)=>x.i=i); SHOW.users=list; SHOW.unext=j.next||null; SHOW.ustate="ok";
+  }catch(e){ console.warn("Miliadex: shared outfits unavailable", e); SHOW.users=SHOW.users||[]; SHOW.ustate="fail"; }
+  showBadge(); if(ui.tab==="show") renderShowGrid();
+}
+// one shared outfit opened by its address (it may not be among the ones loaded yet)
+async function showFetchUser(k){
+  try{ const j=await (await fetch(ROOT+"api/showcase?k="+encodeURIComponent(k))).json(); const it=userItem((j.items||[])[0]); if(!it) return null;
+    const o=showByName(it.name); if(o) return o; SHOW.users=(SHOW.users||[]).concat(it); SHOW.users.forEach((x,i)=>x.i=i); return it; }catch(e){ return null; }
+}
+function showOpenName(n){
+  const it=showFind(n); if(it){ openShowView(it.name); return; }
+  const m=/^u-([0-9a-f]{32})$/.exec(n); if(!m){ toast(t("shGone")); return; }
+  showFetchUser(m[1]).then(x=>{ if(x){ if(ui.tab==="show") renderShowGrid(); openShowView(x.name); } else toast(t("shGone")); });
 }
 // each image is read once for the outfit it carries (pieces, name, in-game screenshot)
 let showQ=[], showRun=0;
@@ -2973,18 +3035,19 @@ function showArrived(it){
 }
 function showList(){
   const F=SHOW.f, q=F.q.trim().toLowerCase();
-  const L=(SHOW.items||[]).filter(it=>{ const m=it.meta;
+  const keep=it=>{ const m=it.meta;
     if((F.g || F.mine) && !m) return false;
     if(F.g && m.L.g!==F.g) return false;
     if(F.mine){ const s=showStats(m); if(!s.n || s.own<s.n) return false; }
     if(q){ const hay=[showName(it), ...(m?lookItems(m.L).flatMap(x=>[x.en,x.fr]):[])].join(" ").toLowerCase(); if(!hay.includes(q)) return false; }
-    return true; });
-  if(F.sort==="name") L.sort((a,b)=>showName(a).localeCompare(showName(b), ui.lang));
-  else if(F.sort==="own") L.sort((a,b)=>showPct(b)-showPct(a) || a.i-b.i);
-  return L;
+    return true; };
+  const order=L=>{ if(F.sort==="name") L.sort((a,b)=>showName(a).localeCompare(showName(b), ui.lang));
+    else if(F.sort==="own") L.sort((a,b)=>showPct(b)-showPct(a) || a.i-b.i);
+    return L; };
+  return order((SHOW.items||[]).filter(keep)).concat(order((SHOW.users||[]).filter(keep)));   // featured first, then the community
 }
 function showCard(it,k){
-  const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot, full=st && st.n && st.own===st.n;
+  const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot && !it.user, full=st && st.n && st.own===st.n;
   const tags = m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.pic?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "";
   const vv = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
   const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-bar" aria-hidden="true"><i style="width:${st.n?(st.own/st.n*100).toFixed(1):0}%"></i></span>`
@@ -2997,28 +3060,33 @@ function showCard(it,k){
 function renderShow(){
   const box=$("showcase"), key=ui.lang;
   if(box.dataset.key!==key){ box.dataset.key=key; const F=SHOW.f;
-    box.innerHTML=`<header class="sh-hero"><div class="sh-sky" aria-hidden="true"><i class="aur a1"></i><i class="aur a2"></i><i class="aur a3"></i><i class="starfield"></i><i class="vp-shoot" style="top:12%;left:88%"></i></div>
-        <div class="sh-ht"><span class="sh-kick">${esc(t("shKick"))}</span><h2>${esc(t("showT"))} <small id="shCount"></small></h2><p>${esc(t("shSub"))}</p></div>
-        <div class="sh-deco" aria-hidden="true"><i></i><i></i><i></i></div></header>
+    box.innerHTML=`<h2 class="sr">${esc(t("showT"))}</h2>
       <div class="sh-tools">
         <label class="search sh-q"><span class="sr">${esc(t("shSearch"))}</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6"/><path d="M13 13l5 5" stroke-linecap="round"/></svg><input id="shQ" type="search" autocomplete="off" placeholder="${esc(t("shSearch"))}" value="${esc(F.q)}"></label>
         <div class="seg sh-g" role="group" aria-label="${esc(t("wear"))}">${[["",t("shAll")],["f","♀ "+t("f")],["m","♂ "+t("m")]].map(([v,l])=>`<button type="button" data-shg="${v}" aria-pressed="${F.g===v}">${esc(l)}</button>`).join("")}</div>
         <label class="sh-mine"><input type="checkbox" id="shMine"${F.mine?" checked":""}><span class="tg" aria-hidden="true"></span><span>${esc(t("shMine"))}</span></label>
         <label class="sh-sort"><span class="sr">${esc(t("shSort"))}</span><select id="shSort">${Object.entries(t("shSorts")).map(([v,l])=>`<option value="${v}"${F.sort===v?" selected":""}>${esc(l)}</option>`).join("")}</select></label>
       </div>
-      <div class="sh-grid" id="shGrid"></div>`; }
+      <div class="sh-wrap" id="shGrid"></div>`; }
   if(SHOW.state==="idle" || (SHOW.state==="ok" && !SHOW.loadedOnce)){ SHOW.loadedOnce=true; showLoad(); }
   renderShowGrid();
 }
+const shSkel = n => `<div class="sh-grid">${Array.from({length:n},(_,k)=>`<span class="sh-card sk" style="--d:${k*60}ms"><span class="sh-frame"><span class="sh-img"></span></span><span class="sh-info"><span class="sh-sk"><i></i><i></i></span></span></span>`).join("")}</div>`;
 function renderShowGrid(){
-  const g=$("shGrid"); if(!g) return; const F=SHOW.f, cnt=$("shCount");
-  if(cnt) cnt.textContent = SHOW.items ? SHOW.items.length : "";
-  if(!SHOW.items && SHOW.state!=="fail"){ g.className="sh-grid"; g.innerHTML=Array.from({length:6},(_,k)=>`<span class="sh-card sk" style="--d:${k*60}ms"><span class="sh-frame"><span class="sh-img"></span></span><span class="sh-info"><span class="sh-sk"><i></i><i></i></span></span></span>`).join("")+`<p class="sh-msg sr">${esc(t("shLoading"))}</p>`; return; }
-  if(SHOW.state==="fail" && !SHOW.items){ g.className="sh-grid msg"; g.innerHTML=`<div class="sh-msg"><b>${esc(t("shFail"))}</b><button type="button" class="btn" data-shretry>${esc(t("shRetry"))}</button></div>`; return; }
-  if(!SHOW.items.length){ g.className="sh-grid msg"; g.innerHTML=`<div class="sh-msg"><span class="sh-msg-ic" aria-hidden="true">✦</span><b>${esc(t("shEmpty"))}</b></div>`; return; }
-  const list=showList(); SHOW.spot = !F.q && !F.g && !F.mine && F.sort==="repo" && list.length>=4;
-  g.className="sh-grid"+(SHOW.spot?" has-spot":"");
-  g.innerHTML = list.length ? list.map((it,k)=>showCard(it,k)).join("") : `<div class="sh-msg"><b>${esc(t("shNone"))}</b></div>`;
+  const g=$("shGrid"); if(!g) return; const F=SHOW.f;
+  if(!SHOW.items && SHOW.state!=="fail"){ g.innerHTML=shSkel(6)+`<p class="sh-msg sr">${esc(t("shLoading"))}</p>`; return; }
+  if(SHOW.state==="fail" && !SHOW.items){ g.innerHTML=`<div class="sh-grid msg"><div class="sh-msg"><b>${esc(t("shFail"))}</b><button type="button" class="btn" data-shretry>${esc(t("shRetry"))}</button></div></div>`; return; }
+  const list=showList(), feat=list.filter(x=>!x.user), comm=list.filter(x=>x.user), filt=!!(F.q || F.g || F.mine);
+  SHOW.spot = !filt && F.sort==="repo" && feat.length>=4;
+  let h="";
+  if(SHOW.items.length) h+=`<section class="sh-sec feat"><h3 class="sh-h"><span class="sh-star" aria-hidden="true">★</span>${esc(t("shFeat"))} <small>${feat.length}</small></h3>
+    ${feat.length ? `<div class="sh-grid${SHOW.spot?" has-spot":""}">${feat.map((it,k)=>showCard(it,k)).join("")}</div>` : `<p class="sh-none">${esc(t("shNone"))}</p>`}</section>`;
+  const loading=SHOW.ustate==="loading", more = SHOW.unext ? `<button type="button" class="btn ghost sh-more" data-shmore${loading?" disabled":""}>${esc(loading?t("shLoading"):t("shMore"))}</button>` : "";
+  const body = !SHOW.users && SHOW.ustate!=="fail" && SHOW.ustate!=="off" ? shSkel(3)
+    : comm.length ? `<div class="sh-grid">${comm.map((it,k)=>showCard(it,k)).join("")}</div>${more}`
+    : `<p class="sh-none">${esc(filt ? t("shNone") : SHOW.ustate==="fail" ? t("shCommFail") : t("shCommEmpty"))}</p>${filt?more:""}`;
+  if(SHOW.ustate!=="off") h+=`<section class="sh-sec comm"><h3 class="sh-h">${esc(t("shComm"))} <small>${SHOW.users ? comm.length+(SHOW.unext?"+":"") : ""}</small></h3><p class="sh-hs">${esc(t("shCommSub"))}</p>${body}</section>`;
+  g.innerHTML = h || `<div class="sh-grid msg"><div class="sh-msg"><span class="sh-msg-ic" aria-hidden="true">✦</span><b>${esc(t("shEmpty"))}</b></div></div>`;
 }
 /* viewer: one detail page for showcase images and saved outfits */
 const VW={src:"show", keys:[], i:0};
@@ -3051,7 +3119,7 @@ function paintView(quiet){
   const pcs = its.slice().sort((a,b)=>ALL_SLOTS.indexOf(slotsOf(a)[0])-ALL_SLOTS.indexOf(slotsOf(b)[0])).map(x=>{ const o=has(x,"x"), sl=slotsOf(x)[0];
       return `<li class="${o?"own":""} r${x.r}"><span class="th">${x.img?`<img src="${esc(wurl(x.img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb="1" data-iid="${esc(x.id)}">`:emblem(x)}</span><span class="tx"><b>${esc(nm(x))}</b><small>${esc((t("catN")||{})[sl]||sl)} · ${"★".repeat(x.r||0)}</small></span><span class="ok" aria-label="${o?"✓":""}">${o?"✓":""}</span></li>`; }).join("");
   const mine=v.kind==="mine", saved=!mine && L && showSaved(v.m);
-  const linkRow=`<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button><button type="button" class="btn ghost" data-sv="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button></div>`;
+  const linkRow=`<div class="sv-row"><button type="button" class="btn ghost" data-sv="dl">${ICON_DL} ${esc(t("shDl"))}</button><button type="button" class="btn ghost" data-sv="link">${ICON_LINK} ${esc(t("shLink"))}</button><button type="button" class="btn ghost" data-sv="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button>${mine && /^https?:$/.test(location.protocol)?pubToggle():""}</div>`;
   const acts = L ? `<button type="button" class="btn sv-main" data-sv="edit">${ICON_EDIT} ${esc(t(mine?"shEditMine":"shEdit"))}</button>
       ${mine?"":`<button type="button" class="btn ghost" data-sv="save"${saved?" disabled":""}>${saved?"✓ "+esc(t("shSaved")):ICON_PLUS+" "+esc(t("shSave"))}</button>`}
       <button type="button" class="btn ghost" data-sv="gcode" title="${esc(t("gameTip"))}">${ICON_PAD} ${esc(t("gameCode"))}</button>${linkRow}` : linkRow;
@@ -3090,9 +3158,9 @@ async function showAct(a){
       catch(e){ toast(t("dlFail")); } return; }
     if(a==="edit"){ loadSaved(L); closeV(); goBuilder(); } return; }
   const it=v.it;
-  if(a==="link" || a==="discord"){ const url=shareUrl("s", encodeURIComponent(showBase(it.name))), n=showName(it).replace(/[\\\[\]]/g,"\\$&");
+  if(a==="link" || a==="discord"){ const url=it.user ? SITE+"/o/"+it.code+"?v="+CARD_V+(it.lang==="fr"?"&l=fr":"") : shareUrl("s", encodeURIComponent(showBase(it.name))), n=showName(it).replace(/[\\\[\]]/g,"\\$&");
     return copyTxt(a==="discord" ? `[${t("cardDiscordO")(n)}](${url})` : url, t(a==="discord"?"scCopiedD":"linkCopied")); }
-  if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
+  if(a==="dl"){ try{ const r=await fetch(showUrl(it)); const b=await r.blob(); const u=URL.createObjectURL(b), x=document.createElement("a"); x.href=u; x.download=it.user ? (slug(showName(it))||"miliadex-outfit")+".jpg" : it.name; document.body.appendChild(x); x.click(); x.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); toast("✓ "+t("dlDone")); }catch(e){ toast(t("dlFail")); } return; }
   const m=await showMeta(it); if(!m) return;
   if(a==="gcode"){ const r=gameCode(m.L); if(!r){ toast(t("gameNone")); return; } return copyTxt(r.code, t("gameCopied")+(r.skip?t("gameSkip")(r.skip):"")); }
   if(a==="save"){ if(showSaved(m)) return; const pic=await storeOutfitPic(await showFull(it)); state.looks=state.looks||[];
@@ -3106,8 +3174,10 @@ async function showAct(a){
 $("showcase").addEventListener("click", e=>{
   const c=e.target.closest(".sh-card[data-sh]"); if(c){ openShowView(c.dataset.sh); return; }
   const g=e.target.closest("[data-shg]"); if(g){ SHOW.f.g=g.dataset.shg; $("showcase").querySelectorAll("[data-shg]").forEach(x=>x.setAttribute("aria-pressed", x===g)); renderShowGrid(); return; }
-  if(e.target.closest("[data-shretry]")){ SHOW.state="loading"; renderShowGrid(); showLoad(true); }
+  if(e.target.closest("[data-shretry]")){ SHOW.state="loading"; renderShowGrid(); showLoad(true); return; }
+  if(e.target.closest("[data-shmore]")) usersLoad(true);
 });
+document.addEventListener("change", e=>{ if(e.target.matches && e.target.matches("[data-shpub]")){ ui.shPub=e.target.checked; saveUI(); document.querySelectorAll("[data-shpub]").forEach(x=>x.checked=ui.shPub); } });
 $("showcase").addEventListener("input", e=>{ if(e.target.id==="shQ"){ SHOW.f.q=e.target.value; clearTimeout(showRT); showRT=setTimeout(renderShowGrid,120); } });
 $("showcase").addEventListener("change", e=>{ if(e.target.id==="shMine"){ SHOW.f.mine=e.target.checked; renderShowGrid(); } else if(e.target.id==="shSort"){ SHOW.f.sort=e.target.value; renderShowGrid(); } });
 // cards lean toward the pointer and catch the light
@@ -3128,7 +3198,7 @@ function readShowHash(){
   const mm=location.hash.match(/show=([^&]+)/); if(!mm) return false;
   try{ history.replaceState(null,"",location.href.split("#")[0]); }catch(e){}
   let n=""; try{ n=decodeURIComponent(mm[1]); }catch(e){ return false; }
-  ui.tab="show"; SHOW.pending=n; if(SHOW.state==="ok" && showFind(n)){ SHOW.pending=null; setTimeout(()=>openShowView(showFind(n).name),60); }
+  ui.tab="show"; SHOW.pending=n; if(SHOW.state==="ok"){ SHOW.pending=null; setTimeout(()=>showOpenName(n),60); }
   return true;
 }
 
@@ -3138,7 +3208,7 @@ const TAB_PATH={sets:"sets",comp:"cosmetics",outfits:"outfits",show:"showcase"},
 const catSlug = c => slug(c==="Multi" ? "multi-part" : c);
 const showBase = n => String(n).replace(/\.[a-z0-9]+$/i,"");
 // by file name, or by name without extension (links made before an image changed format: …/witchy-garden.png → witchy-garden.jpg)
-const showFind = n => n ? (SHOW.items||[]).find(x=>x.name===n) || (SHOW.items||[]).find(x=>showBase(x.name)===showBase(n)) || null : null;
+const showFind = n => n ? showAll().find(x=>x.name===n) || (SHOW.items||[]).find(x=>showBase(x.name)===showBase(n)) || null : null;
 function routeNow(){
   const d=$("det"), v=$("shv");
   if(v.open && VW.src==="show" && VW.keys[VW.i]) return "/showcase/"+encodeURIComponent(showBase(VW.keys[VW.i]));
@@ -3163,6 +3233,7 @@ function parseRoute(path){
 }
 // opening the site at an address: tab and category before the first paint, then the item or outfit
 function routeBoot(){
+  if(ROOT && /^\/a\//.test(location.pathname)){ routeOn=false; adminBoot(); return null; }   // admin address: the URL stays as it is
   const r=parseRoute(location.pathname);
   routeOn = !!ROOT && (!!r || location.pathname==="/index.html" || !/\.html?$/i.test(location.pathname));
   if(!r) return null;
@@ -3176,8 +3247,61 @@ window.addEventListener("popstate", ()=>{
   if(!r.show && v.open) v.close ? v.close() : v.removeAttribute("open");
   if(r.tab!==ui.tab || (r.tab==="comp" && r.sub!==ui.sub)){ ui.tab=r.tab; if(r.tab==="comp") ui.sub=r.sub; saveUI(); renderHeader(); renderTab(); }
   if(r.det && detId!==r.det) openDetail(r.det);
-  if(r.show){ const it=showFind(r.show); if(it) openShowView(it.name); else SHOW.pending=r.show; }
+  if(r.show){ if(SHOW.state==="ok") showOpenName(r.show); else SHOW.pending=r.show; }
 });
+/* ---------- admin: /a/<secret> is a "page not found", except for the site owner (the Google account connected for Drive sync,
+   checked by the server on every call). It lists the outfits shared to the showcase: take one out, put it back, delete its picture ---------- */
+const ADMIN={seg:"", which:"pub", items:[], next:null, stats:null, max:0, busy:false, arm:null};
+function adminBoot(){
+  const m=location.pathname.match(/^\/a\/([^/?#]+)/); try{ ADMIN.seg=m ? decodeURIComponent(m[1]) : ""; }catch(e){ ADMIN.seg=""; }
+  document.documentElement.classList.add("x404"); document.title="404 · Miliadex";
+  const p=document.createElement("div"); p.id="p404";
+  p.innerHTML=`<main class="p404-in"><b class="p404-n">404</b><h1>${esc(t("nf404"))}</h1><p>${esc(t("nf404s"))}</p><a class="btn" href="/">${esc(t("nf404b"))}</a></main>`;
+  document.body.appendChild(p);
+  if(ADMIN.seg) setTimeout(adminCheck, 0);
+}
+async function adminCall(op, body){
+  try{ const tk=await GD.token(); if(!tk) return null;
+    const r=await fetch(ROOT+"api/admin/"+op, {method:"POST", headers:{"content-type":"application/json", authorization:"Bearer "+tk}, body:JSON.stringify(Object.assign({seg:ADMIN.seg}, body||{}))});
+    return r.ok ? await r.json() : null; }catch(e){ return null; }
+}
+async function adminCheck(){
+  const j=await adminCall("me"); if(!j || !j.ok) return;
+  const h=document.documentElement; h.classList.remove("x404"); h.classList.add("xadm"); document.title="Admin · Miliadex";
+  let p=$("padmin"); if(!p){ p=document.createElement("div"); p.id="padmin"; document.body.appendChild(p); p.addEventListener("click", adminClick); }
+  ADMIN.stats=j.stats; ADMIN.max=j.max; adminLoad(false);
+}
+async function adminLoad(more){
+  ADMIN.busy=true; adminRender();
+  const j=await adminCall("list", {which:ADMIN.which, before:more ? ADMIN.next : 0}); ADMIN.busy=false;
+  if(j){ ADMIN.items=(more ? ADMIN.items : []).concat(j.items||[]); ADMIN.next=j.next||null; } else toast(t("admFail"));
+  adminRender();
+}
+async function adminClick(e){
+  const w=e.target.closest("[data-aw]"); if(w){ if(ADMIN.which!==w.dataset.aw){ ADMIN.which=w.dataset.aw; ADMIN.items=[]; ADMIN.next=null; ADMIN.arm=null; adminLoad(false); } return; }
+  if(e.target.closest("[data-amore]")){ adminLoad(true); return; }
+  const b=e.target.closest("[data-aop]"); if(!b || b.disabled) return; const k=b.dataset.k, op=b.dataset.aop;
+  if(op==="delete" && ADMIN.arm!==k){ ADMIN.arm=k; adminRender(); return; }   // deleting takes a second click
+  ADMIN.arm=null; b.disabled=true;
+  const j=await adminCall("set", {k, op});
+  if(j && j.ok){ ADMIN.items=ADMIN.items.filter(x=>x.k!==k); const me=await adminCall("me"); if(me) ADMIN.stats=me.stats; toast("✓ "+t("admDone")); } else toast(t("admFail"));
+  adminRender();
+}
+function adminRender(){
+  const p=$("padmin"); if(!p) return; const S=(ADMIN.stats||[]).filter(Boolean), sum=k=>S.reduce((a,x)=>a+(+x[k]||0),0);
+  const day=ms=>{ try{ return new Date(ms).toLocaleDateString(ui.lang==="fr"?"fr-FR":"en-GB",{day:"numeric",month:"short",year:"numeric"}); }catch(e){ return ""; } };
+  const cards=ADMIN.items.map(x=>{ const L=x.c ? parseLook(x.c) : null, n=(L && L.n.trim())||t("untitled"), its=L ? lookItems(L) : [];
+    return `<article class="adm-card"><a class="adm-th" href="${ROOT}card/${x.k}.jpg" target="_blank" rel="noopener"><img src="${ROOT}card/${x.k}/thumb" alt="" loading="lazy"></a>
+      <div class="adm-tx"><b>${esc(n)}</b><small>${L?(L.g==="f"?"♀":"♂")+" · ":""}${esc(t("shPieces")(its.length))} · ${esc(day(x.at))} · ${esc(String(x.l).toUpperCase())} · ${Math.max(1,Math.round((x.z||0)/1024))} KB${x.p?" · "+esc(t("shPhoto")):""}</small></div>
+      <div class="adm-act">${ADMIN.which==="ban" ? `<button type="button" class="btn ghost" data-aop="show" data-k="${x.k}">${esc(t("admShow"))}</button>` : `<button type="button" class="btn ghost" data-aop="hide" data-k="${x.k}">${esc(t("admHide"))}</button>`}
+        <button type="button" class="btn ghost adm-del${ADMIN.arm===x.k?" armed":""}" data-aop="delete" data-k="${x.k}">${esc(ADMIN.arm===x.k ? t("admSure") : t("admDel"))}</button></div></article>`; }).join("");
+  p.innerHTML=`<header class="adm-top"><div><span class="vp-kick">Miliadex</span><h1>${esc(t("admT"))}</h1></div><a class="btn ghost" href="/">${esc(t("admSite"))}</a></header>
+    <div class="adm-stats"><span><b>${fmtN(sum("c"))}</b> / ${fmtN(ADMIN.max)} ${esc(t("admImgs"))}</span><span><b>${fmtN(Math.round(sum("z")/2**20))}</b> ${esc(t("admMB"))}</span><span><b>${fmtN(sum("p"))}</b> ${esc(t("admPub"))}</span><span><b>${fmtN(sum("b"))}</b> ${esc(t("admBan"))}</span></div>
+    <div class="seg adm-seg" role="group">${[["pub",t("admTabPub")],["ban",t("admTabBan")]].map(([v,l])=>`<button type="button" data-aw="${v}" aria-pressed="${ADMIN.which===v}">${esc(l)}</button>`).join("")}</div>
+    <div class="adm-grid">${cards || (ADMIN.busy ? "" : `<p class="adm-none">${esc(t("admNone"))}</p>`)}</div>
+    ${ADMIN.busy ? `<p class="adm-busy"><span class="spin"></span></p>` : ADMIN.next ? `<button type="button" class="btn ghost adm-more" data-amore>${esc(t("shMore"))}</button>` : ""}`;
+}
+
 /* ---------- save & backup fold ---------- */
 function bkSet(open){ ui.bk=!!open; const b=$("bkBody"); b.classList.toggle("open",ui.bk); if(ui.bk) b.removeAttribute("inert"); else b.setAttribute("inert","");
   $("bkTg").setAttribute("aria-expanded",ui.bk); $("bkSum").textContent=ui.bk?"":t("bkSum"); }
@@ -3318,14 +3442,21 @@ $("shc").addEventListener("input", e=>{ if(e.target.id!=="scName") return;
 /* ---------- share pictures: the card Discord shows for a /c/ or /o/ link — drawn here with the site's own look, kept by the site's Worker ---------- */
 const CARD_V=2;   // same as CARD_V in worker/index.js: bump both when the card design changes
 const cardJobs=new Map();   // link → the picture on its way (true once the site has it)
-function pushCard(k, code, draw){
+// draw() gives a canvas, a Blob, or (outfits) {card, thumb, pic}; opt.pub lists the outfit in the Outfits Showcase
+function pushCard(k, code, draw, opt){
   if(!/^https?:$/.test(location.protocol)) return Promise.resolve(false);
-  const lang=ui.lang==="fr"?"fr":"en", id=k+"|"+lang+"|"+code;
+  const lang=ui.lang==="fr"?"fr":"en", pub=!!(opt && opt.pub), base=k+"|"+lang+"|"+code, id=base+(pub?"|pub":"");
   if(cardJobs.has(id)) return cardJobs.get(id);
+  cardJobs.delete(pub ? base : base+"|pub");   // the other choice is outdated once this one is sent
   const job=(async()=>{
     try{
-      const out=await draw(), b=out instanceof Blob ? out : out && await toBlobP(out,"image/jpeg",.88); if(!b) throw new Error("no picture");
-      const r=await fetch("/api/card?k="+k+"&l="+lang+"&c="+encodeURIComponent(code),{method:"POST",body:b,headers:{"content-type":b.type||"image/jpeg"}});
+      const out=await draw(); let b=out, th=null, pic=false;
+      if(out && !(out instanceof Blob) && out.card){ b=out.card; th=out.thumb||null; pic=!!out.pic; }
+      if(b && !(b instanceof Blob)) b=await toBlobP(b,"image/jpeg",.88);
+      if(!b) throw new Error("no picture");
+      let body=b, headers={"content-type":b.type||"image/jpeg"};
+      if(k==="o"){ body=new FormData(); body.append("card",b,"card.jpg"); if(th) body.append("thumb",th,"thumb"); body.append("pub",pub?"1":"0"); body.append("pic",pic?"1":"0"); headers={}; }
+      const r=await fetch("/api/card?k="+k+"&l="+lang+"&c="+encodeURIComponent(code),{method:"POST",body,headers});
       if(!r.ok) throw new Error("card upload "+r.status);
       return true;
     }catch(e){ console.warn("Miliadex: preview picture not sent", e); cardJobs.delete(id); return false; }
@@ -3426,12 +3557,22 @@ async function shareCardCol(st,name){
   cardText(c,t("scWear")(st.g)+" · Miliastra Wonderland",W-P,596,{font:F_BODY,size:18,fill:"rgba(207,198,255,.75)",align:"right",maxW:440});
   return cv;
 }
-// sharing an outfit: its link (and the picture behind its preview)
+// sharing an outfit: its link (and the picture behind its preview), listed in the Outfits Showcase when the person chose so
+const shPubOn = () => ui.shPub!==false;
+const pubToggle = () => `<label class="pub-t" title="${esc(t("shPubTip"))}"><input type="checkbox" data-shpub${shPubOn()?" checked":""}><span class="tg" aria-hidden="true"></span><span>${esc(t("shPubL"))}</span></label>`;
+// the showcase grid's small picture: the bottom square of the outfit image (its title band stays out), like the featured ones
+async function lookThumb(cv){
+  const s=Math.min(cv.width,cv.height), c=mkCanvas(480,480), g=c.getContext("2d"); g.imageSmoothingQuality="high";
+  g.drawImage(cv,(cv.width-s)/2,cv.height-s,s,s,0,0,480,480);
+  const w=await toBlobP(c,"image/webp",.8); return w && w.type==="image/webp" ? w : await toBlobP(c,"image/jpeg",.82);
+}
 function shareLook(L, discord){
-  const code=lookCode(L), url=shareUrl("o",code), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
+  const code=lookCode(L), url=shareUrl("o",code), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&"), pub=shPubOn() && lookItems(L).length>0;
   // the preview shows the outfit exactly as the site downloads it (JPEG with the outfit inside, so it can be opened back in the Miliadex)
-  const ready=pushCard("o", code, async()=>{ const b=await lookImage(L); if(!b) throw new Error("no picture"); return b; });
-  return copyLater(discord ? `[${t("cardDiscordO")(name)}](${url})` : url, ready, t(discord?"scCopiedD":"linkCopied"),
+  const ready=pushCard("o", code, async()=>{ const cv=await lookCanvas(L), card=await lookImage(L, cv); if(!card) throw new Error("no picture");
+    let thumb=null; try{ thumb=await lookThumb(cv); }catch(e){}
+    return {card, thumb, pic:!!(L.pic && L.picOn!==false)}; }, {pub});
+  return copyLater(discord ? `[${t("cardDiscordO")(name)}](${url})` : url, ready, t(discord?"scCopiedD":"linkCopied")+(pub?t("shPubDone"):""),
     txt=>{ const inp=$("lkCode"); if(inp){ inp.value=txt; inp.focus(); inp.select(); } });
 }
 function readCol(){
@@ -4222,7 +4363,9 @@ const GD=(()=>{
     if(relayOn){ if(!rt){ failed=true; setStatus("auth", t("gdOnce")); } else { plan(); sync(); } return; }
     if(usable) loadGis().catch(()=>{}); if(fresh()) sync();
   }
-  return {init, soon, render};
+  // a valid access token (renewed through the relay when it expired), for the admin page's calls
+  async function token(){ if(fresh()) return tok.v; if(rt){ await refresh(); if(fresh()) return tok.v; } return null; }
+  return {init, soon, render, token};
 })();
 gdHook=()=>GD.soon(); gdRender=()=>GD.render();
 

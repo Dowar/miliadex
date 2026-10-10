@@ -219,7 +219,8 @@ def embed_data():
             comp.append([cid[2:], en, fr or en, q, g, si if isinstance(si, int) and si >= 0 else -1, vv or 0,
                          (pr[0] or 0) if pr else 0, (pr[1] or "") if pr else "", p or "",
                          SHX[1][j] if isinstance(SHX, list) else None, first_slot(cat, mc), vi(v)])
-        data = {"v": vorder, "s": sets, "c": comp}
+        cid = re.search(r'const CID="([^"/][^"]*)"', src)   # the site's Google sign-in client: the admin check accepts only its tokens
+        data = {"v": vorder, "s": sets, "c": comp, "g": cid.group(1) if cid else ""}
         print(f"build: share previews ready ({len(sets)} sets, {len(comp)} cosmetics)")
     except Exception as e:  # previews fall back to plain links; the site itself is unaffected
         data = {"v": [], "s": [], "c": []}

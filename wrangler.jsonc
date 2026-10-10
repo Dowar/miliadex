@@ -10,8 +10,8 @@
     // serve files at their exact address (oauth.html stays oauth.html, as registered with Google); anything else gets index.html
     "html_handling": "none",
     "not_found_handling": "single-page-application",
-    // only share links and their preview pictures run code; everything else is served as plain static files
-    "run_worker_first": ["/c/*", "/o/*", "/s/*", "/api/*", "/card/*"]
+    // only share links, preview pictures, the showcase list and the admin address run code; everything else is plain static files
+    "run_worker_first": ["/c/*", "/o/*", "/s/*", "/api/*", "/card/*", "/a/*"]
   },
   // preview pictures for share links (free plan: SQLite-backed Durable Object, created on deploy)
   "durable_objects": {
