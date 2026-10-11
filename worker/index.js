@@ -37,7 +37,7 @@ const TX = {
     profile: n => n ? `${n} · Miliadex Profile` : "Miliadex Profile",
     lv: "Lv.", vivid: "Vivid rating", value: "Account value", done: p => `${p}% complete`, sets: "Sets", comp: "Cosmetics", top: "Most valuable",
     wear: g => g === "f" ? "Manekina only" : g === "m" ? "Manekin only" : "Manekina + Manekin",
-    outfit: n => `${n || "Untitled outfit"} · Miliadex outfit`, show: n => `${n} · Outfits Showcase`,
+    outfit: n => `${n || "Untitled outfit"} · Miliadex outfit`, show: n => `${n} · Community Outfits`,
     pieces: n => `${n} piece${n > 1 ? "s" : ""}`, full: n => n > 1 ? "Full sets" : "Full set", photo: "With its in-game photo",
     remix: "Open it to remix it in My Outfits", open: "Open in Miliadex",
   },
@@ -46,7 +46,7 @@ const TX = {
     profile: n => n ? `${n} · Profil Miliadex` : "Profil Miliadex",
     lv: "Niv.", vivid: "Vivid rating", value: "Valeur du compte", done: p => `Complété à ${p} %`, sets: "Sets", comp: "Cosmétiques", top: "Plus précieux",
     wear: g => g === "f" ? "Manekina seulement" : g === "m" ? "Manekin seulement" : "Manekina + Manekin",
-    outfit: n => `${n || "Tenue sans nom"} · Tenue Miliadex`, show: n => `${n} · Vitrine de tenues`,
+    outfit: n => `${n || "Tenue sans nom"} · Tenue Miliadex`, show: n => `${n} · Tenues de la communauté`,
     pieces: n => `${n} pièce${n > 1 ? "s" : ""}`, full: n => n > 1 ? "Sets complets" : "Set complet", photo: "Avec sa capture en jeu",
     remix: "Ouvre-la pour la remixer dans Mes tenues", open: "Ouvrir dans le Miliadex",
   },
@@ -198,7 +198,7 @@ async function shortKey(k, code, lang, salt) {
 function colShort(c, lang) {
   const T = TX[lang], st = collStats(c), N = n => fmt(n, lang);
   // the value in money only when the profile's owner shows it on the site
-  return { title: T.profile(c.name), desc: `🏅 ${T.ranks[st.rank]} · ${T.lv} ${st.lv} · ${T.done(pctOf(st))}\n✨ ${N(st.vg)} Vivid · 💎 ${N(st.worth)} Chronal Nexus${c.money ? ` (≈ ${money(st.worth, lang)})` : ""}`, color: CREST[st.rank] };
+  return { title: T.profile(safeName(c.name)), desc: `🏅 ${T.ranks[st.rank]} · ${T.lv} ${st.lv} · ${T.done(pctOf(st))}\n✨ ${N(st.vg)} Vivid · 💎 ${N(st.worth)} Chronal Nexus${c.money ? ` (≈ ${money(st.worth, lang)})` : ""}`, color: CREST[st.rank] };
 }
 function lookShort(L, info, lang) {
   const T = TX[lang];
@@ -572,6 +572,7 @@ function nameOk(s){
   let run=""; for(const w of [...words,"--"]){ if(w.length===1) run+=w; else { if(run.length>1) cand.push(run); run=""; } }   // "s h i t"
   return !cand.some(x=>W.has(x) || W.has(sq(x)));
 }
+const safeName = n => nameOk(n) ? n : "";
 function cleanNick(x) {
   const s = String(x || "").normalize("NFC").replace(/\s+/g, " ").trim();
   if (s.length < 3 || s.length > 20 || !/^[\p{L}\p{N}][\p{L}\p{N} ._'-]*$/u.test(s) || /miliadex|admin|modérat|moderat/i.test(s)) return null;
@@ -642,6 +643,7 @@ async function saveCard(request, env, url, ctx) {
   if (!/^[co]$/.test(k) || code.length > 4000 || salt.length > 64 || !/^[A-Za-z0-9_-]*$/.test(salt)) return new Response("bad link", { status: 400 });
   const L = k === "o" ? readLook(code) : null, ok = k === "c" ? await readCol(code) : L;
   if (!ok) return new Response("bad link", { status: 400 });
+  if (!nameOk(k === "o" ? L.n : ok.name)) return json({ error: "name" }, 0, 400);
   let b, pic = false;
   if (/multipart\/form-data/i.test(request.headers.get("content-type") || "")) {
     const f = await request.formData(), card = f.get("card");
@@ -699,7 +701,7 @@ async function shortLink(request, env, ctx, url, kind, key) {
     return page({ ...colShort(c, lang), ...img, large: true }, here, target, lang);
   }
   const L = readLook(r.code); if (!L) return Response.redirect(origin + target, 302);
-  return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, lookInfo(L), lang), ...img, large: true, color: SITE_COLOR }, here, target, lang);
+  return page({ title: TX[lang].outfit(safeName(L.n)), desc: lookShort(L, lookInfo(L), lang), ...img, large: true, color: SITE_COLOR }, here, target, lang);
 }
 // GET /card/<key>.png|jpg  the picture (cards can be replaced: the same outfit shared again with another screenshot)
 // GET /card/<key>/thumb    its small square picture (admin page), the picture itself for cards sent without one
@@ -838,12 +840,12 @@ export default {
         const L = readLook(arg);
         if (!L) return Response.redirect(origin + target, 302);
         const info = lookInfo(L), pic = await previewImage(env, origin, "o", arg, lang, bot);
-        return page({ title: TX[lang].outfit(L.n), desc: lookShort(L, info, lang), ...pic, large: true, color: SITE_COLOR }, here, lookAt(pic.key), lang);
+        return page({ title: TX[lang].outfit(safeName(L.n)), desc: lookShort(L, info, lang), ...pic, large: true, color: SITE_COLOR }, here, lookAt(pic.key), lang);
       }
       if (/^u-[0-9a-f]{32}$/.test(arg)) {   // a community outfit
         const k = arg.slice(2); let e = null; try { e = await store(env, k).item(k); } catch (x) {}
         const L = e && readLook(e.code); if (!L) return Response.redirect(origin + target, 302);
-        const title = TX[lang].show(L.n || "…") + (e.nick ? (lang === "fr" ? " · par " : " · by ") + e.nick : "");
+        const title = TX[lang].show(safeName(L.n) || "…") + (e.nick && nameOk(e.nick) ? (lang === "fr" ? " · par " : " · by ") + e.nick : "");
         return page({ title, desc: lookShort(L, lookInfo(L), lang), image: `${origin}/card/${k}.jpg`, w: 1080, h: 1350, large: true, color: SITE_COLOR }, here, target, lang);
       }
       const it = await showItem(env, origin, arg);

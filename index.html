@@ -93,17 +93,60 @@ button{cursor:pointer}
 .seg button[aria-pressed="true"]{background:#fff;color:var(--shell)}
 .top .seg{margin-left:auto;font-family:var(--tech);background:rgba(0,0,0,.32)}
 .rank{display:flex;align-items:center;gap:12px;min-width:0}
-.crest{flex:none;position:relative;isolation:isolate;width:46px;height:52px}
+.crest{flex:none;position:relative;isolation:isolate;width:60px;height:60px;cursor:pointer}
 .crest::before{content:"";position:absolute;inset:-8px;z-index:-1;border-radius:50%;background:radial-gradient(circle,var(--glow,#c58cff) 0%,transparent 66%);opacity:.22;animation:fxCrestGlow 4.5s ease-in-out infinite;pointer-events:none}
 @keyframes fxCrestGlow{50%{opacity:.5;transform:scale(1.08)}}
-.crest svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 10px var(--glow,#c58cff))}
+.crest svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--glow,#c58cff) 70%,transparent));transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.crest:hover svg{transform:scale(1.1) rotate(-6deg)}
 .rk{min-width:0}
 .rk-top{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
 .rk-label{white-space:nowrap}
 .rk-top .info-btn{flex:none}
-.info-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.08);color:#fff;font-family:var(--serif);font-style:italic;font-weight:650;font-size:12px;line-height:1;display:grid;place-items:center;padding:0;transition:background .2s,transform .2s}
-.info-btn:hover{background:rgba(255,255,255,.22);transform:scale(1.1)}
-#info{width:min(560px,calc(100% - 24px))}
+.info-btn{position:relative;width:24px;height:24px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;color:#fff;cursor:pointer;
+  background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.4),rgba(255,255,255,.06) 62%),linear-gradient(140deg,rgba(255,224,138,.55),rgba(197,140,255,.55) 52%,rgba(95,211,255,.55));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 0 10px rgba(197,140,255,.35);transition:transform .3s cubic-bezier(.3,1.5,.5,1),box-shadow .25s}
+.info-btn svg{width:13px;height:13px;filter:drop-shadow(0 1px 1px rgba(20,10,50,.5))}
+.info-btn:hover{transform:scale(1.15) rotate(-10deg);box-shadow:inset 0 0 0 1px rgba(255,255,255,.8),0 0 18px rgba(255,224,138,.6)}
+.info-btn:active{transform:scale(.95)}
+#info{width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 24px);position:relative;background:radial-gradient(130% 90% at 50% -10%,#3a2a86 0%,#1d1550 40%,#110b2a 78%);color:#f3efff;border-radius:26px;box-shadow:0 30px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);color-scheme:dark}
+#info > :not(.vp-sky){position:relative;z-index:1}
+.rk-scroll{overflow:auto;padding:6px 22px 22px;display:grid;gap:16px}
+.rk-hero{display:flex;align-items:center;gap:16px}
+.rk-big{flex:none;width:108px;height:108px;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--c1) 65%,transparent));animation:rkFloat 5s ease-in-out infinite}
+.rk-big svg{width:100%;height:100%;display:block}
+@keyframes rkFloat{50%{transform:translateY(-4px)}}
+.rk-hx{min-width:0;display:grid;gap:4px}
+.rk-hx small{font-family:var(--tech);font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#b9adf5}
+.rk-hx h2{margin:0;font-family:var(--serif);font-weight:650;font-size:clamp(24px,5vw,32px);line-height:1.08;background:linear-gradient(92deg,#fff2c9 0%,#ffc36b 35%,#f0b8ff 68%,#9fe6ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rk-hx p{margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;font-family:var(--tech);font-size:13.5px;color:#d8d0ff}
+.rk-hx p .vvi{width:18px;height:18px}
+.rk-hx p b{color:#fff}
+.rk-next{display:grid;gap:7px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.rk-nbar{height:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.rk-nbar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#7b5cff,#c58cff,#5fd3ff);box-shadow:0 0 12px rgba(95,211,255,.7);transform-origin:left;animation:scGrow 1.1s cubic-bezier(.2,.9,.2,1) both}
+.rk-next p{margin:0;font-size:13.5px;color:#d8d0ff}
+.rk-max{margin:0;padding:12px 14px;border-radius:16px;background:linear-gradient(90deg,rgba(255,224,138,.18),rgba(197,140,255,.14));color:#ffe7a8;font-weight:700}
+.rr-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;position:relative}
+.rr{position:relative;z-index:1;display:flex;align-items:center;gap:12px;padding:8px 12px 8px 8px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);animation:rrIn .5s cubic-bezier(.2,.9,.2,1) both;animation-delay:var(--d)}
+@keyframes rrIn{from{opacity:0;transform:translateX(-10px)}}
+.rr-crest{flex:none;width:52px;height:52px}
+.rr-crest svg{width:100%;height:100%;display:block}
+.rr-txt{flex:1;min-width:0;display:grid;gap:1px}
+.rr-txt b{font-family:var(--serif);font-weight:650;font-size:16.5px;color:#fff}
+.rr-txt small{font-family:var(--tech);font-size:12px;color:#b9b0e6}
+.rr-st{flex:none;font-size:12px;font-weight:800;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.rr-st.ok{color:#7ef0c4}
+.rr-st.cur{padding:4px 10px;border-radius:99px;background:linear-gradient(120deg,var(--c1),var(--c2));color:#1a1235}
+.rr-st.lock{color:rgba(255,255,255,.45)} .rr-st.lock svg{width:15px;height:15px}
+.rr.current{background:linear-gradient(100deg,color-mix(in srgb,var(--c2) 34%,transparent),rgba(255,255,255,.05) 70%);border-color:color-mix(in srgb,var(--c1) 70%,transparent);box-shadow:0 0 24px color-mix(in srgb,var(--c1) 30%,transparent)}
+.rr.current .rr-crest{filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c1) 80%,transparent))}
+.rr.reached .rr-crest{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--c1) 50%,transparent))}
+.rr.locked .rr-crest{filter:saturate(.4) brightness(.78) opacity(.75)}
+.rr.locked .rr-txt b{color:rgba(255,255,255,.62)}
+.rk-how{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
+.rk-how h3{margin:0 0 8px;font-family:var(--tech);font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#b9adf5}
+.rk-how ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;line-height:1.45;color:#d8d0ff}
+@media (max-width:480px){ #info{width:100%;max-width:100%;max-height:100dvh;height:100dvh;margin:0;border-radius:0} .rk-scroll{padding:4px 14px 18px} .rk-big{width:86px;height:86px} }
 .ih{display:flex;align-items:center;gap:12px;padding:16px 18px 10px;background:linear-gradient(160deg,#2b1f5c,#171133);color:#fff}
 .ih h2{margin:0;font-family:var(--serif);font-size:22px;font-weight:650}
 .ih .dx{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
@@ -155,11 +198,13 @@ button{cursor:pointer}
 .screen{background:var(--screen);border-radius:10px 10px 24px 24px;margin-top:6px;border:6px solid var(--shell);padding:0 14px 18px;min-height:70vh}
 
 /* ---------- tabs + toolbar ---------- */
-.tabs{position:relative;isolation:isolate;display:flex;gap:4px;width:fit-content;max-width:100%;margin-top:12px;padding:4px;border-radius:17px;background:var(--chip);box-shadow:inset 0 1px 2px rgba(20,10,60,.12)}
+.tabs{position:relative;isolation:isolate;display:flex;gap:6px;width:fit-content;max-width:100%;margin-top:12px;padding:4px;border-radius:17px;background:var(--chip);box-shadow:inset 0 1px 2px rgba(20,10,60,.12)}
 .tab{flex:1 1 0;width:250px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;background:transparent;border-radius:13px;padding:10px 14px;text-align:left;color:var(--text);transition:color .3s,background .2s}
 .tab b{font-family:var(--serif);font-weight:650;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab span{font-family:var(--tech);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;transition:color .3s}
-.tab:not([aria-selected="true"]):hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.tab:not([aria-selected="true"]){background:color-mix(in srgb,var(--accent) 9%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent);transition:color .3s,background .2s,box-shadow .25s}
+.tab:not([aria-selected="true"]):hover{background:color-mix(in srgb,var(--accent) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 34%,transparent),0 0 18px color-mix(in srgb,var(--accent) 38%,transparent)}
+.tab:not([aria-selected="true"]):hover span{color:var(--text)}
 .tab[aria-selected="true"]{color:var(--on-accent)}
 .tab[aria-selected="true"] span{color:color-mix(in srgb,var(--on-accent) 78%,transparent)}
 .tabs:not(.has-pill) .tab[aria-selected="true"]{background:var(--accent)}
@@ -398,7 +443,7 @@ button{cursor:pointer}
 .sc-card::after{content:"";position:absolute;z-index:-1;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.09) 45%,transparent 60%);background-size:250% 100%;animation:scShine 6s ease-in-out 1s infinite}
 @keyframes scShine{0%{background-position:120% 0}35%,100%{background-position:-30% 0}}
 .sc-id{display:flex;align-items:center;gap:14px}
-.sc-crest{flex:none;width:54px;height:61px;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--cr) 70%,transparent))}
+.sc-crest{flex:none;width:68px;height:68px;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--cr) 70%,transparent))}
 .sc-crest svg{display:block;width:100%;height:100%}
 .sc-who{min-width:0}
 .sc-who small{display:block;font-family:var(--tech);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#b9adf5}
@@ -869,6 +914,12 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 .mosaic.n3 span:first-child{grid-row:span 2}
 .mosaic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .lk-meta{display:grid;padding:9px 10px 11px;gap:2px}
+.look.editing{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent),0 8px 26px color-mix(in srgb,var(--accent) 25%,transparent)}
+.look.editing .lk-meta{position:relative}
+.lk-ed{position:absolute;z-index:2;left:8px;bottom:calc(100% + 8px);max-width:calc(100% - 16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:11.5px;font-weight:800;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.lk-ed svg{width:12px;height:12px}
+.look.saved{animation:lkSaved .9s cubic-bezier(.3,1.4,.5,1)}
+@keyframes lkSaved{35%{transform:scale(1.035);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 45%,transparent),0 0 34px color-mix(in srgb,var(--accent) 55%,transparent)}}
 .lk-meta b{font-family:var(--serif);font-size:16px;font-weight:650;overflow-wrap:anywhere}
 .lk-meta small{color:var(--muted);font-size:12px}
 .lk-act{position:absolute;top:8px;right:8px;display:flex;gap:6px}
@@ -936,7 +987,7 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
   .orbit{width:108px;height:108px}
   .brand h1{font-size:19px;letter-spacing:.1em}
   .top .seg button{padding:5px 9px;font-size:12px}
-  .crest{width:32px;height:36px}
+  .crest{width:46px;height:46px}
   .rank{gap:8px}
   .rk-label{font-size:9.5px;letter-spacing:.12em}
   .rc-lv{font-size:11px;padding:1px 8px 1px 3px}.rc-lv .vvi{width:17px;height:17px}
@@ -1007,7 +1058,7 @@ body.has-bg .constel::before{background:linear-gradient(90deg,rgba(190,170,255,.
 body.has-bg .node svg{filter:drop-shadow(0 1px 3px rgba(8,4,24,.75))}
 body.has-bg .node:hover svg{filter:drop-shadow(0 0 8px rgba(159,230,255,.75)) brightness(1.15)}
 body.has-bg .orbit svg{filter:drop-shadow(0 2px 8px rgba(8,4,24,.6))}
-body.has-bg .crest svg{filter:drop-shadow(0 0 10px var(--glow,#c58cff)) drop-shadow(0 1px 2px rgba(8,4,24,.8))}
+body.has-bg .crest svg{filter:drop-shadow(0 0 8px color-mix(in srgb,var(--glow,#c58cff) 70%,transparent)) drop-shadow(0 1px 2px rgba(8,4,24,.8))}
 body.has-bg .screen{background:color-mix(in srgb,var(--screen) var(--pa,88%),transparent);border-color:color-mix(in srgb,var(--shell) 70%,transparent)}
 body.has-bg .toolbar{background:transparent}
 .toolbar{transition:background .25s,border-color .25s}
@@ -1020,6 +1071,7 @@ body.has-bg .toolbar{background:transparent}
 .hbtn:hover{transform:rotate(-12deg);background:rgba(255,255,255,.12);box-shadow:0 0 18px rgba(160,140,255,.5)}
 .hbtn svg{width:18px;height:18px}
 .hbtn + .seg{margin-left:0}
+.top .seg + .hbtn{margin-left:4px}
 #bgd{width:min(900px,calc(100% - 24px))}
 #bgd::backdrop{background:rgba(8,5,22,.28);-webkit-backdrop-filter:none;backdrop-filter:none}
 .bg-body{overflow:auto;padding:6px 18px 18px;overscroll-behavior:contain}
@@ -1114,7 +1166,8 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   .hero-main,.brand{display:contents}
   .brand h1{grid-row:1;grid-column:1/3;justify-self:start;font-size:20px;letter-spacing:.12em;margin-right:8px}
   #shBtn,#gdBtn,#bgBtn,.top #lang{grid-row:1}
-  #shBtn{grid-column:3} #gdBtn{grid-column:4} #bgBtn{grid-column:5} .top #lang{grid-column:6;margin-left:8px}
+  #shBtn{grid-column:3} #bgBtn{grid-column:4} .top #lang{grid-column:5;margin-left:8px} #gdBtn{grid-column:6}
+  .top .seg + .hbtn{margin-left:8px}
   .top .hbtn,.top .hbtn:not([hidden]) + .hbtn{margin:0 0 0 6px;width:34px;height:34px}
   .top .hbtn svg{width:17px;height:17px}
   .orbit{grid-row:2/4;grid-column:1;width:100px;height:100px;margin:2px 14px 0 0;align-self:start}
@@ -1132,7 +1185,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   .top .seg button{padding:5px 7px}
   .orbit{width:84px;height:84px;margin-right:10px}
   .rk-name{font-size:17px}
-  .crest{width:28px;height:32px}
+  .crest{width:32px;height:32px}
 }
 /* header details (rarity bars + versions) fold under a toggle */
 .hx-bar{display:flex;align-items:center;gap:12px;margin-top:12px}
@@ -1273,6 +1326,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .ask-ps .miss img{filter:grayscale(1) brightness(.55);opacity:.7}
 .ask-ps .cur{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .ask .row .btn{flex:1 1 150px}
+#lkName.bad,#scName.bad{border-color:#d6455d!important;box-shadow:0 0 0 3px rgba(214,69,93,.2);color:#d6455d}
 /* the cloud button once signed in: the pseudo */
 #gdBtn.me{width:auto;max-width:230px;display:inline-flex;align-items:center;gap:7px;padding:3px 12px 3px 3px;border-radius:999px;font:650 13px var(--body);color:#fff}
 #gdBtn.me:hover{transform:none}
@@ -1547,11 +1601,11 @@ html.x404 body, html.xadm body{background:var(--screen)}
           <h1>MILIADEX</h1>
           <button type="button" class="worth" id="worth"></button>
           <button type="button" class="hbtn" id="shBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="17.5" cy="5.5" r="2.6"/><circle cx="6.5" cy="12" r="2.6"/><circle cx="17.5" cy="18.5" r="2.6"/><path d="M8.8 10.7l6.4-3.9M8.8 13.3l6.4 3.9"/></svg></button>
-          <button type="button" class="hbtn" id="gdBtn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg></button>
           <button type="button" class="hbtn" id="bgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/><path d="M17.5 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke="none"/></svg></button>
           <div class="seg" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="fr">FR</button></div>
+          <button type="button" class="hbtn" id="gdBtn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg></button>
         </div>
-        <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo">i</button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
+        <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="3.6" r="1.35" fill="currentColor"/><path d="M6.4 6.6H8.6V12.4M6.6 12.4H10.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
         <div class="xp"><div class="xp-bar"><i id="xpFill"></i></div><div class="xp-txt" id="xpTxt"></div></div>
       </div>
     </div>
@@ -1651,11 +1705,11 @@ const T = {
   localNote:"This link opens the Miliadex on this device. To share outfits with friends, the Miliadex has to be online (for example on GitHub Pages). Until then, share the code: they paste it in “Open a code”.",
   importLook:"Import with code",importPh:"Miliadex code, In-game Sharing Code or link",badLook:"That isn't an outfit code",gameCode:"In-game Sharing Code",gameTip:"Code for Cosmetic Plan › Import Sharing Code (you need to own the pieces)",gameCopied:"In-game Sharing Code copied: paste it in Cosmetic Plan › Import Sharing Code",gameLook:n=>n?`${n}'s in-game outfit`:"In-game outfit",gameIn:(n,m)=>`In-game Sharing Code opened · ${n} piece${n===1?"":"s"}`+(m?` · ${m} not in the Miliadex yet`:""),gameNone:"No piece of this outfit can go into an In-game Sharing Code",gameSkip:n=>` · ${n} piece${n===1?"":"s"} left out`,
   slotN:{"Hairstyle":"Hair","Headwear":"Headwear","Top":"Top","Bottom":"Bottom","Footwear":"Shoes","Earrings":"Earrings","Eye Accessory":"Eyewear","Face Accessory":"Face","Neck Accessory":"Neck","Back Accessory":"Back","Wrist Accessory":"Wrists","Leg Accessory":"Legs","Pendant":"Pendant","Pendant 1":"Pendant 1","Pendant 2":"Pendant 2","Tail Accessory":"Tail","Skin Tone":"Skin","Eye Shape":"Eyes","Iris":"Iris","Eyebrows":"Brows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lips"},reverse:"Reverse order",gMem:"Origin",memSet:"Set pieces",memSolo:"Standalone",pieces:"Pieces",partOf:"Part of the set",back:"Back",
-  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",amKick:"Your Miliadex account",amRandom:"This pseudo was picked at random. Choose your own: it signs the outfits you share in the Outfits Showcase.",amNickL:"Pseudo",amNickSub:"3 to 20 characters · shown on the outfits you share",amSync:"Google Drive sync",amShared:n=>n?`${n} outfit${n===1?"":"s"} shared`:"No outfit shared yet",amSeeMine:"See them",amOut:"Sign out",amWait:"Connecting to your Miliadex account…",amInT:"Sign in with Google",amInIntro:"Signing in with your Google account lets you:",amInSync:"<b>Sync</b> your collection and outfits between all your devices",amInShare:"<b>Share your outfits</b> in the Outfits Showcase, under a pseudo you choose",amInLike:"<b>Like</b> other players’ outfits",amInNote:"The Miliadex only uses a private, hidden folder of its own in your Google Drive: it sees nothing else there, and your email address isn’t stored.",meChange:"Choose your pseudo",nkRude:"This pseudo isn’t allowed: pick another one",acMine:"My account",chkRun:"Checking the image…",chkBad:"This image can’t be used: inappropriate content detected",chkDrop:"This outfit’s in-game screenshot was left out: inappropriate content detected",chkShareBad:"Link copied without the in-game screenshot: inappropriate content detected",chkShareNo:"Link copied without the in-game screenshot: it couldn’t be checked",pbRnd:n=>`It will be signed “${n}”, a pseudo picked at random.`,pbTxt:"Everyone will see this outfit in the Outfits Showcase: its name, its pieces, your in-game screenshot and your pseudo. You can remove it at any time.",pbRule:"No inappropriate content: the name and the in-game screenshot are checked on your device before anything is sent.",pbChkName:"Outfit name and pseudo",pbChkPic:"In-game screenshot",pbNoPic:"No in-game screenshot",pbGo:"Share",pbGoU:"Update",pbNameBad:"This outfit’s name isn’t allowed in the showcase: rename it first.",pbNickBad:"Your pseudo isn’t allowed in the showcase: change it first (My account).",pbPicBad:"Your in-game screenshot can’t go in the showcase (inappropriate content detected): remove it or pick another one.",pbPicErr:"The in-game screenshot couldn’t be checked (connection?): try again.",vpCurL:"Show the value in dollars",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
+  viaSet:n=>`Owned with the set ${n}`,linkGone:"This link has expired or doesn’t exist",nameBad:"This name isn’t allowed: pick another one",lkEditing:"Editing",rkYou:"Your rank",rkShare:p=>`${p}% of all Vivid`,rkNext:(n,r,l)=>`${n} more Vivid to become ${r} (Lv. ${l})`,rkHow:"How it works",rkHow1:"Every set (each version, ♀ and ♂) and every standalone cosmetic you own adds its Vivid value, like in the game. A set’s pieces are covered by the set; interactions give none.",rkHow2:n=>`Every ${n} Vivid is one Raiment Collector level.`,rkHow3:"Each rank is reached at a share of all the Vivid there is to collect: 10%, 25%, 50%, 75%, 95%, then everything.",amKick:"Your Miliadex account",amRandom:"This pseudo was picked at random. Choose your own: it signs the outfits you share in Community Outfits.",amNickL:"Pseudo",amNickSub:"3 to 20 characters · shown on the outfits you share",amSync:"Google Drive sync",amShared:n=>n?`${n} outfit${n===1?"":"s"} shared`:"No outfit shared yet",amSeeMine:"See them",amOut:"Sign out",amWait:"Connecting to your Miliadex account…",amInT:"Sign in with Google",amInIntro:"Signing in with your Google account lets you:",amInSync:"<b>Sync</b> your collection and outfits between all your devices",amInShare:"<b>Share your outfits</b> in Community Outfits, under a pseudo you choose",amInLike:"<b>Like</b> other players’ outfits",amInNote:"The Miliadex only uses a private, hidden folder of its own in your Google Drive: it sees nothing else there, and your email address isn’t stored.",meChange:"Choose your pseudo",nkRude:"This pseudo isn’t allowed: pick another one",acMine:"My account",chkRun:"Checking the image…",chkBad:"This image can’t be used: inappropriate content detected",chkDrop:"This outfit’s in-game screenshot was left out: inappropriate content detected",chkShareBad:"Link copied without the in-game screenshot: inappropriate content detected",chkShareNo:"Link copied without the in-game screenshot: it couldn’t be checked",pbRnd:n=>`It will be signed “${n}”, a pseudo picked at random.`,pbTxt:"Everyone will see this outfit in Community Outfits: its name, its pieces, your in-game screenshot and your pseudo. You can remove it at any time.",pbRule:"No inappropriate content: names and in-game screenshots are checked automatically.",pbChkName:"Outfit name and pseudo",pbChkPic:"In-game screenshot",pbNoPic:"No in-game screenshot",pbGo:"Share",pbGoU:"Update",pbNameBad:"This outfit’s name isn’t allowed: rename it first.",pbNickBad:"Your pseudo isn’t allowed: change it first (My account).",pbPicBad:"Your in-game screenshot can’t be shared (inappropriate content detected): remove it or pick another one.",pbPicErr:"The in-game screenshot couldn’t be checked (connection?): try again.",vpCurL:"Show the value in dollars",ocImp:"Import Miliadex outfit card",ocHint:"A Miliadex outfit card is your outfit’s image with the outfit saved inside it (pieces, name, in-game screenshot). Import it here to get the outfit back, or send it to a friend: they can import it in their own Miliadex. It only works with the original file, not a screenshot of it.",impT:"Imported outfit",oaBtn:"Mark all as owned",oaT:"Mark this outfit as owned",oaTxt:"These pieces of the outfit aren’t in your collection yet. Untick any you don’t have, then confirm.",oaCount:n=>`${n} piece${n===1?"":"s"} not owned yet`,oaAll:"Select all",oaNone:"Select none",oaGo:n=>n?`Mark ${n} piece${n===1?"":"s"}`:"Select at least one piece",oaDone:n=>`${n} piece${n===1?"":"s"} added to your collection`,askSetTxt:(p,n)=>`You’re marking ${p} as owned, but ${n} other piece${n===1?" of this set is":"s of this set are"} still missing. Do you own the whole set?`,askAll:n=>`Whole set (${n} pieces)`,askOne:"Just this piece",askDone:n=>`${n}: whole set owned`,viaToast:n=>`Included with ${n}. Uncheck the set to remove it.`,
   rank:"Collector rank",next:(n,r)=>`${n} pts to become ${r}`,ranksT:"Collector ranks",infoBtn:"See all ranks",reached:"Reached",current:"You are here",locked:"Locked",start:"Start",
   ranksIntro:"Your rank follows your Vivid rating, like in the game: every set (each version) and every standalone cosmetic you own adds its Vivid value. A set's pieces are covered by the set's rating; interactions give none. Every 300 Vivid is one Raiment Collector level; the ranks below are reached at those levels.",
   yourPts:(a,b,l,lm)=>`Your Vivid: ${a} / ${b} · Raiment Collector Lv. ${l} / ${lm}`,maxed:"Everything collected. Legendary.",rankUp:r=>`New rank: ${r}!`,
-  ranks:["Wide-eyed Traveler","Wardrobe Apprentice","Seasoned Collector","Fashion Virtuoso","Wonderland Icon","Octavia's Favorite","Master of Miliastra"],sortCat:"Catalog order",sortRar:"Rarity",sortName:"Name",sortMiss:"Missing first",sortVal:"Value",valueL:"Value",vividL:"Vivid rating",vivPiece:"Included in its set's Vivid rating",lvShort:"Lv.",freeWith:n=>`Free with ${n}: the 5★ of this banner, these come on the way`,lvUp:l=>`Raiment Collector Lv. ${l}!`,rcTip:(v,l)=>`Raiment Collector Lv. ${l} · ${v} Vivid (one level every 300)`,nextLv:(n,l)=>`${n} Vivid to Lv. ${l}`,rankAt:(r,l)=>`${r} at Lv. ${l}`,moneyTip:p=>`Estimate in US dollars at the best top-up rate (6,480 + 1,600 Chronal Nexus for ${p}).`,
+  ranks:["Wide-eyed Traveler","Wardrobe Apprentice","Seasoned Collector","Fashion Virtuoso","Wonderland Icon","Octavia's Favorite","Master of Miliastra"],sortCat:"Catalog order",sortRar:"Rarity",sortName:"Name",sortMiss:"Missing first",sortVal:"Value",valueL:"Value",vividL:"Vivid rating",vivPiece:"Included in its set's Vivid rating",lvShort:"Lv.",freeWith:n=>`Free with ${n}: the 5★ of this banner, these come on the way`,lvUp:l=>`Raiment Collector Lv. ${l}!`,rcTip:(v,l)=>`Raiment Collector Lv. ${l} · ${v} Vivid (one level every 300)`,nextLv:(v,n,l)=>`${v} / ${n} Vivid to Lv. ${l}`,rankAt:(r,l)=>`${r} at Lv. ${l}`,moneyTip:p=>`Estimate in US dollars at the best top-up rate (6,480 + 1,600 Chronal Nexus for ${p}).`,
   vpOpen:"See how your account value is calculated",vpKick:"Account value",vpSub:"What your collection would cost in Chronal Nexus",vpCN:"Chronal Nexus",
   vpOdes:n=>`<b>${n}</b> Odes`,vpPacks:n=>`<b>${n}</b> × the best top-up pack`,vpPaid:n=>`<b>${n}</b> paid items`,vpRateS:p=>`at ${p} for 8,080`,
   vpSrc:"Where the value comes from",vpLbl:{o5:"Event Ode 5★",a:"Ascension",o4:"Event Ode 4★",o3:"Event Ode 3★",s:"Miliastra Shop"},
@@ -1679,11 +1733,11 @@ const T = {
   gdTitle:"Google Drive sync",gdText:"Sign in to keep your collection and outfits in sync on all your devices. Miliadex only uses its own private folder on your Drive.",
   gdLocal:"Google sign-in only works on the online version of Miliadex.",gdGsiErr:"Couldn't load Google sign-in (check your connection or an ad blocker).",gdDenied:"Google sign-in was cancelled or refused.",gdOff:"Google Drive disconnected",gdPulled:"Collection updated from Google Drive",gdNet:"Sync failed, it will try again.",
   gdNow:"just now",gdSec:n=>`${n} s ago`,gdMin:n=>`${n} min ago`,gdOk:a=>`Synced ${a}`,gdSt:{off:"",auth:"Sign in again",idle:"Connected",sync:"Syncing…",ok:"Synced",err:"Error"},gdHint:"Sync your collection with Google Drive",gdStay:"You stay signed in: the connection renews itself and each device merges its changes item by item, so an older device never overwrites a newer save.",gdAs:e=>`Signed in as ${e}`,gdOnce:"Sign in one last time to stay connected for good.",gdExpired:"Your Google access expired or was removed: sign in again.",
-  imgImp:"Import with image",showT:"Outfits Showcase",shKick:"Miliadex gallery",shSub:"Outfits made with the Miliadex. Open one to remix it, keep it in My Outfits or download it.",shSearch:"Search an outfit or a piece",shAll:"All",shMine:"I own every piece",
-  shSort:"Sort",shSorts:{repo:"Most liked",new:"Newest",own:"Most owned by me",name:"Name"},shEmpty:"The showcase is empty for now. Come back soon!",shFeat:"Featured",shComm:"Community",shCommSub:"Outfits players shared from their saved outfits.",shCommEmpty:"No shared outfits yet: share yours from My Outfits.",shCommFail:"Shared outfits couldn’t be loaded.",shMore:"Show more",shPubL:"Show in the Outfits Showcase",shPubTip:"When you copy a link to an outfit, it also appears in the Outfits Showcase (its name, pieces and in-game screenshot).",shPubDone:" · in the Outfits Showcase",nf404:"Page not found",nf404s:"This page doesn’t exist or has moved.",nf404b:"Back to the Miliadex",admT:"Showcase moderation",admSite:"Back to the site",admImgs:"link pictures",admEntries:"showcase outfits",admMB:"MB",admPub:"in the showcase",admBan:"taken out",admTabPub:"In the showcase",admTabBan:"Taken out",admHide:"Take out",admShow:"Put back",admDel:"Delete picture",admSure:"Sure? Click again",admNone:"Nothing here.",admDone:"Done",admFail:"That didn’t work",admTabFeat:"Featured",admFeat:"Feature (a copy)",admUnfeat:"Remove from Featured",admPeople:"accounts",admFeatN:"featured",shBy:n=>`by ${n}`,likeL:"Like",likeNeed:"Sign in with Google to like outfits",likeFail:"The like didn’t go through",acIn:n=>`Signed in as ${n}`,acNick:"Change pseudo",acOut:"Sign in with Google",acWhy:"to like outfits and show yours here",pubNeed:"Sign in with Google to show your outfits in the showcase",shPubAs:n=>`Show in the Outfits Showcase as ${n}`,nkT:"Your pseudo",nkSub:"Shown on the outfits you show in the Outfits Showcase. 3 to 20 characters.",nkSave:"Save",nkTaken:"This pseudo is already taken",nkBad:"3 to 20 letters, digits, spaces or . _ ' -",nkDone:"Pseudo saved",nkFail:"That didn’t work, try again",acDel:"Delete my Miliadex account",acDelSure:"Sure? Click again: pseudo and likes deleted, your outfits leave the showcase",acDelDone:"Account deleted",pubBtn:"Share in the Outfits Showcase",pubIn:"In the Outfits Showcase",pubChanged:"Changed since you shared it",pubUpd:"Update in the showcase",pubWaitL:s=>`Update possible in ${s}s`,pubOff:"Remove from the showcase",pubView:"See it",pubDone:"Shared in the Outfits Showcase",pubUpdDone:"Updated in the showcase",pubOffDone:"Removed from the showcase",pubLimit:n=>`You already have ${n} outfits in the showcase: remove one first`,pubBan:"This outfit was taken out of the showcase by moderation",pubNeed2:"Sign in with Google to share it in the showcase",pubSending:"Sending the outfit to the showcase…",pubFail:"That didn’t work, try again",pubEmpty:"Add some pieces first",pubBadge:"Showcase",shMineSh:"My shared outfits",shMineNone:"You haven’t shared any outfit yet: open one of My Outfits and choose “Share in the Outfits Showcase”.",pubBanned:"Taken out by moderation",shNone:"No outfit matches these filters.",shLoading:"Loading the showcase…",
-  shFail:"The showcase couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
+  imgImp:"Import with image",showT:"Community Outfits",shKick:"Miliadex gallery",shSub:"Outfits made with the Miliadex. Open one to remix it, keep it in My Outfits or download it.",shSearch:"Search an outfit or a piece",shAll:"All",shMine:"Fully owned",
+  shSort:"Sort",shSorts:{repo:"Most liked",new:"Newest",own:"Most owned by me",name:"Name"},shEmpty:"No community outfits yet. Come back soon!",shFeat:"Featured",shComm:"Shared by players",shCommSub:"Outfits players shared from their saved outfits.",shCommEmpty:"No shared outfits yet: share yours from My Outfits.",shCommFail:"Shared outfits couldn’t be loaded.",shMore:"Show more",shPubL:"Show in Community Outfits",shPubTip:"When you copy a link to an outfit, it also appears in Community Outfits (its name, pieces and in-game screenshot).",shPubDone:" · in Community Outfits",nf404:"Page not found",nf404s:"This page doesn’t exist or has moved.",nf404b:"Back to the Miliadex",admT:"Community moderation",admSite:"Back to the site",admImgs:"link pictures",admEntries:"community outfits",admMB:"MB",admPub:"shared",admBan:"taken out",admTabPub:"Shared",admTabBan:"Taken out",admHide:"Take out",admShow:"Put back",admDel:"Delete picture",admSure:"Sure? Click again",admNone:"Nothing here.",admDone:"Done",admFail:"That didn’t work",admTabFeat:"Featured",admFeat:"Feature (a copy)",admUnfeat:"Remove from Featured",admPeople:"accounts",admFeatN:"featured",shBy:n=>`by ${n}`,likeL:"Like",likeNeed:"Sign in with Google to like outfits",likeFail:"The like didn’t go through",acIn:n=>`Signed in as ${n}`,acNick:"Change pseudo",acOut:"Sign in with Google",acWhy:"to like outfits and show yours here",pubNeed:"Sign in with Google to share your outfits with the community",shPubAs:n=>`Show in Community Outfits as ${n}`,nkT:"Your pseudo",nkSub:"Shown on the outfits you share with the community. 3 to 20 characters.",nkSave:"Save",nkTaken:"This pseudo is already taken",nkBad:"3 to 20 letters, digits, spaces or . _ ' -",nkDone:"Pseudo saved",nkFail:"That didn’t work, try again",acDel:"Delete my Miliadex account",acDelSure:"Sure? Click again: pseudo and likes deleted, your outfits leave Community Outfits",acDelDone:"Account deleted",pubBtn:"Share with the community",pubIn:"Shared with the community",pubChanged:"Changed since you shared it",pubUpd:"Update for the community",pubWaitL:s=>`Update possible in ${s}s`,pubOff:"Remove from Community Outfits",pubView:"See it",pubDone:"Shared with the community",pubUpdDone:"Updated for the community",pubOffDone:"Removed from Community Outfits",pubLimit:n=>`You already share ${n} outfits with the community: remove one first`,pubBan:"This outfit was taken out of Community Outfits by moderation",pubNeed2:"Sign in with Google to share it with the community",pubSending:"Sending the outfit to Community Outfits…",pubFail:"That didn’t work, try again",pubEmpty:"Add some pieces first",pubBadge:"Community",shMineSh:"My shared outfits",shMineNone:"You haven’t shared any outfit yet: open one of My Outfits and choose “Share with the community”.",pubBanned:"Taken out by moderation",shNone:"No outfit matches these filters.",shLoading:"Loading community outfits…",
+  shFail:"Community outfits couldn't be loaded right now.",shRetry:"Try again",shOwned:(a,b)=>`${a}/${b} owned`,shPieces:n=>`${n} piece${n===1?"":"s"}`,shPiecesT:"Pieces",shPhoto:"In-game screenshot",
   shEdit:"Edit in My Outfits",shEditMine:"Edit",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
-  shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't in the showcase anymore.",
+  shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't shared with the community anymore.",
   imgTip:"Open a Miliadex outfit card (the image downloaded from the Miliadex), or drop it on the preview",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image isn’t a Miliadex outfit card (use the original file downloaded from the Miliadex)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
   scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
@@ -1704,11 +1758,11 @@ const T = {
   localNote:"Ce lien ouvre le Miliadex sur cet appareil. Pour partager tes tenues avec tes amis, le Miliadex doit être en ligne (par exemple sur GitHub Pages). En attendant, partage le code : il suffit de le coller dans « Ouvrir un code ».",
   importLook:"Importer avec un code",importPh:"Code Miliadex, code de partage du jeu ou lien",badLook:"Ce n'est pas un code de tenue",gameCode:"Code de partage du jeu",gameTip:"Code pour Plan cosmétique › Importer un code de partage (il faut posséder les pièces)",gameCopied:"Code de partage du jeu copié : colle-le dans Plan cosmétique › Importer un code de partage",gameLook:n=>n?`Tenue en jeu de ${n}`:"Tenue du jeu",gameIn:(n,m)=>`Code de partage du jeu ouvert · ${n} pièce${n>1?"s":""}`+(m?` · ${m} pas encore dans le Miliadex`:""),gameNone:"Aucune pièce de cette tenue ne peut aller dans un code de partage du jeu",gameSkip:n=>` · ${n} pièce${n>1?"s":""} ignorée${n>1?"s":""}`,
   slotN:{"Hairstyle":"Coiffure","Headwear":"Couvre-chef","Top":"Haut","Bottom":"Bas","Footwear":"Chaussures","Earrings":"Boucles d'oreilles","Eye Accessory":"Lunettes","Face Accessory":"Visage","Neck Accessory":"Cou","Back Accessory":"Dos","Wrist Accessory":"Poignets","Leg Accessory":"Jambes","Pendant":"Pendentif","Pendant 1":"Pendentif 1","Pendant 2":"Pendentif 2","Tail Accessory":"Queue","Skin Tone":"Teint","Eye Shape":"Yeux","Iris":"Iris","Eyebrows":"Sourcils","Eye Makeup":"Fard","Facial Makeup":"Maquillage","Lipstick":"Lèvres"},reverse:"Inverser l'ordre",gMem:"Origine",memSet:"Pièces de set",memSolo:"Hors set",pieces:"Pièces",partOf:"Fait partie du set",back:"Retour",
-  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",amKick:"Ton compte Miliadex",amRandom:"Ce pseudo a été choisi au hasard. Choisis le tien : il signe les tenues que tu partages dans la vitrine.",amNickL:"Pseudo",amNickSub:"3 à 20 caractères · affiché sur les tenues que tu partages",amSync:"Synchronisation Google Drive",amShared:n=>n?`${n} tenue${n>1?"s":""} partagée${n>1?"s":""}`:"Aucune tenue partagée pour l’instant",amSeeMine:"Les voir",amOut:"Se déconnecter",amWait:"Connexion à ton compte Miliadex…",amInT:"Se connecter avec Google",amInIntro:"Te connecter avec ton compte Google te permet de :",amInSync:"<b>Synchroniser</b> ta collection et tes tenues entre tous tes appareils",amInShare:"<b>Partager tes tenues</b> dans la vitrine, sous un pseudo que tu choisis",amInLike:"<b>Aimer</b> les tenues des autres joueurs",amInNote:"Le Miliadex n’utilise qu’un dossier privé et caché de ton Google Drive : il n’y voit rien d’autre, et ton adresse e-mail n’est pas enregistrée.",meChange:"Choisis ton pseudo",nkRude:"Ce pseudo n’est pas autorisé : choisis-en un autre",acMine:"Mon compte",chkRun:"Vérification de l’image…",chkBad:"Cette image ne peut pas être utilisée : contenu inapproprié détecté",chkDrop:"La capture en jeu de cette tenue a été retirée : contenu inapproprié détecté",chkShareBad:"Lien copié sans la capture en jeu : contenu inapproprié détecté",chkShareNo:"Lien copié sans la capture en jeu : elle n’a pas pu être vérifiée",pbRnd:n=>`Elle sera signée « ${n} », un pseudo choisi au hasard.`,pbTxt:"Tout le monde verra cette tenue dans la vitrine : son nom, ses pièces, ta capture en jeu et ton pseudo. Tu pourras la retirer quand tu veux.",pbRule:"Pas de contenu inapproprié : le nom et la capture en jeu sont vérifiés sur ton appareil avant l’envoi.",pbChkName:"Nom de la tenue et pseudo",pbChkPic:"Capture en jeu",pbNoPic:"Pas de capture en jeu",pbGo:"Partager",pbGoU:"Mettre à jour",pbNameBad:"Le nom de cette tenue n’est pas autorisé dans la vitrine : renomme-la d’abord.",pbNickBad:"Ton pseudo n’est pas autorisé dans la vitrine : change-le d’abord (Mon compte).",pbPicBad:"Ta capture en jeu ne peut pas aller dans la vitrine (contenu inapproprié détecté) : retire-la ou choisis-en une autre.",pbPicErr:"La capture en jeu n’a pas pu être vérifiée (connexion ?) : réessaie.",vpCurL:"Afficher la valeur en euros",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
+  viaSet:n=>`Obtenu avec le set ${n}`,linkGone:"Ce lien a expiré ou n’existe pas",nameBad:"Ce nom n’est pas autorisé : choisis-en un autre",lkEditing:"En cours de modification",rkYou:"Ton rang",rkShare:p=>`${p} % du Vivid total`,rkNext:(n,r,l)=>`Encore ${n} Vivid pour devenir ${r} (niv. ${l})`,rkHow:"Comment ça marche",rkHow1:"Chaque set (chaque version, ♀ et ♂) et chaque cosmétique hors set que tu possèdes ajoute sa valeur de Vivid, comme en jeu. Les pièces d’un set sont couvertes par le set ; les interactions n’en donnent pas.",rkHow2:n=>`Tous les ${n} Vivid, tu gagnes un niveau de Raiment Collector.`,rkHow3:"Chaque rang s’obtient à une part de tout le Vivid à collectionner : 10 %, 25 %, 50 %, 75 %, 95 %, puis la totalité.",amKick:"Ton compte Miliadex",amRandom:"Ce pseudo a été choisi au hasard. Choisis le tien : il signe les tenues que tu partages avec la communauté.",amNickL:"Pseudo",amNickSub:"3 à 20 caractères · affiché sur les tenues que tu partages",amSync:"Synchronisation Google Drive",amShared:n=>n?`${n} tenue${n>1?"s":""} partagée${n>1?"s":""}`:"Aucune tenue partagée pour l’instant",amSeeMine:"Les voir",amOut:"Se déconnecter",amWait:"Connexion à ton compte Miliadex…",amInT:"Se connecter avec Google",amInIntro:"Te connecter avec ton compte Google te permet de :",amInSync:"<b>Synchroniser</b> ta collection et tes tenues entre tous tes appareils",amInShare:"<b>Partager tes tenues</b> avec la communauté, sous un pseudo que tu choisis",amInLike:"<b>Aimer</b> les tenues des autres joueurs",amInNote:"Le Miliadex n’utilise qu’un dossier privé et caché de ton Google Drive : il n’y voit rien d’autre, et ton adresse e-mail n’est pas enregistrée.",meChange:"Choisis ton pseudo",nkRude:"Ce pseudo n’est pas autorisé : choisis-en un autre",acMine:"Mon compte",chkRun:"Vérification de l’image…",chkBad:"Cette image ne peut pas être utilisée : contenu inapproprié détecté",chkDrop:"La capture en jeu de cette tenue a été retirée : contenu inapproprié détecté",chkShareBad:"Lien copié sans la capture en jeu : contenu inapproprié détecté",chkShareNo:"Lien copié sans la capture en jeu : elle n’a pas pu être vérifiée",pbRnd:n=>`Elle sera signée « ${n} », un pseudo choisi au hasard.`,pbTxt:"Tout le monde verra cette tenue dans les tenues de la communauté : son nom, ses pièces, ta capture en jeu et ton pseudo. Tu pourras la retirer quand tu veux.",pbRule:"Pas de contenu inapproprié : les noms et les captures en jeu sont vérifiés automatiquement.",pbChkName:"Nom de la tenue et pseudo",pbChkPic:"Capture en jeu",pbNoPic:"Pas de capture en jeu",pbGo:"Partager",pbGoU:"Mettre à jour",pbNameBad:"Le nom de cette tenue n’est pas autorisé : renomme-la d’abord.",pbNickBad:"Ton pseudo n’est pas autorisé : change-le d’abord (Mon compte).",pbPicBad:"Ta capture en jeu ne peut pas être partagée (contenu inapproprié détecté) : retire-la ou choisis-en une autre.",pbPicErr:"La capture en jeu n’a pas pu être vérifiée (connexion ?) : réessaie.",vpCurL:"Afficher la valeur en euros",ocImp:"Importer une carte de tenue Miliadex",ocHint:"Une carte de tenue Miliadex, c’est l’image de ta tenue avec la tenue enregistrée dedans (pièces, nom, capture en jeu). Importe-la ici pour retrouver la tenue, ou envoie-la à un ami : il pourra l’importer dans son Miliadex. Ça ne marche qu’avec le fichier d’origine, pas une capture d’écran de la carte.",impT:"Tenue importée",oaBtn:"Tout marquer obtenu",oaT:"Marquer la tenue comme obtenue",oaTxt:"Ces pièces de la tenue ne sont pas encore dans ta collection. Décoche celles que tu n’as pas, puis confirme.",oaCount:n=>`${n} pièce${n>1?"s":""} pas encore obtenue${n>1?"s":""}`,oaAll:"Tout cocher",oaNone:"Tout décocher",oaGo:n=>n?`Marquer ${n} pièce${n>1?"s":""}`:"Coche au moins une pièce",oaDone:n=>`${n} pièce${n>1?"s":""} ajoutée${n>1?"s":""} à ta collection`,askSetTxt:(p,n)=>`Tu marques ${p} comme obtenu, mais il manque encore ${n} autre${n===1?"":"s"} pièce${n===1?"":"s"} de ce set. As-tu tout le set ?`,askAll:n=>`Tout le set (${n} pièces)`,askOne:"Juste cette pièce",askDone:n=>`${n} : set complet obtenu`,viaToast:n=>`Inclus avec ${n}. Décoche le set pour le retirer.`,
   rank:"Rang de collection",next:(n,r)=>`Encore ${n} pts pour devenir ${r}`,ranksT:"Rangs de collection",infoBtn:"Voir tous les rangs",reached:"Atteint",current:"Tu es ici",locked:"À débloquer",start:"Départ",
   ranksIntro:"Ton rang suit ton Vivid rating, comme en jeu : chaque set (chaque version) et chaque cosmétique hors set obtenu ajoute sa valeur de Vivid. Les pièces d'un set sont couvertes par le Vivid du set ; les interactions n'en donnent pas. Tous les 300 Vivid, tu gagnes un niveau de Raiment Collector ; les rangs ci-dessous s'obtiennent à ces niveaux.",
   yourPts:(a,b,l,lm)=>`Ton Vivid : ${a} / ${b} · Raiment Collector niv. ${l} / ${lm}`,maxed:"Tout est à toi. Légendaire.",rankUp:r=>`Nouveau rang : ${r} !`,
-  ranks:["Voyageur émerveillé","Apprenti styliste","Collectionneur aguerri","Virtuose de la mode","Icône de Wonderland","Favori d'Octavia","Maître de Miliastra"],sortCat:"Ordre du catalogue",sortRar:"Rareté",sortName:"Nom",sortMiss:"Manquants d'abord",sortVal:"Valeur",valueL:"Valeur",vividL:"Vivid rating",vivPiece:"Compris dans le Vivid rating de son set",lvShort:"Niv.",freeWith:n=>`Offert avec ${n} : le 5★ de cette bannière, obtenu en route`,lvUp:l=>`Raiment Collector niv. ${l} !`,rcTip:(v,l)=>`Raiment Collector niv. ${l} · ${v} Vivid (un niveau tous les 300)`,nextLv:(n,l)=>`Encore ${n} Vivid pour le niv. ${l}`,rankAt:(r,l)=>`${r} au niv. ${l}`,moneyTip:p=>`Estimation en euros au meilleur tarif de recharge (6 480 + 1 600 Chronal Nexus pour ${p}).`,
+  ranks:["Voyageur émerveillé","Apprenti styliste","Collectionneur aguerri","Virtuose de la mode","Icône de Wonderland","Favori d'Octavia","Maître de Miliastra"],sortCat:"Ordre du catalogue",sortRar:"Rareté",sortName:"Nom",sortMiss:"Manquants d'abord",sortVal:"Valeur",valueL:"Valeur",vividL:"Vivid rating",vivPiece:"Compris dans le Vivid rating de son set",lvShort:"Niv.",freeWith:n=>`Offert avec ${n} : le 5★ de cette bannière, obtenu en route`,lvUp:l=>`Raiment Collector niv. ${l} !`,rcTip:(v,l)=>`Raiment Collector niv. ${l} · ${v} Vivid (un niveau tous les 300)`,nextLv:(v,n,l)=>`${v} / ${n} Vivid pour le niv. ${l}`,rankAt:(r,l)=>`${r} au niv. ${l}`,moneyTip:p=>`Estimation en euros au meilleur tarif de recharge (6 480 + 1 600 Chronal Nexus pour ${p}).`,
   vpOpen:"Voir le détail du calcul de la valeur du compte",vpKick:"Valeur du compte",vpSub:"Ce que ta collection coûterait en Chronal Nexus",vpCN:"Chronal Nexus",
   vpOdes:n=>`<b>${n}</b> Odes`,vpPacks:n=>`<b>${n}</b> × le meilleur pack`,vpPaid:n=>`<b>${n}</b> objets payants`,vpRateS:p=>`à ${p} les 8 080`,
   vpSrc:"D'où vient la valeur",vpLbl:{o5:"Ode d'événement 5★",a:"Ascension",o4:"Ode d'événement 4★",o3:"Ode d'événement 3★",s:"Boutique Miliastra"},
@@ -1732,11 +1786,11 @@ const T = {
   gdTitle:"Synchro Google Drive",gdText:"Connecte-toi pour synchroniser ta collection et tes tenues sur tous tes appareils. Miliadex n'utilise que son propre dossier privé sur ton Drive.",
   gdLocal:"La connexion Google ne marche que sur la version en ligne de Miliadex.",gdGsiErr:"Impossible de charger la connexion Google (vérifie ta connexion ou un bloqueur de pub).",gdDenied:"La connexion Google a été annulée ou refusée.",gdOff:"Google Drive déconnecté",gdPulled:"Collection mise à jour depuis Google Drive",gdNet:"La synchro a échoué, nouvel essai bientôt.",
   gdNow:"à l'instant",gdSec:n=>`il y a ${n} s`,gdMin:n=>`il y a ${n} min`,gdOk:a=>`Synchronisé ${a}`,gdSt:{off:"",auth:"Reconnexion requise",idle:"Connecté",sync:"Synchro…",ok:"Synchronisé",err:"Erreur"},gdHint:"Synchronise ta collection avec Google Drive",gdStay:"Tu restes connecté : la connexion se renouvelle toute seule et chaque appareil fusionne ses changements pièce par pièce, un vieil appareil n'écrase donc jamais une sauvegarde plus récente.",gdAs:e=>`Connecté avec ${e}`,gdOnce:"Reconnecte-toi une dernière fois pour rester connecté en permanence.",gdExpired:"Ton accès Google a expiré ou a été retiré : reconnecte-toi.",
-  imgImp:"Importer avec une image",showT:"Vitrine de tenues",shKick:"Galerie Miliadex",shSub:"Des tenues créées avec le Miliadex. Ouvre-en une pour la modifier, la garder dans Mes tenues ou la télécharger.",shSearch:"Chercher une tenue ou une pièce",shAll:"Toutes",shMine:"Je possède tout",
-  shSort:"Trier",shSorts:{repo:"Les plus aimées",new:"Les plus récentes",own:"Les plus possédées",name:"Nom"},shEmpty:"La vitrine est vide pour l'instant. Reviens bientôt !",shFeat:"En vedette",shComm:"Communauté",shCommSub:"Les tenues que les joueurs ont partagées depuis leurs tenues enregistrées.",shCommEmpty:"Aucune tenue partagée pour l'instant : partage les tiennes depuis Mes tenues.",shCommFail:"Impossible de charger les tenues partagées.",shMore:"Afficher plus",shPubL:"Montrer dans la vitrine",shPubTip:"Quand tu copies le lien d'une tenue, elle apparaît aussi dans la vitrine (nom, pièces et capture en jeu).",shPubDone:" · visible dans la vitrine",nf404:"Page introuvable",nf404s:"Cette page n'existe pas ou a été déplacée.",nf404b:"Retour au Miliadex",admT:"Modération de la vitrine",admSite:"Retour au site",admImgs:"images de liens",admEntries:"tenues de la vitrine",admMB:"Mo",admPub:"dans la vitrine",admBan:"retirées",admTabPub:"Dans la vitrine",admTabBan:"Retirées",admHide:"Retirer",admShow:"Remettre",admDel:"Supprimer l'image",admSure:"Sûr ? Reclique",admNone:"Rien ici.",admDone:"Fait",admFail:"Ça n'a pas marché",admTabFeat:"En vedette",admFeat:"Mettre en vedette (copie)",admUnfeat:"Retirer de la vedette",admPeople:"comptes",admFeatN:"en vedette",shBy:n=>`par ${n}`,likeL:"J'aime",likeNeed:"Connecte-toi avec Google pour aimer des tenues",likeFail:"Le j'aime n'est pas passé",acIn:n=>`Connecté en tant que ${n}`,acNick:"Changer de pseudo",acOut:"Se connecter avec Google",acWhy:"pour aimer des tenues et montrer les tiennes ici",pubNeed:"Connecte-toi avec Google pour montrer tes tenues dans la vitrine",shPubAs:n=>`Montrer dans la vitrine en tant que ${n}`,nkT:"Ton pseudo",nkSub:"Affiché sur les tenues que tu montres dans la vitrine. 3 à 20 caractères.",nkSave:"Enregistrer",nkTaken:"Ce pseudo est déjà pris",nkBad:"3 à 20 lettres, chiffres, espaces ou . _ ' -",nkDone:"Pseudo enregistré",nkFail:"Ça n'a pas marché, réessaie",acDel:"Supprimer mon compte Miliadex",acDelSure:"Sûr ? Reclique : pseudo et j'aime supprimés, tes tenues quittent la vitrine",acDelDone:"Compte supprimé",pubBtn:"Partager dans la vitrine",pubIn:"Dans la vitrine",pubChanged:"Modifiée depuis le partage",pubUpd:"Mettre à jour dans la vitrine",pubWaitL:s=>`Mise à jour possible dans ${s} s`,pubOff:"Retirer de la vitrine",pubView:"La voir",pubDone:"Partagée dans la vitrine",pubUpdDone:"Mise à jour dans la vitrine",pubOffDone:"Retirée de la vitrine",pubLimit:n=>`Tu as déjà ${n} tenues dans la vitrine : retires-en une d'abord`,pubBan:"Cette tenue a été retirée de la vitrine par la modération",pubNeed2:"Connecte-toi avec Google pour la partager dans la vitrine",pubSending:"Envoi de la tenue dans la vitrine…",pubFail:"Ça n'a pas marché, réessaie",pubEmpty:"Ajoute d'abord des pièces",pubBadge:"Vitrine",shMineSh:"Mes partages",shMineNone:"Tu n'as encore rien partagé : ouvre une de tes tenues dans Mes tenues et choisis « Partager dans la vitrine ».",pubBanned:"Retirée par la modération",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement de la vitrine…",
-  shFail:"La vitrine n'a pas pu être chargée pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
+  imgImp:"Importer avec une image",showT:"Tenues de la communauté",shKick:"Galerie Miliadex",shSub:"Des tenues créées avec le Miliadex. Ouvre-en une pour la modifier, la garder dans Mes tenues ou la télécharger.",shSearch:"Chercher une tenue ou une pièce",shAll:"Toutes",shMine:"Entièrement possédées",
+  shSort:"Trier",shSorts:{repo:"Les plus aimées",new:"Les plus récentes",own:"Les plus possédées",name:"Nom"},shEmpty:"Pas encore de tenues de la communauté. Reviens bientôt !",shFeat:"En vedette",shComm:"Partagées par les joueurs",shCommSub:"Les tenues que les joueurs ont partagées depuis leurs tenues enregistrées.",shCommEmpty:"Aucune tenue partagée pour l'instant : partage les tiennes depuis Mes tenues.",shCommFail:"Impossible de charger les tenues partagées.",shMore:"Afficher plus",shPubL:"Montrer dans les tenues de la communauté",shPubTip:"Quand tu copies le lien d'une tenue, elle apparaît aussi dans les tenues de la communauté (nom, pièces et capture en jeu).",shPubDone:" · visible par la communauté",nf404:"Page introuvable",nf404s:"Cette page n'existe pas ou a été déplacée.",nf404b:"Retour au Miliadex",admT:"Modération de la communauté",admSite:"Retour au site",admImgs:"images de liens",admEntries:"tenues de la communauté",admMB:"Mo",admPub:"partagées",admBan:"retirées",admTabPub:"Partagées",admTabBan:"Retirées",admHide:"Retirer",admShow:"Remettre",admDel:"Supprimer l'image",admSure:"Sûr ? Reclique",admNone:"Rien ici.",admDone:"Fait",admFail:"Ça n'a pas marché",admTabFeat:"En vedette",admFeat:"Mettre en vedette (copie)",admUnfeat:"Retirer de la vedette",admPeople:"comptes",admFeatN:"en vedette",shBy:n=>`par ${n}`,likeL:"J'aime",likeNeed:"Connecte-toi avec Google pour aimer des tenues",likeFail:"Le j'aime n'est pas passé",acIn:n=>`Connecté en tant que ${n}`,acNick:"Changer de pseudo",acOut:"Se connecter avec Google",acWhy:"pour aimer des tenues et montrer les tiennes ici",pubNeed:"Connecte-toi avec Google pour partager tes tenues avec la communauté",shPubAs:n=>`Montrer dans les tenues de la communauté en tant que ${n}`,nkT:"Ton pseudo",nkSub:"Affiché sur les tenues que tu partages avec la communauté. 3 à 20 caractères.",nkSave:"Enregistrer",nkTaken:"Ce pseudo est déjà pris",nkBad:"3 à 20 lettres, chiffres, espaces ou . _ ' -",nkDone:"Pseudo enregistré",nkFail:"Ça n'a pas marché, réessaie",acDel:"Supprimer mon compte Miliadex",acDelSure:"Sûr ? Reclique : pseudo et j'aime supprimés, tes tenues quittent les tenues de la communauté",acDelDone:"Compte supprimé",pubBtn:"Partager avec la communauté",pubIn:"Partagée avec la communauté",pubChanged:"Modifiée depuis le partage",pubUpd:"Mettre à jour pour la communauté",pubWaitL:s=>`Mise à jour possible dans ${s} s`,pubOff:"Retirer de la communauté",pubView:"La voir",pubDone:"Partagée avec la communauté",pubUpdDone:"Mise à jour pour la communauté",pubOffDone:"Retirée de la communauté",pubLimit:n=>`Tu partages déjà ${n} tenues avec la communauté : retires-en une d'abord`,pubBan:"Cette tenue a été retirée de la communauté par la modération",pubNeed2:"Connecte-toi avec Google pour la partager avec la communauté",pubSending:"Envoi de la tenue à la communauté…",pubFail:"Ça n'a pas marché, réessaie",pubEmpty:"Ajoute d'abord des pièces",pubBadge:"Communauté",shMineSh:"Mes partages",shMineNone:"Tu n'as encore rien partagé : ouvre une de tes tenues dans Mes tenues et choisis « Partager avec la communauté ».",pubBanned:"Retirée par la modération",shNone:"Aucune tenue ne correspond à ces filtres.",shLoading:"Chargement des tenues de la communauté…",
+  shFail:"Les tenues de la communauté n'ont pas pu être chargées pour le moment.",shRetry:"Réessayer",shOwned:(a,b)=>`${a}/${b} possédée${a>1?"s":""}`,shPieces:n=>`${n} pièce${n>1?"s":""}`,shPiecesT:"Pièces",shPhoto:"Capture en jeu",
   shEdit:"Modifier dans Mes tenues",shEditMine:"Modifier",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
-  shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus dans la vitrine.",
+  shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus partagée avec la communauté.",
   imgTip:"Ouvre une carte de tenue Miliadex (l’image téléchargée depuis le Miliadex), ou dépose-la sur l’aperçu",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image n’est pas une carte de tenue Miliadex (utilise le fichier d’origine téléchargé depuis le Miliadex)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
   scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
@@ -1976,8 +2030,6 @@ const visible = () => ALL[ui.tab].filter(it=>pass(it));
 /* ---------- header, tabs, toolbar ---------- */
 let shownPct = 0;
 const RANK_T=[0,.10,.25,.50,.75,.95,1];
-const CREST=[["#d9b59a","#7a5440"],["#e6e6f2","#7b7b98"],["#ffd27a","#b0701f"],["#d6b0ff","#6b3fc9"],["#a8ecff","#2f7fc9"],["#ffc2e3","#c43f8f"],["#fff4cf","#ff8f3a"]];
-const ROMAN=["I","II","III","IV","V","VI","VII"];
 const SHORT={"6.1":"II","6.2":"III","6.3":"IV","6.4":"V","6.5":"VI","6.6":"VII","6.7":"VIII","7.0":"7.0","7.1":"7.1","+":"+"};
 const tabList = tab => tab==="outfits" ? tabList("sets").concat(tabList("comp")) : ALL[tab].filter(it=>it.kind==="set"||compVisible(it));
 const VLV=300;   // Raiment Collector: one level every 300 Vivid
@@ -1994,11 +2046,101 @@ function score(){ let got=0,tot=0;
 const rankLv = tot => RANK_T.map((f,i)=> i===0 ? 1 : lvOf(Math.floor(f*tot/VLV)*VLV));
 function rankOf(g,tot){ const L=rankLv(tot), lv=lvOf(g); let r=0; L.forEach((x,i)=>{ if(lv>=x) r=i; }); return r; }
 function rankIdx(){ const [g,tt]=score(); return rankOf(g,tt); }
-function crestSvg(i){ const [a,b]=CREST[i];
-  return `<svg viewBox="0 0 46 52"><defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>
-    <path d="M23 2 L43 11 L43 31 Q43 43 23 50 Q3 43 3 31 L3 11 Z" fill="url(#cg)" stroke="rgba(255,255,255,.8)" stroke-width="1.6"/>
-    <path d="M23 7 L38 14 L38 30 Q38 39 23 45 Q8 39 8 30 L8 14 Z" fill="none" stroke="rgba(20,12,40,.35)" stroke-width="1.2"/>
-    <text x="23" y="32" text-anchor="middle" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="${i>4?12:14}" fill="#1a1235">${ROMAN[i]}</text></svg>`; }
+// rank emblems, Miliastra style: a glossy star-gem medallion (the Chronal Nexus / Vivid look: starry stone, four-point sparkle,
+// orbit rings) in a rim that turns from pearl to gold; each rank changes the silhouette and adds an ornament
+const CREST=[["#ffd9bd","#c9825d"],["#e9e6ff","#8c88c4"],["#ffe08a","#d08a1e"],["#dcbcff","#7a48e0"],["#a6efff","#2f8fe0"],["#ffc4e4","#d84a9a"],["#fff1c4","#b65cff"]];
+const GEM=[ // light, mid, deep (the stone)
+  ["#fff1e4","#f6b993","#a45e3e"],
+  ["#ffffff","#c9c4f0","#5f5a9c"],
+  ["#fff6cf","#ffc95a","#b26a12"],
+  ["#f6e8ff","#b98cff","#4a24a8"],
+  ["#eafcff","#69d8ff","#1a5fc0"],
+  ["#fff0f8","#ff95cf","#a8287a"],
+  ["#ffffff","#c79bff","#2b1a7a"]];
+const RIM=[ // rim metal: highlight, body, shadow
+  ["#fff3e8","#e6b394","#8e5a40"],
+  ["#ffffff","#d8d5ee","#8a86b0"],
+  ["#fff8d6","#f3c75c","#9e6418"],
+  ["#fff8d6","#f3c75c","#9e6418"],
+  ["#fff8d6","#f3c75c","#9e6418"],
+  ["#fff8d6","#f3c75c","#9e6418"],
+  ["#fffbe6","#ffd66b","#a8661a"]];
+let crestN=0;
+function crestSvg(i){
+  const u="cr"+(++crestN), C=36, f=n=>+n.toFixed(2), [gl,gm,gd]=GEM[i], [rl,rm,rd]=RIM[i];
+  const P=(r,a)=>[C+r*Math.cos(a), C+r*Math.sin(a)];
+  // a closed smooth curve through points (Catmull-Rom)
+  const smooth=pts=>{ const n=pts.length; let d=`M${f(pts[0][0])} ${f(pts[0][1])}`;
+    for(let k=0;k<n;k++){ const p0=pts[(k-1+n)%n],p1=pts[k],p2=pts[(k+1)%n],p3=pts[(k+2)%n];
+      d+=`C${f(p1[0]+(p2[0]-p0[0])/6)} ${f(p1[1]+(p2[1]-p0[1])/6)} ${f(p2[0]-(p3[0]-p1[0])/6)} ${f(p2[1]-(p3[1]-p1[1])/6)} ${f(p2[0])} ${f(p2[1])}`; }
+    return d+"Z"; };
+  // medallion silhouette: a circle, then soft scallops (more of them as the rank grows)
+  const lobes=[0,0,6,8,8,10,12][i], depth=[0,0,.07,.075,.075,.08,.1][i];
+  const shape=R=>{ if(!lobes) return `M${C-R} ${C}a${R} ${R} 0 1 0 ${2*R} 0a${R} ${R} 0 1 0 ${-2*R} 0Z`;
+    const pts=[]; for(let k=0;k<lobes*2;k++){ const a=-Math.PI/2+k*Math.PI/lobes; pts.push(P(k%2?R*(1-depth):R, a)); } return smooth(pts); };
+  const R=[25,23.5,25,22.5,22.5,23,23.5][i];
+  // four-point sparkle
+  const spark=(x,y,r,w=.16)=>{ const k=r*w; return `M${f(x)} ${f(y-r)}C${f(x+k*.5)} ${f(y-k)} ${f(x+k)} ${f(y-k*.5)} ${f(x+r)} ${f(y)}C${f(x+k)} ${f(y+k*.5)} ${f(x+k*.5)} ${f(y+k)} ${f(x)} ${f(y+r)}C${f(x-k*.5)} ${f(y+k)} ${f(x-k)} ${f(y+k*.5)} ${f(x-r)} ${f(y)}C${f(x-k)} ${f(y-k*.5)} ${f(x-k*.5)} ${f(y-k)} ${f(x)} ${f(y-r)}Z`; };
+  // tiny stars inside the stone (the "thousand stars"), more with each rank
+  const DOTS=[[27,44,.8],[45,30,.7],[44,46,.9],[26,31,.6],[37,49,.7],[30,24,.55],[47,39,.6],[24,39,.7],[40,24,.5],[33,46,.5]];
+  const dots=DOTS.slice(0,[2,3,4,6,7,8,10][i]).map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}"/>`).join("");
+  const defs=[];
+  defs.push(`<radialGradient id="${u}g" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="${gl}"/><stop offset=".42" stop-color="${gm}"/><stop offset="1" stop-color="${gd}"/></radialGradient>`);
+  defs.push(`<linearGradient id="${u}m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${rl}"/><stop offset=".3" stop-color="${rm}"/><stop offset=".55" stop-color="${rd}"/><stop offset=".78" stop-color="${rm}"/><stop offset="1" stop-color="${rl}"/></linearGradient>`);
+  defs.push(`<linearGradient id="${u}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>`);
+  defs.push(`<radialGradient id="${u}h" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${CREST[i][0]}" stop-opacity="${(.18+i*.05).toFixed(2)}"/><stop offset="1" stop-color="${CREST[i][0]}" stop-opacity="0"/></radialGradient>`);
+  defs.push(`<filter id="${u}b" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="1.6"/></filter>`);
+  defs.push(`<clipPath id="${u}c"><path d="${shape(R*.8)}"/></clipPath>`);
+  if(i===6){ // prismatic stone for the last rank
+    defs[0]=`<linearGradient id="${u}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".28" stop-color="#ff9fd2"/><stop offset=".55" stop-color="#9a6bff"/><stop offset=".8" stop-color="#3fc7ff"/><stop offset="1" stop-color="#2a3a9e"/></linearGradient>`;
+    defs.push(`<radialGradient id="${u}d" cx="50%" cy="54%" r="55%"><stop offset="0" stop-color="#1c1050" stop-opacity=".0"/><stop offset=".7" stop-color="#1c1050" stop-opacity=".18"/><stop offset="1" stop-color="#1c1050" stop-opacity=".45"/></radialGradient>`);
+  }
+  const back=[], front=[];
+  if(i>=2) back.push(`<circle cx="${C}" cy="${C}" r="35" fill="url(#${u}h)"/>`);
+  // III: two little sparkles riding the rim
+  if(i===2) front.push(`<g fill="#fff">${["",""].map((_,k)=>`<path d="${spark(k?55:17,k?17:17,4.2,.2)}"/>`).join("")}</g>`);
+  // IV+: a compass of thin rays behind
+  if(i>=3 && i!==5){ const n=i>=6?16:8, long=i>=6?34.5:31, short=i>=6?27:26; let d="";
+    for(let k=0;k<n;k++){ const a=-Math.PI/2+k*2*Math.PI/n, r=(n===16&&k%2)?short:(k%2?short:long), w=Math.PI/(n*(k%2?2.6:2.1));
+      const [x1,y1]=P(R*.9,a-w),[x2,y2]=P(r,a),[x3,y3]=P(R*.9,a+w); d+=`M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}L${f(x3)} ${f(y3)}Z`; }
+    back.push(`<path d="${d}" fill="url(#${u}m)" stroke="${rl}" stroke-opacity=".6" stroke-width=".5" stroke-linejoin="round"/>`); }
+  // VI: a rosette of slim pointed petals behind, gold rays between them
+  if(i===5){ const n=12; let d="", g="";
+    for(let k=0;k<n;k++){ const a=-Math.PI/2+k*2*Math.PI/n, [bx,by]=P(R*.75,a), [tx,ty]=P(k%3?31:34,a), [l1x,l1y]=P(26,a-.2), [r1x,r1y]=P(26,a+.2), [l2x,l2y]=P(30,a-.08), [r2x,r2y]=P(30,a+.08);
+      d+=`M${f(bx)} ${f(by)}C${f(l1x)} ${f(l1y)} ${f(l2x)} ${f(l2y)} ${f(tx)} ${f(ty)}C${f(r2x)} ${f(r2y)} ${f(r1x)} ${f(r1y)} ${f(bx)} ${f(by)}Z`;
+      const b2=a+Math.PI/n, [x1,y1]=P(R*.9,b2-.07),[x2,y2]=P(28,b2),[x3,y3]=P(R*.9,b2+.07); g+=`M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}L${f(x3)} ${f(y3)}Z`; }
+    defs.push(`<radialGradient id="${u}p" cx="50%" cy="50%" r="50%"><stop offset=".55" stop-color="${gm}"/><stop offset="1" stop-color="#fff2f9"/></radialGradient>`);
+    back.push(`<path d="${g}" fill="url(#${u}m)"/><path d="${d}" fill="url(#${u}p)" stroke="${rm}" stroke-width=".8" stroke-linejoin="round"/>`); }
+  // V+: an orbit around the stone, with stars riding it
+  const orbit=(rx,ry,rot,sw,sat)=>{ const ell=`<ellipse cx="${C}" cy="${C}" rx="${rx}" ry="${ry}" fill="none" stroke="${rl}" stroke-width="${sw}" stroke-opacity=".9"/>`;
+    const arc=`<path d="M${C-rx} ${C}A${rx} ${ry} 0 0 0 ${C+rx} ${C}" fill="none" stroke="${rl}" stroke-width="${sw}" stroke-linecap="round"/>`;
+    back.push(`<g transform="rotate(${rot} ${C} ${C})" opacity=".55">${ell}</g>`);
+    front.push(`<g transform="rotate(${rot} ${C} ${C})">${arc}${sat.map(t=>{ const x=C+rx*Math.cos(t), y=C+ry*Math.sin(t); return `<path d="${spark(x,y,3.6,.22)}" fill="#fff"/>`; }).join("")}</g>`); };
+  if(i===4) orbit(33,10.5,-24,1.3,[.5,2.4]);
+  if(i===5) orbit(33.5,11,-24,1.3,[.5,2.6]);
+  if(i===6){ orbit(34,11,-24,1.3,[.55,2.5]); orbit(34,11,24,1,[1.2]); }
+  // VII: a crown of three sparkles above
+  if(i===6) front.push(`<g fill="#fff">${[[36,4.2,5.2],[25.5,7.5,3],[46.5,7.5,3]].map(([x,y,r])=>`<path d="${spark(x,y,r,.2)}"/>`).join("")}</g>`);
+  // II: four little studs around the stone
+  if(i===1) back.push(`<g fill="url(#${u}m)" stroke="#fff" stroke-opacity=".8" stroke-width=".5">${[0,1,2,3].map(k=>{ const a=-Math.PI/4+k*Math.PI/2, [x,y]=P(R+4.6,a); return `<path d="${spark(x,y,3.4,.25)}"/>`; }).join("")}</g>`);
+  const sr=[8,9,10,10.5,11,11.5,12.5][i];
+  return `<svg viewBox="0 0 72 72" aria-hidden="true"><defs>${defs.join("")}</defs>
+    ${back.join("")}
+    <path d="${shape(R)}" fill="url(#${u}m)" stroke="${rd}" stroke-opacity=".55" stroke-width=".7"/>
+    <path d="${shape(R*.94)}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".6"/>
+    <path d="${shape(R*.8)}" fill="url(#${u}g)"/>
+    <g clip-path="url(#${u}c)">
+      ${i===6?`<rect width="72" height="72" fill="url(#${u}d)"/>`:""}
+      <g fill="#fff" opacity=".85">${dots}</g>
+      <ellipse cx="${C-3}" cy="${C-R*.5}" rx="${R*.62}" ry="${R*.36}" fill="url(#${u}s)"/>
+      <path d="M${C-R*.55} ${C+R*.52}Q${C} ${C+R*.86} ${C+R*.55} ${C+R*.52}" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round"/>
+    </g>
+    <path d="${shape(R*.8)}" fill="none" stroke="${gd}" stroke-opacity=".6" stroke-width=".8"/>
+    <path d="${spark(C,C,sr+1.5)}" fill="${CREST[i][0]}" filter="url(#${u}b)" opacity=".95"/>
+    <path d="${spark(C,C,sr)}" fill="#fff"/>
+    ${i>=5?`<path d="${spark(C+7.5,C-7,3.2,.22)}" fill="#fff" opacity=".9"/>`:""}
+    ${front.join("")}</svg>`;
+}
 const RING = (()=>{ let ticks=""; for(let i=0;i<60;i++){ const a=i*6*Math.PI/180, r1=i%5?59:57, r2=61.5; ticks+=`<line x1="${(70+r1*Math.sin(a)).toFixed(2)}" y1="${(70-r1*Math.cos(a)).toFixed(2)}" x2="${(70+r2*Math.sin(a)).toFixed(2)}" y2="${(70-r2*Math.cos(a)).toFixed(2)}"/>`; }
   return `<defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset=".45" stop-color="#c58cff"/><stop offset="1" stop-color="#5fd3ff"/></linearGradient>
     <linearGradient id="ng" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c58cff"/><stop offset="1" stop-color="#5fd3ff"/></linearGradient>
@@ -2042,7 +2184,7 @@ function renderHeader(){
   const cr=$("crest"); if(cr.dataset.i!==String(ri)){ cr.dataset.i=ri; cr.innerHTML=crestSvg(ri); cr.style.setProperty("--glow", CREST[ri][0]); }
   if(st && sg<st){ const into=sg%VLV, need=VLV-into;
     $("xpFill").style.width=Math.max(2,into/VLV*100)+"%";
-    $("xpTxt").textContent=t("nextLv")(fmt(need), lv+1) + (ri<RANK_T.length-1 ? " · "+t("rankAt")(ranks[ri+1], L[ri+1]) : ""); }
+    $("xpTxt").textContent=t("nextLv")(fmt(sg), fmt(lv*VLV), lv+1) + (ri<RANK_T.length-1 ? " · "+t("rankAt")(ranks[ri+1], L[ri+1]) : ""); }
   else { $("xpFill").style.width="100%"; $("xpTxt").textContent=t("maxed"); }
   const rar = ht==="sets"?[5,4,3]:[5,4,3,2], vers=VORDER.filter(v=>list.some(i=>i.v===v));
   const key=ht+"|"+ui.g+"|"+ui.lang;
@@ -2419,14 +2561,26 @@ function toast(msg){
 
 /* ---------- rank info ---------- */
 function openRanks(){
-  const [g,tt]=score(), cur=rankOf(g,tt), ranks=t("ranks"), d=$("info"), L=rankLv(tt);
+  const [g,tt]=score(), cur=rankOf(g,tt), ranks=t("ranks"), d=$("info"), L=rankLv(tt), lv=lvOf(g), last=RANK_T.length-1;
+  const vOf=i=>i===0 ? 0 : (L[i]-1)*VLV, nextV=cur<last ? vOf(cur+1) : tt, prevV=vOf(cur), pct=cur<last ? Math.max(0,Math.min(1,(g-prevV)/Math.max(1,nextV-prevV))) : 1;
   const rows=RANK_T.map((th,i)=>{ const st=i<cur?"reached":i===cur?"current":"locked";
-    const req = i===0 ? t("start") : `${t("lvShort")} ${L[i]} · ${fmt((L[i]-1)*VLV)} Vivid`;
-    return `<li class="ri ${st}"><span class="ri-crest">${crestSvg(i).replace(/id="cg"/,`id="cg${i}"`).replace(/url\(#cg\)/,`url(#cg${i})`)}</span><span class="ri-txt"><b>${esc(ranks[i])}</b><small>${esc(req)}</small></span><span class="ri-st">${esc(t(st))}</span></li>`; }).join("");
-  d.innerHTML=`<div class="ih"><h2 id="iTitle">${esc(t("ranksT"))}</h2><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
-    <div class="ib"><p>${esc(t("ranksIntro"))}</p><p class="ipts">${esc(t("yourPts")(fmt(g),fmt(tt),lvOf(g),lvOf(tt)))}</p><ol class="rlist">${rows}</ol></div>`;
+    const req = i===0 ? t("start") : `${t("lvShort")} ${L[i]} · ${fmt(vOf(i))} Vivid · ${t("rkShare")(Math.round(th*100))}`;
+    const badge = st==="reached" ? `<span class="rr-st ok">✓ ${esc(t("reached"))}</span>` : st==="current" ? `<span class="rr-st cur">${esc(t("current"))}</span>`
+      : `<span class="rr-st lock" title="${esc(t("locked"))}"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.6" fill="currentColor"/><path d="M5.5 7V5.2a2.5 2.5 0 0 1 5 0V7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="sr">${esc(t("locked"))}</span></span>`;
+    return `<li class="rr ${st}" style="--c1:${CREST[i][0]};--c2:${CREST[i][1]};--d:${i*70}ms"><span class="rr-crest">${crestSvg(i)}</span><span class="rr-txt"><b>${esc(ranks[i])}</b><small>${esc(req)}</small></span>${badge}</li>`; }).join("");
+  d.innerHTML=`<div class="vp-sky" aria-hidden="true"><i class="aur a1"></i><i class="aur a2"></i><i class="aur a3"></i><i class="starfield"></i><i class="vp-shoot" style="top:8%;left:90%"></i></div>
+    <div class="vp-head"><span class="vp-kick" id="iTitle">${esc(t("ranksT"))}</span><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
+    <div class="rk-scroll">
+      <section class="rk-hero" style="--c1:${CREST[cur][0]};--c2:${CREST[cur][1]}"><span class="rk-big">${crestSvg(cur)}</span>
+        <div class="rk-hx"><small>${esc(t("rkYou"))}</small><h2>${esc(ranks[cur])}</h2><p>${vivIcon()}<b>${esc(t("lvShort"))} ${lv}</b><span>${fmt(g)} / ${fmt(tt)} Vivid</span></p></div></section>
+      ${cur<last ? `<div class="rk-next"><div class="rk-nbar"><i style="width:${(pct*100).toFixed(1)}%"></i></div><p>${esc(t("rkNext")(fmt(Math.max(0,nextV-g)), ranks[cur+1], L[cur+1]))}</p></div>` : `<p class="rk-max">✦ ${esc(t("maxed"))}</p>`}
+      <ol class="rr-list">${rows}</ol>
+      <section class="rk-how"><h3>${esc(t("rkHow"))}</h3><ul><li>${esc(t("rkHow1"))}</li><li>${esc(t("rkHow2")(VLV))}</li><li>${esc(t("rkHow3"))}</li></ul></section>
+    </div>`;
   if(!d.open){ d.showModal ? d.showModal() : d.setAttribute("open",""); }
+  const sc=d.querySelector(".rk-scroll"), now=sc && sc.querySelector(".rr.current"); if(now && sc.scrollHeight>sc.clientHeight) requestAnimationFrame(()=>{ now.scrollIntoView({block:"nearest"}); });
 }
+$("crest").addEventListener("click", openRanks);
 $("rankInfo").addEventListener("click", openRanks);
 $("info").addEventListener("click", e=>{ const d=$("info"); if(e.target===d || e.target.closest("[data-close]")) d.close ? d.close() : d.removeAttribute("open"); });
 /* ---------- account value page ---------- */
@@ -2718,8 +2872,9 @@ function lookCard(L){
   const pics=[]; for(const s of ["Top","Bottom","Hairstyle","Footwear","Headwear"]) if(m[s] && m[s].primary && !pics.includes(m[s].it)) pics.push(m[s].it);
   for(const it of its) if(pics.length<4 && !pics.includes(it)) pics.push(it);
   const mos = L.pic ? `<span><img data-pic="${esc(L.pic)}" alt=""></span>` : pics.slice(0,4).map(it=>`<span class="r${it.r}">${it.img?imgTag(it.img,160,nm(it),it.id):""}</span>`).join("");
-  return `<article class="look"><button type="button" class="lk-open" data-lview="${esc(L.id)}"><span class="mosaic ${L.pic?"n1 has-pic":"n"+Math.min(4,pics.length)}">${mos}</span>
-    <span class="lk-meta"><b>${esc(L.n||t("untitled"))}${L.pub?` <span class="lk-pub" title="${esc(t("pubIn"))}">✦ ${esc(t("pubBadge"))}</span>`:""}</b><small>${L.g==="f"?"♀ "+esc(t("f")):"♂ "+esc(t("m"))} · ${esc(t("ownedOf")(own,its.length))}</small></span></button>
+  const editing = look.id===L.id;
+  return `<article class="look${editing?" editing":""}" data-id="${esc(L.id)}"><button type="button" class="lk-open" data-lview="${esc(L.id)}"><span class="mosaic ${L.pic?"n1 has-pic":"n"+Math.min(4,pics.length)}">${mos}</span>
+    <span class="lk-meta">${editing?`<span class="lk-ed">${ICON_PEN} ${esc(t("lkEditing"))}</span>`:""}<b>${esc(L.n||t("untitled"))}${L.pub?` <span class="lk-pub" title="${esc(t("pubIn"))}">✦ ${esc(t("pubBadge"))}</span>`:""}</b><small>${L.g==="f"?"♀ "+esc(t("f")):"♂ "+esc(t("m"))} · ${esc(t("ownedOf")(own,its.length))}</small></span></button>
     <div class="lk-act"><button type="button" class="mini" data-lshare="${esc(L.id)}" aria-label="${esc(t("share"))}" title="${esc(t("share"))}">${ICON_LINK}</button><button type="button" class="mini danger" data-ldel="${esc(L.id)}" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div></article>`;
 }
 const ICON_PAD=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6.5h8a3.5 3.5 0 0 1 3.4 4.3l-.9 3.6a2 2 0 0 1-3.4.9L11.6 14H8.4l-1.5 1.3a2 2 0 0 1-3.4-.9l-.9-3.6A3.5 3.5 0 0 1 6 6.5Z"/><path d="M7 9.2v2.4M5.8 10.4h2.4"/><circle cx="13.4" cy="9.6" r=".6" fill="currentColor"/><circle cx="14.8" cy="11.2" r=".6" fill="currentColor"/></svg>`;
@@ -2763,6 +2918,7 @@ function renderOutfits(){
       </div>
       ${location.protocol==="file:"?`<p class="b-note">${esc(t("localNote"))}</p>`:""}
     </div>`;
+  { const ni=$("lkName"); if(ni && ni.value) nameMark(ni); }
   const looks=state.looks||[];
   $("lkList").innerHTML = `<div class="lk-head"><h2>${esc(t("myLooks"))} <small>${looks.length}</small></h2><form class="lk-imp" id="lkImp"><input id="lkCode" autocomplete="off" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importLook"))}"><button class="btn ghost" type="submit">${esc(t("importLook"))}</button></form></div>
     <div class="looks">${looks.length ? looks.slice().reverse().map(lookCard).join("") : `<p class="empty-l">${esc(t("noLooks"))}</p>`}</div>`;
@@ -2943,6 +3099,7 @@ async function lookCanvas(L){
   return cv;
 }
 async function downloadLook(){
+  if(!nameGuard(look.n)) return;
   await drawLook();
   const out=await lookImage(look, $("lkCv")); if(!out){ toast(t("dlFail")); return; }
   const a=document.createElement("a"); a.href=URL.createObjectURL(out); a.download=(slug(look.n||"")||"miliadex-outfit")+".jpg";
@@ -3516,7 +3673,7 @@ function renderShowGrid(){
   const list=showList(), feat=F.own ? [] : list.filter(showIsFeat), comm=F.own ? list : list.filter(x=>!showIsFeat(x)), filt=!!(F.q || F.g || F.mine);
   if(F.own){ g.innerHTML=`<section class="sh-sec comm"><h3 class="sh-h">${esc(t("shMineSh"))} <small>${SHOW.mine ? comm.length : ""}</small></h3>
       ${!SHOW.mine ? shSkel(3) : comm.length ? `<div class="sh-grid">${comm.map((it,k)=>showCard(it,k)).join("")}</div>` : `<p class="sh-none">${esc(filt ? t("shNone") : t("shMineNone"))}</p>`}</section>`; return; }
-  SHOW.spot = !filt && F.sort==="repo" && feat.length>=4;
+  SHOW.spot = false;   // every outfit gets the same slot
   let h="";
   if(SHOW.items.length || (SHOW.ufeat||[]).length) h+=`<section class="sh-sec feat"><h3 class="sh-h"><span class="sh-star" aria-hidden="true">★</span>${esc(t("shFeat"))} <small>${feat.length}</small></h3>
     ${feat.length ? `<div class="sh-grid${SHOW.spot?" has-spot":""}">${feat.map((it,k)=>showCard(it,k)).join("")}</div>` : `<p class="sh-none">${esc(t("shNone"))}</p>`}</section>`;
@@ -3600,7 +3757,7 @@ async function showAct(a){
     if(a==="edit"){ const S=IMP.saved && (state.looks||[]).find(x=>x.id===IMP.saved);
       if(S) loadSaved(S); else { shared=null; look={id:null,n:L.n,g:L.g,i:L.i.slice(),pic:L.pic||null,picOn:L.picOn!==false,p2:!!L.p2}; saveDraft(); }
       closeV(); goBuilder(); toast("✓ "+t("shOpened")); return; }
-    if(a==="save"){ if(impSaved()) return; state.looks=state.looks||[];
+    if(a==="save"){ if(impSaved() || !nameGuard(L.n)) return; state.looks=state.looks||[];
       const S={id:Date.now().toString(36), n:(L.n||"").trim().slice(0,60)||`${t("untitled")} #${state.looks.length+1}`, g:L.g, i:L.i.slice(), t:Date.now()};
       if(L.pic){ S.pic=L.pic; S.picOn=L.picOn!==false; } if(L.p2) S.p2=true;
       state.looks.push(S); IMP.saved=S.id; save(); renderHeader(); if(ui.tab==="outfits") renderOutfits(); paintView(true); toast("✓ "+t("shAdded"));
@@ -3859,7 +4016,7 @@ function shCard(st,name,cur){
       return `<span class="sc-th r${it.r}" title="${esc(nm(it))} · ${esc(fmtN(e.v))} Chronal Nexus">${emblem(it)}${img?`<img src="${esc(wurl(img,120))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}</span>`; }).join("")
     : `<p class="sc-none">${esc(t("scNone"))}</p>`;
   return `<article class="sc-card" style="--cr:${C[0]}">
-    <div class="sc-id"><span class="sc-crest" aria-hidden="true">${crestSvg(ri).replace(/id="cg"/,'id="cgS"').replace(/url\(#cg\)/,"url(#cgS)")}</span>
+    <div class="sc-id"><span class="sc-crest" aria-hidden="true">${crestSvg(ri)}</span>
       <div class="sc-who"><small>${esc(t("scOf"))}</small><h2 id="scWho">${esc(name||t("scAnon"))}</h2><p><b>${esc(t("ranks")[ri])}</b><span>${esc(t("lvShort"))} ${st.lv}</span></p></div></div>
     <div class="sc-main"><div class="sc-ring" role="img" aria-label="${esc(pctTxt(st)+" "+t("scDone"))}">${ring}<div class="mid"><b>${esc(pctTxt(st))}</b><small>${esc(t("scDone"))}</small></div></div>
       <div class="sc-kpis"><div class="sc-kpi"><span class="k">${vivIcon()}${esc(t("vividL"))}</span><b>${fmtN(st.vg)}</b><small>/ ${fmtN(st.vt)}</small></div>
@@ -3872,6 +4029,7 @@ const ICON_CHAT=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stro
 const colUrl = code => shareUrl("c", code);
 let shReady=null, shTok=0;
 async function shPrepare(){
+  if(!nameOk(ui.shName)) return null;   // nothing is sent with a name that isn't allowed
   const tok=++shTok, code=await SHARE.make(state.owned, ui.g, ui.shName, showMoney());
   if(tok!==shTok) return shReady;
   const url=colUrl(code), key=shortKeyOf("c", code, ui.lang==="fr"?"fr":"en", ""), nm=SHARE.clean(ui.shName).replace(/[\\\[\]]/g,"\\$&");
@@ -3884,7 +4042,7 @@ function openShare(theirs){
   const d=$("shc"), mine=!theirs, name = mine ? SHARE.clean(ui.shName) : theirs.name;
   const st = mine ? collStats(state.owned, ui.g) : collStats(theirs.owned, theirs.g);
   let foot;
-  if(mine){ shReady=null; shPrepare();
+  if(mine){ shReady=null; shPrepare(); setTimeout(()=>{ const i=$("scName"); if(i) nameMark(i); });
     foot=`<label class="sc-name"><span>${esc(t("scName"))}</span><input id="scName" type="text" maxlength="24" autocomplete="nickname" spellcheck="false" placeholder="${esc(t("scNamePh"))}" value="${esc(name)}"></label>
       <div class="sc-act"><button type="button" class="btn" data-sc="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button><button type="button" class="btn ghost" data-sc="link">${ICON_LINK} ${esc(t("scLink"))}</button></div>
       <p class="sc-note">${esc(t("scNote"))}</p>`; }
@@ -3899,6 +4057,7 @@ $("shBtn").addEventListener("click", ()=>openShare(null));
 $("shc").addEventListener("click", async e=>{ const d=$("shc");
   if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
   const b=e.target.closest("[data-sc]"); if(!b) return;
+  if(!nameGuard(ui.shName)){ const i=$("scName"); if(i) i.focus(); return; }
   const r=shReady||await shPrepare(); if(!r) return;
   const dc=b.dataset.sc==="discord", txt=async ok=>{ const k=ok && await r.key, u=k ? SITE+"/c/"+k : r.url; return dc ? r.md(u) : u; };   // short link once the site has the card
   copyLater(txt, r.card, t(dc?"scCopiedD":"linkCopied"), txt=>{ // no clipboard access: show the text ready to copy by hand
@@ -3907,7 +4066,7 @@ $("shc").addEventListener("click", async e=>{ const d=$("shc");
 });
 let shNameT=0;
 $("shc").addEventListener("input", e=>{ if(e.target.id!=="scName") return;
-  ui.shName=SHARE.clean(e.target.value); saveUI(); const w=$("scWho"); if(w) w.textContent=ui.shName||t("scAnon");
+  ui.shName=SHARE.clean(e.target.value); saveUI(); const w=$("scWho"); if(w) w.textContent=ui.shName||t("scAnon"); nameMark(e.target);
   shReady=null; clearTimeout(shNameT); shNameT=setTimeout(shPrepare,200); });
 /* ---------- share pictures: the card Discord shows for a /c/ or /o/ link — drawn here with the site's own look, kept by the site's Worker ---------- */
 const CARD_V=2;   // same as CARD_V in worker/index.js: bump both when the card design changes
@@ -3994,11 +4153,8 @@ async function shareCardCol(st,name,cur){
   const [imgs,vimg,cimg]=await Promise.all([Promise.all(tops.map(e=>pathOf(e)?loadImg(wurl(pathOf(e),300)).then(i=>i||emblemImg(e.it)):emblemImg(e.it))), loadImgEl(VIV_IMG), loadImgEl(CN_IMG)]);
   const cv=mkCanvas(W,H), c=cv.getContext("2d"); c.textBaseline="alphabetic";
   cardBg(c,W,H,rgbaOf(C[1],.32));
-  c.save(); c.translate(P,40); c.scale(1.75,1.75);
-  const sp=new Path2D("M23 2 L43 11 L43 31 Q43 43 23 50 Q3 43 3 31 L3 11 Z"), cg=c.createLinearGradient(0,0,0,52); cg.addColorStop(0,C[0]); cg.addColorStop(1,C[1]);
-  c.shadowColor="rgba(0,0,0,.4)"; c.shadowBlur=12; c.fillStyle=cg; c.fill(sp); c.shadowBlur=0;
-  c.strokeStyle="rgba(255,255,255,.85)"; c.lineWidth=1.6; c.stroke(sp); c.strokeStyle="rgba(20,12,40,.35)"; c.lineWidth=1.2; c.stroke(new Path2D("M23 7 L38 14 L38 30 Q38 39 23 45 Q8 39 8 30 L8 14 Z"));
-  c.font=`700 ${st.rank>4?12:14}px "Chakra Petch", sans-serif`; c.fillStyle="#1a1235"; c.textAlign="center"; c.fillText(ROMAN[st.rank],23,32); c.textAlign="left"; c.restore();
+  const crest=await loadImgEl("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(crestSvg(st.rank).replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" width="216" height="216" ')));
+  if(crest){ c.save(); c.shadowColor=rgbaOf(C[0],.55); c.shadowBlur=22; c.drawImage(crest,P-18,22,108,108); c.restore(); }
   const nx=P+100, tg=c.createLinearGradient(nx,0,nx+680,0); tg.addColorStop(0,"#fff2c9"); tg.addColorStop(.35,"#ffc36b"); tg.addColorStop(.7,"#f0b8ff"); tg.addColorStop(1,"#9fe6ff");
   cardText(c,name||t("scAnon"),nx,98,{font:F_SERIF,size:54,min:32,maxW:690,fill:tg});
   const rw=cardText(c,t("ranks")[st.rank],nx,140,{font:F_BOLD,size:26,fill:C[0],maxW:520});
@@ -4130,6 +4286,7 @@ async function lookThumb(cv){
   const w=await toBlobP(c,"image/webp",.72); return w && w.type==="image/webp" ? w : await toBlobP(c,"image/jpeg",.78);
 }
 function shareLook(L, discord){
+  if(!nameGuard(L.n)) return;
   const want=!!(L.pic && L.picOn!==false), name=((L.n||"").trim()||t("untitled")).replace(/[\\\[\]]/g,"\\$&");
   // the in-game screenshot goes along only once it passed the image check (screenshots added before the check get it now)
   const job=(want ? picOk(L.pic) : Promise.resolve(false)).then(ok=>{
@@ -4157,6 +4314,7 @@ function readCol(){
 }
 function saveLook(fromShared){
   const src=fromShared?shared:look; state.looks=state.looks||[];
+  if(!nameGuard(src.n)) return;
   const L={id:(fromShared?null:look.id)||Date.now().toString(36), n:(src.n||"").trim()||`${t("untitled")} #${state.looks.length+1}`, g:src.g, i:src.i.slice(), t:Date.now()};
   if(src.pic){ L.pic=src.pic; L.picOn=src.picOn!==false; }
   if(src.p2) L.p2=true;
@@ -4165,7 +4323,7 @@ function saveLook(fromShared){
   look={id:L.id,n:L.n,g:L.g,i:L.i.slice(),pic:L.pic||null,picOn:L.picOn!==false,p2:!!L.p2}; saveDraft();
   if(fromShared) shared=null;
   save(); renderOutfits(); renderHeader(); toast("✓ "+t("lookSaved"));
-  const card=$("outfits").querySelector(".look"); if(card) confetti(50, card);
+  const card=$("outfits").querySelector(`.look[data-id="${CSS.escape(L.id)}"]`); if(card){ confetti(50, card); card.classList.add("saved"); setTimeout(()=>card.classList.remove("saved"),1000); }
 }
 function surprise(){
   const rnd=a=>a[Math.floor(Math.random()*a.length)];
@@ -4270,7 +4428,10 @@ function pickSet(){
 }
 
 /* outfit events */
-$("outfits").addEventListener("input", e=>{ if(e.target.id==="lkName"){ look.n=e.target.value; saveDraft(); scheduleDraw(); } });
+$("outfits").addEventListener("input", e=>{ if(e.target.id==="lkName"){ look.n=e.target.value; saveDraft(); scheduleDraw(); nameMark(e.target); } });
+// a name that isn't allowed: the field says so, and saving, sharing or downloading the outfit is refused
+function nameMark(inp){ const bad=!nameOk(inp.value); inp.classList.toggle("bad", bad); inp.setAttribute("aria-invalid", bad); inp.title=bad ? t("nameBad") : ""; }
+const nameGuard = n => { if(nameOk(n)) return true; toast(t("nameBad")); return false; };
 $("outfits").addEventListener("submit", async e=>{ if(e.target.id!=="lkImp") return; e.preventDefault();
   const v=$("lkCode").value.trim(), sm=v.match(/\/o\/([0-9A-Za-z]{10})(?![0-9A-Za-z_-])/) || (SHORT_RE.test(v) && [v,v]);
   let L=null, pic=null;
