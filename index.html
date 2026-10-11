@@ -92,6 +92,9 @@ button{cursor:pointer}
 .seg button{border:0;background:transparent;border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;color:inherit;white-space:nowrap}
 .seg button[aria-pressed="true"]{background:#fff;color:var(--shell)}
 .top .seg{margin-left:auto;font-family:var(--tech);background:rgba(0,0,0,.32)}
+#setBtn svg{transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+#setBtn:hover{transform:none} #setBtn:hover svg,#setBtn.on svg{transform:rotate(60deg)}
+#setBtn.on{background:rgba(255,255,255,.16);box-shadow:0 0 18px rgba(160,140,255,.5)}
 .rank{display:flex;align-items:center;gap:12px;min-width:0}
 .crest{flex:none;position:relative;isolation:isolate;width:60px;height:60px;cursor:pointer}
 .crest::before{content:"";position:absolute;inset:-8px;z-index:-1;border-radius:50%;background:radial-gradient(circle,var(--glow,#c58cff) 0%,transparent 66%);opacity:.22;animation:fxCrestGlow 4.5s ease-in-out infinite;pointer-events:none}
@@ -199,9 +202,21 @@ button{cursor:pointer}
 
 /* ---------- tabs + toolbar ---------- */
 .tabs{position:relative;isolation:isolate;display:flex;gap:6px;width:fit-content;max-width:100%;margin-top:12px;padding:4px;border-radius:17px;background:var(--chip);box-shadow:inset 0 1px 2px rgba(20,10,60,.12)}
-.tab{flex:1 1 0;width:250px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;background:transparent;border-radius:13px;padding:10px 14px;text-align:left;color:var(--text);transition:color .3s,background .2s}
+.tab{flex:1 1 0;width:250px;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;border:0;background:transparent;border-radius:13px;padding:10px 14px;text-align:left;color:var(--text);transition:color .3s,background .2s}
 .tab b{font-family:var(--serif);font-weight:650;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;min-width:0}
-.tab span{font-family:var(--tech);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;transition:color .3s}
+.tab span{font-family:var(--tech);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;transition:color .3s;justify-self:end}
+.tab-ic{width:21px;height:21px;color:var(--accent);transition:color .3s,transform .35s cubic-bezier(.3,1.5,.5,1)}
+.tab[aria-selected="true"] .tab-ic{color:currentColor}
+.tab:not([aria-selected="true"]):hover .tab-ic{transform:scale(1.12) rotate(-6deg)}
+#tab-show b{grid-column:2/-1}
+/* narrower: the count goes under the name, a long name takes two lines */
+@media (max-width:1180px){
+  .tab{grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:9px;row-gap:1px;padding:8px 12px}
+  .tab-ic{grid-row:1/3;width:20px;height:20px}
+  .tab b{grid-column:2;font-size:15.5px}
+  .tab span{grid-column:2;justify-self:start;font-size:11.5px}
+  #tab-show b{grid-row:1/3;white-space:normal;line-height:1.12;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
 .tab:not([aria-selected="true"]){background:color-mix(in srgb,var(--accent) 9%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent);transition:color .3s,background .2s,box-shadow .25s}
 .tab:not([aria-selected="true"]):hover{background:color-mix(in srgb,var(--accent) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 34%,transparent),0 0 18px color-mix(in srgb,var(--accent) 38%,transparent)}
 .tab:not([aria-selected="true"]):hover span{color:var(--text)}
@@ -1083,7 +1098,8 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
   .comp .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .comp .meta h3{font-size:13px}
   .comp .tags{display:none}
-  .tab{flex-direction:column;align-items:flex-start;gap:0;padding:8px 10px}
+  .tab{grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;row-gap:0;padding:8px 10px}
+  .tab-ic{grid-row:1/3;width:19px;height:19px} .tab b{grid-column:2} .tab span{grid-column:2;justify-self:start} #tab-show b{grid-row:1/3}
   .tab b{font-size:14.5px}
   .tab span{font-size:11.5px}
   .slots.main,.slots.acc{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -1217,6 +1233,28 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 
 /* ---------- Google Drive sync ---------- */
 .hbtn[hidden]{display:none}
+.set-pop{position:absolute;z-index:60;width:min(300px,calc(100vw - 20px));box-sizing:border-box;padding:10px;border-radius:18px;color:#f3efff;font-family:var(--body);
+  background:radial-gradient(120% 90% at 50% -20%,#3a2a86 0%,#21185a 45%,#150f36 100%);border:1px solid rgba(255,255,255,.14);box-shadow:0 22px 60px rgba(6,3,20,.55),inset 0 1px 0 rgba(255,255,255,.12)}
+.set-pop[hidden]{display:none}
+.set-pop::before{content:"";position:absolute;top:-6px;left:calc(var(--ax,270px) - 6px);width:12px;height:12px;transform:rotate(45deg);background:#3a2a86;border-left:1px solid rgba(255,255,255,.14);border-top:1px solid rgba(255,255,255,.14);border-radius:3px 0 0 0}
+.set-pop.in{animation:spIn .28s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes spIn{from{opacity:0;transform:translateY(-6px) scale(.96)}}
+.sp-hd{margin:2px 6px 8px;font-family:var(--tech);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#b9adf5}
+.sp-row{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;padding:9px 10px;border-radius:12px;border:0;background:transparent;color:inherit;font:inherit;text-align:left}
+.sp-row + .sp-row{margin-top:4px}
+.sp-go{cursor:pointer;transition:background .2s}
+.sp-go:hover,.sp-go:focus-visible{background:rgba(255,255,255,.08)}
+.sp-ic{flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08);color:#d9cfff}
+.sp-ic svg{width:18px;height:18px}
+.sp-l{flex:1;min-width:0;display:grid;gap:1px}
+.sp-l b{font-size:14px;font-weight:650}
+.sp-l small{font-size:12px;color:#b9b0e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.set-pop .seg{flex:none;font-family:var(--tech);background:rgba(0,0,0,.32)}
+.sp-th{flex:none;width:56px;height:36px;border-radius:8px;overflow:hidden;background:#1a1238;border:1px solid rgba(255,255,255,.18)}
+.sp-th.none{background:repeating-linear-gradient(135deg,rgba(255,255,255,.06) 0 6px,transparent 6px 12px)}
+.sp-th img,.sp-th canvas{width:100%;height:100%;object-fit:cover;display:block}
+.sp-chev{flex:none;width:16px;height:16px;color:#b9adf5}
+@media (prefers-reduced-motion:reduce){ .set-pop.in{animation:none} }
 #gdBtn{position:relative}
 #gdBtn::after{content:"";position:absolute;right:2px;top:2px;width:9px;height:9px;border-radius:50%;background:#8a86a8;box-shadow:0 0 0 2px #2a1f5c}
 #gdBtn[data-st="ok"]::after,#gdBtn[data-st="idle"]::after{background:#2fd39a}
@@ -1232,12 +1270,11 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 }
 /* mobile header: top bar (logo + buttons) / ring beside rank + XP / value pill */
 @media (max-width:640px){
-  .hero{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto auto;align-items:center;column-gap:0;row-gap:10px}
+  .hero{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;align-items:center;column-gap:0;row-gap:10px}
   .hero-main,.brand{display:contents}
   .brand h1{grid-row:1;grid-column:1/3;justify-self:start;font-size:20px;letter-spacing:.12em;margin-right:8px}
-  #shBtn,#gdBtn,#bgBtn,.top #lang{grid-row:1}
-  #shBtn{grid-column:3} #bgBtn{grid-column:4} .top #lang{grid-column:5;margin-left:8px} #gdBtn{grid-column:6}
-  .top .seg + .hbtn{margin-left:8px}
+  #shBtn,#setBtn,#gdBtn{grid-row:1}
+  #shBtn{grid-column:3} #setBtn{grid-column:4} #gdBtn{grid-column:5}
   .top .hbtn,.top .hbtn:not([hidden]) + .hbtn{margin:0 0 0 6px;width:34px;height:34px}
   .top .hbtn svg{width:17px;height:17px}
   .orbit{grid-row:2/4;grid-column:1;width:100px;height:100px;margin:2px 14px 0 0;align-self:start}
@@ -1413,7 +1450,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
   #gdBtn.me::after{left:auto;right:1px;top:1px}
   #gdBtn.me.rnd{box-shadow:0 0 0 2px #ffe08a,0 0 14px rgba(255,200,90,.45)}
 }
-@media (min-width:641px) and (max-width:900px){ .brand{flex-wrap:wrap;row-gap:10px} .worth{order:3;margin-left:0;flex-basis:100%} }
+@media (min-width:641px) and (max-width:900px){ .brand{flex-wrap:wrap;row-gap:10px} .worth{order:3;margin-left:0;flex-basis:100%} #shBtn{margin-left:auto} }
 @media (max-width:640px){
   #gdBtn.me{width:34px;max-width:none;padding:0;justify-content:center}
   #gdBtn.me .me-n,#gdBtn.me .me-go{display:none}
@@ -1620,7 +1657,7 @@ html.x404 body, html.xadm body{background:var(--screen)}
 /* four tabs: two by two on phones */
 @media (max-width:560px){
   .tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}
-  .tab{width:auto;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding:8px 12px}
+  .tab{width:auto;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:9px;row-gap:1px;padding:8px 12px}
   .tab b{font-size:15px;max-width:100%}
   .tab span{font-size:11.5px}
   .sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -1671,8 +1708,7 @@ html.x404 body, html.xadm body{background:var(--screen)}
           <h1>MILIADEX</h1>
           <button type="button" class="worth" id="worth"></button>
           <button type="button" class="hbtn" id="shBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="17.5" cy="5.5" r="2.6"/><circle cx="6.5" cy="12" r="2.6"/><circle cx="17.5" cy="18.5" r="2.6"/><path d="M8.8 10.7l6.4-3.9M8.8 13.3l6.4 3.9"/></svg></button>
-          <button type="button" class="hbtn" id="bgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/><path d="M17.5 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke="none"/></svg></button>
-          <div class="seg" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="fr">FR</button></div>
+          <button type="button" class="hbtn" id="setBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="setPop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.11 9.94L21.43 10.2V13.8L19.11 14.06L18.48 15.56L19.94 17.4L17.4 19.94L15.56 18.48L14.06 19.11L13.8 21.43H10.2L9.94 19.11L8.44 18.48L6.6 19.94L4.06 17.4L5.52 15.56L4.89 14.06L2.57 13.8V10.2L4.89 9.94L5.52 8.44L4.06 6.6L6.6 4.06L8.44 5.52L9.94 4.89L10.2 2.57H13.8L14.06 4.89L15.56 5.52L17.4 4.06L19.94 6.6L18.48 8.44Z"/><circle cx="12" cy="12" r="3.2"/></svg></button>
           <button type="button" class="hbtn" id="gdBtn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg></button>
         </div>
         <div class="rank"><span class="crest" id="crest" aria-hidden="true"></span><div class="rk"><div class="rk-top"><span class="rk-label" id="rkLabel"></span><span class="rc-lv" id="rcLv"></span><button type="button" class="info-btn" id="rankInfo"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="3.6" r="1.35" fill="currentColor"/><path d="M6.4 6.6H8.6V12.4M6.6 12.4H10.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="rk-name" id="rkName" aria-live="polite"></div></div></div>
@@ -1690,10 +1726,10 @@ html.x404 body, html.xadm body{background:var(--screen)}
 
   <main class="screen">
     <div class="tabs" role="tablist" id="tabs">
-      <button class="tab" role="tab" id="tab-sets" data-tab="sets"><b></b><span></span></button>
-      <button class="tab" role="tab" id="tab-comp" data-tab="comp"><b></b><span></span></button>
-      <button class="tab" role="tab" id="tab-outfits" data-tab="outfits"><b></b><span></span></button>
-      <button class="tab" role="tab" id="tab-show" data-tab="show"><b></b><span></span></button>
+      <button class="tab" role="tab" id="tab-sets" data-tab="sets"><svg class="tab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8.6c0-1.1.7-1.5 1.4-2.1a2 2 0 1 0-3.3-1.6"/><path d="M12 8.6l-8.2 6.1c-1 .8-.5 2.3.8 2.3h14.8c1.3 0 1.8-1.5.8-2.3z"/><path d="M7.5 20h9"/></svg><b></b><span></span></button>
+      <button class="tab" role="tab" id="tab-comp" data-tab="comp"><svg class="tab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 5L4 7.5l1.7 3.7 2-.9V19h8.6v-8.7l2 .9L20 7.5 15.6 5c-.6 1.3-2 2.1-3.6 2.1S9 6.3 8.4 5z"/><path d="M19.5 1.8l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="currentColor" stroke="none"/></svg><b></b><span></span></button>
+      <button class="tab" role="tab" id="tab-outfits" data-tab="outfits"><svg class="tab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.2 3.5h5.6c.4 2.1 2 3.3 2 5.8 0 2.4-1.5 3.5-1.5 5.7H8.7c0-2.2-1.5-3.3-1.5-5.7 0-2.5 1.6-3.7 2-5.8z"/><path d="M8.6 9.2h6.8"/><path d="M12 15v5M8.5 20.5h7"/></svg><b></b><span></span></button>
+      <button class="tab" role="tab" id="tab-show" data-tab="show"><svg class="tab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.2" r="3.1"/><path d="M3.3 19.5c.5-3.4 2.8-5.4 5.7-5.4s5.2 2 5.7 5.4"/><path d="M15.3 5.3a3.1 3.1 0 0 1 0 5.8"/><path d="M17.2 14.4c2 .6 3.3 2.4 3.6 5.1"/></svg><b></b></button>
     </div>
     <div class="toolbar" id="toolbar">
       <label class="search"><span class="sr" id="qlbl"></span>
@@ -1744,6 +1780,11 @@ html.x404 body, html.xadm body{background:var(--screen)}
 <dialog id="cut" aria-labelledby="cTitle"></dialog>
 <dialog id="val" aria-labelledby="vpTitle"></dialog>
 <dialog id="bgd" aria-labelledby="bgTitle"></dialog>
+<div class="set-pop" id="setPop" role="dialog" aria-labelledby="setT" hidden>
+  <p class="sp-hd" id="setT"></p>
+  <div class="sp-row"><span class="sp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9s-1.2 6.5-3.6 9c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3z"/></svg></span><span class="sp-l"><b id="spLang"></b></span><div class="seg" id="lang" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="fr">FR</button></div></div>
+  <button type="button" class="sp-row sp-go" id="bgBtn"><span class="sp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/></svg></span><span class="sp-l"><b id="spBg"></b><small id="spBgCur"></small></span><span class="sp-th" id="spBgTh" aria-hidden="true"></span><svg class="sp-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg></button>
+</div>
 <dialog id="shc" aria-labelledby="scTitle"></dialog>
 <dialog id="shv" aria-labelledby="svTitle"></dialog>
 <input type="file" id="picFile" accept="image/*" hidden>
@@ -1791,7 +1832,7 @@ const T = {
   vpHowD:{o5:"Worst case: the 5★ arrives at pity 70.",a:"The 2nd copy of a 5★, also at pity 70.",o4:"Guaranteed within 10 Odes. Counts 0 if you own that banner's 5★ in the same version.",o3:"One Ode, the cheapest pull.",s:"The regular price, promotions ignored."},
   vpZeroH:"Free reward, Miliastra Pass or Standard Ode: nothing to pay in Chronal Nexus.",vpRate:"Conversion",vpRateD:"Best top-up: 6,480 + 1,600 bonus Chronal Nexus.",vpShop:"Shop price",
   vpNote:"Each version (♀/♂) of a set counts separately and includes its pieces. Prices are without discount; Event Odes are taken at their guaranteed maximum.",
-  vpEmpty:"Check the items you own to see what your collection is worth.",bgBtn:"Background",bgT:"Background",bgIntro:"Pick a Miliastra Wonderland visual for the page background. It applies right away.",bgDim:"Dim",bgBlur:"Blur",bgPa:"Panel",bgReset:"Reset",bgResetT:"Background settings reset",bgMove:"Motion",bgFx:"Animated",bgFxD:"abstract, with particles",fxN:{galaxy:"Galaxy",nebula:"Nebula",constellations:"Constellations",fireflies:"Fireflies",warp:"Starflight",crystals:"Prism crystals"},bgNone:"Default",bgOwn:"Your image",bgLv:"Wonderland level backgrounds",bgLvD:"from the Miliastra profile",bgLvN:n=>`Level ${n}`,bgSp:"Miliastra Wonderland",bgSpD:"Wonderland Treasures key art",bgCred:"Images: Genshin Impact Wiki (Fandom) · © HoYoverse. Your own image stays on this device; right-click it (or long-press) to replace it.",bgErr:"This image couldn't be read.",vpTT:(l,v,p,n)=>`${l}\n${v} Chronal Nexus · ${p}\n${n}`,perVer:"per version",worthL:"Account value",worthOf:n=>`of ${n}`,
+  vpEmpty:"Check the items you own to see what your collection is worth.",bgBtn:"Background",setBtn:"Settings",setLang:"Language",bgT:"Background",bgIntro:"Pick a Miliastra Wonderland visual for the page background. It applies right away.",bgDim:"Dim",bgBlur:"Blur",bgPa:"Panel",bgReset:"Reset",bgResetT:"Background settings reset",bgMove:"Motion",bgFx:"Animated",bgFxD:"abstract, with particles",fxN:{galaxy:"Galaxy",nebula:"Nebula",constellations:"Constellations",fireflies:"Fireflies",warp:"Starflight",crystals:"Prism crystals"},bgNone:"Default",bgOwn:"Your image",bgLv:"Wonderland level backgrounds",bgLvD:"from the Miliastra profile",bgLvN:n=>`Level ${n}`,bgSp:"Miliastra Wonderland",bgSpD:"Wonderland Treasures key art",bgCred:"Images: Genshin Impact Wiki (Fandom) · © HoYoverse. Your own image stays on this device; right-click it (or long-press) to replace it.",bgErr:"This image couldn't be read.",vpTT:(l,v,p,n)=>`${l}\n${v} Chronal Nexus · ${p}\n${n}`,perVer:"per version",worthL:"Account value",worthOf:n=>`of ${n}`,
   worthTip:"Total Chronal Nexus value of what you own. Shop items: price without discount. Event Ode: 5★ = 70 Odes (maximum pity), ascension = a 2nd copy at pity, 4★ = 10 Odes (free if you own that banner's 5★ in the same version), 3★ = 1 Ode, at 160 per Ode. Free items, Miliastra Pass and Standard Ode rewards count as 0.",
   basis:{s:"Miliastra Shop price (without discount)",o5:"Event Ode 5★: 70 Odes × 160 (maximum pity)",a:"Ascension: a 2nd copy at maximum pity (70 × 160)",o4:"Event Ode 4★: guaranteed within 10 Odes (10 × 160)",o4f:"Free with the banner's 5★ (obtained on the way)",o3:"Event Ode 3★: 1 Ode (160)",none:"No Chronal Nexus price (free reward, Miliastra Pass or Standard Ode)",piece:"Included in its set's value"},filters:"Filters",done:"Show results",reset:"Reset filters",clearAll:"Clear all",
   gSrc:"How to get",gR:"Rarity",gV:"Version",gSt:"Collection",gCat:"Type",allCats:"All",inAllCats:n=>`See the ${n} result${n>1?"s":""} in all types`,own:"Owned",miss:"Missing",other:"Other",
@@ -1844,7 +1885,7 @@ const T = {
   vpHowD:{o5:"Pire cas : le 5★ tombe au pity 70.",a:"Le 2e exemplaire d'un 5★, lui aussi au pity 70.",o4:"Garanti en 10 Odes. Compte 0 si tu as le 5★ de cette bannière dans la même version.",o3:"Une seule Ode, le tirage le moins cher.",s:"Le prix normal, sans tenir compte des promos."},
   vpZeroH:"Récompense gratuite, Miliastra Pass ou Ode standard : rien à payer en Chronal Nexus.",vpRate:"Conversion",vpRateD:"Meilleur pack : 6 480 + 1 600 Chronal Nexus offerts.",vpShop:"Prix boutique",
   vpNote:"Chaque version (♀/♂) d'un set compte séparément et inclut ses pièces. Prix hors promo ; les Odes d'événement sont prises à leur maximum garanti.",
-  vpEmpty:"Coche les objets que tu possèdes pour voir ce que vaut ta collection.",bgBtn:"Fond d'écran",bgT:"Fond d'écran",bgIntro:"Choisis un visuel de Miliastra Wonderland pour le fond de la page. Il s'applique tout de suite.",bgDim:"Assombrir",bgBlur:"Flou",bgPa:"Panneau",bgReset:"Réinitialiser",bgResetT:"Réglages du fond réinitialisés",bgMove:"Animation",bgFx:"Animés",bgFxD:"abstraits, avec particules",fxN:{galaxy:"Galaxie",nebula:"Nébuleuse",constellations:"Constellations",fireflies:"Lucioles",warp:"Voyage stellaire",crystals:"Cristaux prismatiques"},bgNone:"Par défaut",bgOwn:"Ton image",bgLv:"Fonds de niveau Wonderland",bgLvD:"du profil Miliastra",bgLvN:n=>`Niveau ${n}`,bgSp:"Miliastra Wonderland",bgSpD:"illustrations des Trésors de Wonderland",bgCred:"Images : Genshin Impact Wiki (Fandom) · © HoYoverse. Ton image reste sur cet appareil ; clic droit (ou appui long) dessus pour la remplacer.",bgErr:"Impossible de lire cette image.",vpTT:(l,v,p,n)=>`${l}\n${v} Chronal Nexus · ${p}\n${n}`,perVer:"par version",worthL:"Valeur du compte",worthOf:n=>`sur ${n}`,
+  vpEmpty:"Coche les objets que tu possèdes pour voir ce que vaut ta collection.",bgBtn:"Fond d'écran",setBtn:"Paramètres",setLang:"Langue",bgT:"Fond d'écran",bgIntro:"Choisis un visuel de Miliastra Wonderland pour le fond de la page. Il s'applique tout de suite.",bgDim:"Assombrir",bgBlur:"Flou",bgPa:"Panneau",bgReset:"Réinitialiser",bgResetT:"Réglages du fond réinitialisés",bgMove:"Animation",bgFx:"Animés",bgFxD:"abstraits, avec particules",fxN:{galaxy:"Galaxie",nebula:"Nébuleuse",constellations:"Constellations",fireflies:"Lucioles",warp:"Voyage stellaire",crystals:"Cristaux prismatiques"},bgNone:"Par défaut",bgOwn:"Ton image",bgLv:"Fonds de niveau Wonderland",bgLvD:"du profil Miliastra",bgLvN:n=>`Niveau ${n}`,bgSp:"Miliastra Wonderland",bgSpD:"illustrations des Trésors de Wonderland",bgCred:"Images : Genshin Impact Wiki (Fandom) · © HoYoverse. Ton image reste sur cet appareil ; clic droit (ou appui long) dessus pour la remplacer.",bgErr:"Impossible de lire cette image.",vpTT:(l,v,p,n)=>`${l}\n${v} Chronal Nexus · ${p}\n${n}`,perVer:"par version",worthL:"Valeur du compte",worthOf:n=>`sur ${n}`,
   worthTip:"Valeur totale en Chronal Nexus de ce que tu possèdes. Boutique : prix hors promo. Ode d'événement : 5★ = 70 Odes (pity maximal), ascension = un 2e exemplaire au pity, 4★ = 10 Odes (offert si tu as le 5★ de cette bannière dans la même version), 3★ = 1 Ode, à 160 l'Ode. Les objets gratuits, du Miliastra Pass et de l'Ode standard comptent pour 0.",
   basis:{s:"Prix boutique Miliastra (hors promo)",o5:"Ode d'événement 5★ : 70 Odes × 160 (pity maximal)",a:"Ascension : un 2e exemplaire au pity maximal (70 × 160)",o4:"Ode d'événement 4★ : garanti en 10 Odes (10 × 160)",o4f:"Offert avec le 5★ de la bannière (obtenu en route)",o3:"Ode d'événement 3★ : 1 Ode (160)",none:"Pas de prix en Chronal Nexus (récompense gratuite, Miliastra Pass ou Ode standard)",piece:"Comprise dans la valeur de son set"},filters:"Filtres",done:"Voir les résultats",reset:"Réinitialiser les filtres",clearAll:"Tout effacer",
   gSrc:"Obtention",gR:"Rareté",gV:"Version",gSt:"Collection",gCat:"Type",allCats:"Tout",inAllCats:n=>`Voir ${n>1?"les "+n+" résultats":"le résultat"} dans tous les types`,own:"Obtenus",miss:"Manquants",other:"Autres",
@@ -2269,7 +2310,7 @@ function renderHeader(){
     upd.push([el.querySelector(".na"),"dash",`${(2*Math.PI*17*p).toFixed(2)} 120`]); });
   requestAnimationFrame(()=>upd.forEach(([el,k,v])=>{ if(k==="width") el.style.width=v; else el.setAttribute("stroke-dasharray",v); }));
   $("tab-outfits").querySelector("b").textContent=t("outfits"); $("tab-outfits").querySelector("span").textContent=(state.looks||[]).length; $("tab-outfits").setAttribute("aria-selected", ui.tab==="outfits");
-  $("tab-show").querySelector("b").textContent=t("showT"); $("tab-show").querySelector("span").textContent=SHOW.items?SHOW.items.length:"✦"; $("tab-show").setAttribute("aria-selected", ui.tab==="show");
+  $("tab-show").querySelector("b").textContent=t("showT"); $("tab-show").setAttribute("aria-selected", ui.tab==="show");
   $("rankInfo").setAttribute("aria-label", t("infoBtn")); $("rankInfo").title=t("infoBtn");
   for(const tab of ["sets","comp"]){
     const el=$("tab-"+tab), [g2,t2]=tally(tabList(tab));
@@ -2284,7 +2325,7 @@ function countUp(el,from,to){
 function renderChrome(){
   document.documentElement.lang=ui.lang;
   $("lang").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===ui.lang));
-  $("q").placeholder=t("search"); $("qlbl").textContent=t("search"); $("bgBtn").title=t("bgBtn"); hxSet(ui.hx); bkSet(ui.bk); $("shBtn").title=t("scBtn"); $("shBtn").setAttribute("aria-label",t("scBtn")); $("bgBtn").setAttribute("aria-label",t("bgBtn"));
+  $("q").placeholder=t("search"); $("qlbl").textContent=t("search"); $("setBtn").title=t("setBtn"); $("setBtn").setAttribute("aria-label",t("setBtn")); setRender(); hxSet(ui.hx); bkSet(ui.bk); $("shBtn").title=t("scBtn"); $("shBtn").setAttribute("aria-label",t("scBtn")); $("bgBtn").setAttribute("aria-label",t("bgBtn"));
   $("gender").setAttribute("aria-label", t("wear"));
   const gl={both:t("both"),f:"♀ "+t("f"),m:"♂ "+t("m")};
   if(!$("gender").querySelector("[data-g]")) $("gender").innerHTML=Object.keys(gl).map(v=>`<button type="button" data-g="${v}"></button>`).join("");
@@ -2869,7 +2910,7 @@ $("constel").addEventListener("click", e=>{ const n=e.target.closest(".node"); i
   if(ui.tab==="sets" && ui.sort==="cat" && !ui.f.sets.v.length){ const sec=document.querySelector(`.group[data-group="v:${CSS.escape(v)}"]`); if(sec){ sec.scrollIntoView({behavior:reduce()?"auto":"smooth",block:"start"}); return; } }
   toggleFilter("v", v); $("tabs").scrollIntoView({behavior:reduce()?"auto":"smooth",block:"start"}); });
 $("lang").addEventListener("click", e=>{ const b=e.target.closest("[data-lang]"); if(!b || ui.lang===b.dataset.lang) return; ui.lang=b.dataset.lang; saveUI();
-  $("lang").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); afterPaint(renderAll); });
+  $("lang").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); afterPaint(()=>{ renderAll(); if(!setPop.hidden) setPlace(); }); });
 $("gender").addEventListener("click", e=>{ const b=e.target.closest("[data-g]"); if(!b || ui.g===b.dataset.g) return; ui.g=b.dataset.g; saveUI();
   $("gender").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b)); afterGlide($("gender"), ()=>{ renderChrome(); renderHeader(); renderTab(); }); });
 let qT=null; $("q").addEventListener("input", e=>{ q=e.target.value.trim(); clearTimeout(qT); qT=setTimeout(()=>{ renderFilters(); renderList(); },120); });
@@ -5064,8 +5105,27 @@ function openBg(){
     tl.addEventListener("pointerenter", ()=>{ if(!reduce()) stopLive=FXBG.preview(cv, cv.dataset.fx, true); });
     tl.addEventListener("pointerleave", ()=>{ if(stopLive){ stopLive(); stopLive=null; } }); });
 }
-function pickBg(id){ ui.bg=Object.assign(bgCfg(),{id}); saveUI(); document.querySelectorAll("#bgd .bg-t").forEach(b=>b.setAttribute("aria-pressed", b.dataset.bg===id)); applyBg(); }
-$("bgBtn").addEventListener("click", openBg);
+function pickBg(id){ ui.bg=Object.assign(bgCfg(),{id}); saveUI(); document.querySelectorAll("#bgd .bg-t").forEach(b=>b.setAttribute("aria-pressed", b.dataset.bg===id)); applyBg(); setRender(); }
+$("bgBtn").addEventListener("click", ()=>{ setOpen(false); openBg(); });
+/* ---------- the header's settings button: a small panel with the language and the background ---------- */
+const setPop=$("setPop");
+function bgName(id){ if(!id) return t("bgNone"); if(id==="custom") return t("bgOwn"); if(id.startsWith("fx:")) return t("fxN")[id.slice(3)]||id.slice(3); const b=BGS.find(x=>x[0]===id); return b ? b[1] : id; }
+function setRender(){
+  $("setT").textContent=t("setBtn"); $("spLang").textContent=t("setLang"); $("spBg").textContent=t("bgBtn");
+  const id=bgCfg().id||"", th=$("spBgTh"); $("spBgCur").textContent=bgName(id);
+  if(th.dataset.id===id) return; th.dataset.id=id; th.innerHTML=""; th.className="sp-th"+(id?"":" none");
+  if(id.startsWith("fx:") && FXBG.has(id.slice(3))){ const c=document.createElement("canvas"); c.width=112; c.height=72; th.appendChild(c); FXBG.preview(c, id.slice(3), false); }
+  else if(id==="custom") PicDB.get("bg").then(r=>{ if(r && r.src && th.dataset.id==="custom") th.innerHTML=`<img src="${URL.createObjectURL(r.src)}" alt="">`; });
+  else if(id){ const b=BGS.find(x=>x[0]===id); if(b) th.innerHTML=`<img src="${esc(bgSrc(b[2],160))}" alt="" referrerpolicy="no-referrer">`; }
+}
+function setPlace(){ const r=$("setBtn").getBoundingClientRect(), w=setPop.offsetWidth, left=Math.round(Math.min(innerWidth-w-10, Math.max(10, r.right-w)));
+  setPop.style.left=(left+scrollX)+"px"; setPop.style.top=Math.round(r.bottom+10+scrollY)+"px"; setPop.style.setProperty("--ax", Math.round(r.left+r.width/2-left)+"px"); }
+function setOpen(on){ if(on===!setPop.hidden) return; setPop.hidden=!on; $("setBtn").setAttribute("aria-expanded", String(on)); $("setBtn").classList.toggle("on", on);
+  if(on){ setRender(); setPlace(); syncPills(); setPop.classList.remove("in"); void setPop.offsetWidth; setPop.classList.add("in"); } }
+$("setBtn").addEventListener("click", ()=>setOpen(setPop.hidden));
+document.addEventListener("pointerdown", e=>{ if(!setPop.hidden && !setPop.contains(e.target) && !e.target.closest("#setBtn")) setOpen(false); }, true);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !setPop.hidden){ setOpen(false); $("setBtn").focus(); } });
+window.addEventListener("resize", ()=>{ if(!setPop.hidden) setPlace(); });
 const BG_DEF={dim:50,blur:0,pa:88,move:true};
 $("bgd").addEventListener("click", e=>{ const d=$("bgd");
   if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
