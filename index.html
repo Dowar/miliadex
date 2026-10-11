@@ -110,7 +110,7 @@ button{cursor:pointer}
 .info-btn:active{transform:scale(.95)}
 #info{width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 24px);position:relative;background:radial-gradient(130% 90% at 50% -10%,#3a2a86 0%,#1d1550 40%,#110b2a 78%);color:#f3efff;border-radius:26px;box-shadow:0 30px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);color-scheme:dark}
 #info > :not(.vp-sky){position:relative;z-index:1}
-.rk-scroll{overflow:auto;padding:6px 22px 22px;display:grid;gap:16px}
+.rk-scroll{overflow:auto;padding:22px 22px 22px;display:grid;gap:16px}
 .rk-hero{display:flex;align-items:center;gap:16px}
 .rk-big{flex:none;width:108px;height:108px;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--c1) 65%,transparent));animation:rkFloat 5s ease-in-out infinite}
 .rk-big svg{width:100%;height:100%;display:block}
@@ -146,7 +146,7 @@ button{cursor:pointer}
 .rk-how{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
 .rk-how h3{margin:0 0 8px;font-family:var(--tech);font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#b9adf5}
 .rk-how ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;line-height:1.45;color:#d8d0ff}
-@media (max-width:480px){ #info{width:100%;max-width:100%;max-height:100dvh;height:100dvh;margin:0;border-radius:0} .rk-scroll{padding:4px 14px 18px} .rk-big{width:86px;height:86px} }
+@media (max-width:480px){ #info{width:100%;max-width:100%;max-height:100dvh;height:100dvh;margin:0;border-radius:0} .rk-scroll{padding:18px 14px 18px} .rk-big{width:86px;height:86px} }
 .ih{display:flex;align-items:center;gap:12px;padding:16px 18px 10px;background:linear-gradient(160deg,#2b1f5c,#171133);color:#fff}
 .ih h2{margin:0;font-family:var(--serif);font-size:22px;font-weight:650}
 .ih .dx{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
@@ -200,7 +200,7 @@ button{cursor:pointer}
 /* ---------- tabs + toolbar ---------- */
 .tabs{position:relative;isolation:isolate;display:flex;gap:6px;width:fit-content;max-width:100%;margin-top:12px;padding:4px;border-radius:17px;background:var(--chip);box-shadow:inset 0 1px 2px rgba(20,10,60,.12)}
 .tab{flex:1 1 0;width:250px;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;background:transparent;border-radius:13px;padding:10px 14px;text-align:left;color:var(--text);transition:color .3s,background .2s}
-.tab b{font-family:var(--serif);font-weight:650;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab b{font-family:var(--serif);font-weight:650;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;min-width:0}
 .tab span{font-family:var(--tech);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;transition:color .3s}
 .tab:not([aria-selected="true"]){background:color-mix(in srgb,var(--accent) 9%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent);transition:color .3s,background .2s,box-shadow .25s}
 .tab:not([aria-selected="true"]):hover{background:color-mix(in srgb,var(--accent) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 34%,transparent),0 0 18px color-mix(in srgb,var(--accent) 38%,transparent)}
@@ -484,7 +484,14 @@ button{cursor:pointer}
 .sc-none{grid-column:1/-1;margin:0;font-size:13px;color:#a49dc8}
 .sc-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:#a49dc8}
 .sc-foot span:first-child{font-family:var(--tech);font-weight:700;letter-spacing:.22em;color:#cfc6ff}
-.sc-name{display:grid;gap:6px;font-size:13px;font-weight:600;color:#cfc6ff}
+.sc-as{margin:0;font-size:13.5px;color:#cfc6ff}
+.sc-as b{color:#fff}
+.sc-as .linkbtn{color:#cfc6ff;text-decoration:underline;text-underline-offset:3px}
+.sc-lock{display:grid;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.sc-lock p{margin:0;display:grid;gap:4px;font-size:13.5px;line-height:1.45;color:#d8d0ff}
+.sc-lock b{font-size:15px;color:#fff}
+.sc-lock .gbtn{box-sizing:border-box}
+.sc-wait{display:flex!important;align-items:center;gap:10px;grid-template:none}
 .sc-name input{font:inherit;font-weight:500;font-size:15px;color:#fff;background:rgba(10,6,30,.45);border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:10px 12px;outline:none}
 .sc-name input:focus{border-color:#9c85ff;box-shadow:0 0 0 3px rgba(156,133,255,.3)}
 .sc-act{display:flex;flex-wrap:wrap;gap:10px}
@@ -786,7 +793,65 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 .cv-wrap{position:relative}
 .cv-wrap::after{content:"";position:absolute;top:14px;right:14px;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.25);border-top-color:#fff;opacity:0;transition:opacity .2s;animation:spin .8s linear infinite;pointer-events:none}
 .cv-wrap.loading::after{opacity:1}
-#lkCv{display:block;width:100%;height:auto;max-width:100%}
+.lc{aspect-ratio:1080/1350;width:100%;user-select:none;-webkit-user-select:none}
+.lc-st{position:absolute;left:0;top:0;width:1080px;height:1350px;transform-origin:0 0;transform:scale(var(--s,.4));pointer-events:none;overflow:hidden;color:#fff;
+  background:radial-gradient(circle 460px at 150px 110px,rgba(123,92,255,.45),rgba(123,92,255,0)),radial-gradient(circle 420px at 990px 60px,rgba(47,184,255,.25),rgba(47,184,255,0)),
+    radial-gradient(circle 600px at 640px 1380px,rgba(255,159,90,.18),rgba(255,159,90,0)),radial-gradient(circle 1700px at 0 0,#4c369c 0,#271c58 42%,#110b28 100%)}
+.lc-stars{position:absolute;inset:0;width:100%;height:100%}
+.lc-brand{position:absolute;left:64px;top:63px;font:700 26px/1 var(--tech);letter-spacing:7px;color:#cfc6ff}
+.lc-g{position:absolute;right:64px;top:52px;height:46px;padding:0 20px;border-radius:23px;background:rgba(255,255,255,.14);font:700 22px/46px var(--body);white-space:nowrap}
+.lc-top{position:absolute;left:64px;right:64px;top:116px}
+.lc-ti{margin:0;font:650 66px/72px var(--serif);background:linear-gradient(90deg,#fff2c9,#ffc36b 35%,#f0b8ff 70%,#9fe6ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.lc-sub{margin:13px 0 0;font:500 25px/32px var(--body);color:#d6ceff}
+.lc-body{position:absolute;inset:0}
+.lc-ft{position:absolute;left:64px;right:64px;top:1264px;padding-top:23px;border-top:1.5px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;align-items:baseline;gap:20px;line-height:1}
+.lc-ft b{font:700 25px/1 var(--tech);letter-spacing:2px}
+.lc-ft i{font:500 19px/1 var(--body);font-style:normal;color:rgba(207,198,255,.7);margin-left:12px}
+.lc-ft small{font:500 16px/1 var(--body);color:rgba(207,198,255,.65);white-space:nowrap}
+.lc-t{position:absolute;transform-origin:0 0;transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),transform .5s cubic-bezier(.2,.8,.2,1)}
+.lc-t.big{width:300px;height:300px} .lc-t.sm{width:150px;height:150px}
+.lc-t.r5{--a:#9a6326;--b:#e0aa52} .lc-t.r4{--a:#5b479c;--b:#a383e6} .lc-t.r3{--a:#2f5a8c;--b:#62a0d6} .lc-t.r2{--a:#356b52;--b:#68aa86} .lc-t.r0,.lc-t.r1{--a:#5e5b74;--b:#a5a2bb}
+.lc-c{position:absolute;inset:0;border-radius:30px;overflow:hidden;background:linear-gradient(158deg,var(--a),var(--b));box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.lc-t.sm .lc-c{border-radius:20px;box-shadow:0 7px 18px rgba(0,0,0,.4)}
+.lc-c::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.28),rgba(255,255,255,0) 90%)}
+.lc-c img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .35s}
+.lc-c img.ok{opacity:1}
+.lc-c::after{content:"";position:absolute;inset:50% 0 0;background:linear-gradient(rgba(12,8,30,0) 4%,rgba(12,8,30,.9))}
+.lc-t{--f:1;--pd:18px;--fs:22px;--fl:14px;--rs:20px;--rt:15px;--ck:34px;--co:12px}
+.lc-t.sm{--pd:11px;--fs:14px;--rs:13px;--rt:11px;--ck:24px;--co:8px}
+.lc-tx{position:absolute;z-index:1;left:var(--pd);right:var(--pd);bottom:var(--pd);display:grid;gap:calc(4px*var(--f))}
+.lc-tx small{font:700 var(--fl)/1.1 var(--tech);color:rgba(235,228,255,.85)}
+.lc-tx b{font:600 var(--fs)/1.23 var(--body);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lc-r{position:absolute;z-index:1;left:var(--pd);top:var(--rt);font-size:var(--rs);line-height:1;text-shadow:0 0 4px rgba(0,0,0,.6)}
+.lc-t.r5 .lc-r{color:#ffe6a6}
+.lc-ok{position:absolute;z-index:1;right:var(--co);top:var(--co);width:var(--ck);height:var(--ck);border-radius:50%;background:#22b07f;display:grid;place-items:center}
+.lc-ok svg{width:65%;height:65%}
+
+
+.lc-ok.pop{animation:lcPop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes lcPop{from{transform:scale(0)}}
+.lc-t.lc-in .lc-c{animation:lcIn .5s cubic-bezier(.3,1.35,.5,1) calc(var(--i,0)*25ms) backwards}
+@keyframes lcIn{from{opacity:0;transform:scale(.55) translateY(24px)}}
+.lc-out{transition:none}
+#outfits.enter :is(.b-preview > *, .b-head, .quick, .slots > *, .board > h3, .mk, .b-foot, .lk-head, .looks > *){animation:obIn .6s cubic-bezier(.2,.8,.2,1) calc(min(var(--e,0),26)*26ms) backwards}
+@keyframes obIn{from{opacity:0;transform:translateY(18px)}}
+#outfits.enter .lc-t .lc-c{animation:lcIn .55s cubic-bezier(.3,1.35,.5,1) calc(180ms + var(--i,0)*45ms) backwards}
+.lc-t.lc-out .lc-c,.lc-pic.lc-out,.lc-acc.lc-out,.lc-empty.lc-out{animation:lcOut .35s ease-in forwards}
+@keyframes lcOut{to{opacity:0;transform:scale(.6)}}
+.lc-pic.lc-in,.lc-acc.lc-in,.lc-empty.lc-in{animation:lcFade .5s ease backwards}
+@keyframes lcFade{from{opacity:0}}
+.lc-pic,.lc-acc,.lc-empty{position:absolute;transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1),height .5s cubic-bezier(.2,.8,.2,1)}
+.lc-pic img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain}
+.lc-pic.frame{border-radius:30px;border:3px solid transparent;overflow:hidden;background:linear-gradient(#1a1238,#1a1238) padding-box,linear-gradient(135deg,rgba(255,236,190,.85),rgba(240,184,255,.55),rgba(159,230,255,.8)) border-box;box-shadow:0 16px 40px rgba(6,3,20,.6)}
+.lc-pic.frame::after{content:"";position:absolute;z-index:2;inset:70% 0 0;background:linear-gradient(rgba(12,8,30,0),rgba(12,8,30,.35))}
+.lc-pic.clear img{object-position:50% 100%;filter:drop-shadow(0 14px 19px rgba(8,4,24,.55))}
+.lc-pic.clear::before{content:"";position:absolute;left:-160px;right:-160px;top:-80px;bottom:-80px;background:radial-gradient(closest-side circle at 50% 42%,rgba(186,160,255,.36),rgba(186,160,255,0))}
+.lc-pic.clear::after{content:"";position:absolute;left:2%;right:2%;bottom:-24px;height:44px;border-radius:50%;background:radial-gradient(closest-side,rgba(226,214,255,.7),rgba(160,130,255,.25) 55%,rgba(160,130,255,0))}
+.lc-acc{height:28px;display:flex;align-items:center;gap:18px;font:700 16px/1 var(--tech);letter-spacing:4px;color:rgba(207,198,255,.85)}
+.lc-acc::before,.lc-acc::after{content:"";flex:1;height:1.5px;background:rgba(207,198,255,.3)}
+.lc-empty{text-align:center;font-family:var(--body);font-weight:500;line-height:1.3;color:rgba(230,224,255,.75)}
+@media (prefers-reduced-motion:reduce){ .lc-t,.lc-pic,.lc-acc,.lc-empty{transition:none} .lc-c img{transition:none} }
 .b-preview .btn{display:flex;align-items:center;justify-content:center;gap:8px}
 .oc-box{display:grid;gap:8px}
 .oc-box .btn{text-align:center}
@@ -802,7 +867,12 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 .pic-add small{font-size:12px;color:var(--muted)}
 .pic-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:10px;border:2px solid var(--line);border-radius:14px;background:var(--card)}
 .pic-th{width:58px;height:80px;border-radius:10px;background:radial-gradient(circle at 50% 38%,#5b45b0,#1c1440);display:grid;place-items:center;overflow:hidden}
-.pic-th img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.pic-th img{max-width:100%;max-height:100%;object-fit:contain;display:block;grid-area:1/1}
+.pic-th > svg{grid-area:1/1;width:26px;height:26px;color:rgba(255,255,255,.55);display:none}
+.pic-row.away .pic-th > svg{display:block}
+.pic-new,.pic-away,.pic-row.away .sw,.pic-row.away [data-act=pic-edit],.pic-row.away .pic-note{display:none}
+.pic-row.away .pic-new{display:inline-flex}
+.pic-row.away .pic-away{display:block;grid-column:1/-1;margin:0;font-size:12px;color:var(--muted)}
 .pic-ctl{display:grid;gap:8px;min-width:0}
 .sw{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;cursor:pointer}
 .sw input{width:18px;height:18px;accent-color:var(--accent);margin:0}
@@ -1326,7 +1396,7 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .ask-ps .miss img{filter:grayscale(1) brightness(.55);opacity:.7}
 .ask-ps .cur{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .ask .row .btn{flex:1 1 150px}
-#lkName.bad,#scName.bad{border-color:#d6455d!important;box-shadow:0 0 0 3px rgba(214,69,93,.2);color:#d6455d}
+#lkName.bad{border-color:#d6455d!important;box-shadow:0 0 0 3px rgba(214,69,93,.2);color:#d6455d}
 /* the cloud button once signed in: the pseudo */
 #gdBtn.me{width:auto;max-width:230px;display:inline-flex;align-items:center;gap:7px;padding:3px 12px 3px 3px;border-radius:999px;font:650 13px var(--body);color:#fff}
 #gdBtn.me:hover{transform:none}
@@ -1698,7 +1768,7 @@ const ODEB=[["Candlelit Revelry",["Fervent Fighter","Mystic Forest","Sonic Ruins
 /* ---------- i18n ---------- */
 const T = {
  en:{sub:"Miliastra Wonderland collection tracker",sets:"Sets",comp:"Cosmetics",search:"Search a set or cosmetic…",both:"Both",f:"Manekina",m:"Manekin",
-  sortL:"Sort by",download:"Download Miliadex outfit card",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Miliadex outfit card downloaded · import it again to get this outfit back",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNote:"The photo stays on this device and out of backups. It only leaves inside the image you download and the preview picture of links you share (both reopen the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",autoNone:"The automatic cut-out found no character in this frame: the photo is used as is (try framing your character more closely)",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
+  sortL:"Sort by",download:"Download Miliadex outfit card",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Miliadex outfit card downloaded · import it again to get this outfit back",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNew:"Add one",picAway:"This outfit’s in-game screenshot stayed on the device where it was added (photos aren’t synced): its pieces show instead. Add one here if you like.",picNote:"The photo stays on this device and out of backups. It only leaves inside the image you download and the preview picture of links you share (both reopen the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",autoNone:"The automatic cut-out found no character in this frame: the photo is used as is (try framing your character more closely)",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
   saveLook:"Save outfit",updateLook:"Update outfit",share:"Share link",copyCode:"Copy code",clear:"Clear",myLooks:"My outfits",noLooks:"No saved outfits yet. Build one above, then press “Save outfit”.",
   ownedOf:(a,b)=>`${a}/${b} pieces owned`,pick:n=>`Choose: ${n}`,pickSet:"Choose a set",equip:"Equip",equipped:"Equipped",addPiece:"Add",none:"Remove",ownedOnly:"Owned only",searchPh:"Search…",included:"Included",
   sharedT:"Outfit shared with you",saveShared:"Save to my outfits",dismiss:"Dismiss",linkCopied:"Link copied",lookSaved:"Outfit saved",lookDeleted:"Outfit deleted",del:"Delete",
@@ -1739,7 +1809,7 @@ const T = {
   shEdit:"Edit in My Outfits",shEditMine:"Edit",shSave:"Add to My Outfits",shSaved:"In My Outfits",shDl:"Download",shLink:"Copy link",shAdded:"Added to My Outfits",shOpened:"Outfit opened in My Outfits: change it as you like",
   shNoData:"This image doesn't carry a Miliadex outfit, so it can only be downloaded.",shAllOwned:"You own the whole outfit!",shPrev:"Previous",shNext:"Next",shGone:"This outfit isn't shared with the community anymore.",
   imgTip:"Open a Miliadex outfit card (the image downloaded from the Miliadex), or drop it on the preview",imgIn:n=>`Outfit opened from its image${n?" · with its in-game screenshot":""}`,imgNone:"This image isn’t a Miliadex outfit card (use the original file downloaded from the Miliadex)",hxMore:"Details",hxLess:"Hide details",scBtn:"Share my collection",scKickMine:"Share my collection",scKickTheirs:"Collection shared with you",scOf:"Miliadex collection",scAnon:"Anonymous Traveler",scDone:"complete",sc5:"5★ sets",scTop:"Most valuable pieces",scNone:"Nothing collected yet.",
-  scName:"Your name on the card (optional)",scNamePh:"Traveler",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
+  scAs:"Shared as",scNick:"Change pseudo",scSignT:"Sign in to share your collection",scSignP:"Your card goes out under your Miliadex pseudo. Signing in with Google also keeps your collection synced across your devices.",scDiscord:"Copy for Discord",scCopiedD:"Copied: paste it in Discord",scLink:"Copy link",scNote:"The link carries your whole collection (owned items only, nothing personal): anyone who opens it sees this card.",
   scMine:"See my collection",scStart:"Start my collection",scYou:(l,p,v)=>`You: Lv. ${l} · ${p} complete · ${v} Vivid`,scBad:"This collection link is damaged or incomplete.",scWear:g=>g==="f"?"Manekina only":g==="m"?"Manekin only":"Manekina + Manekin",
   cardProfile:"Collector profile",cardDiscordO:n=>`Miliadex - ${n} outfit`,cardWait:"Preparing the preview picture…",
   gdReconnect:"Sign in again",gdSyncNow:"Sync now",gdDisconnect:"Disconnect",gdConnect:"Sign in with Google",gdPriv:"Privacy",
@@ -1751,7 +1821,7 @@ const T = {
   typeN:{o:"Outfit",k:"Makeup & hair",i:"Interactions"},
   catN:{"Hairstyle":"Hairstyles","Headwear":"Headwear","Top":"Tops","Bottom":"Bottoms","Top;Bottom":"One-piece outfits","Multi":"Multi-part outfits","Eye Accessory":"Eyewear","Face Accessory":"Face accessories","Tail Accessory":"Tails","Footwear":"Footwear","Earrings":"Earrings","Neck Accessory":"Neck accessories","Back Accessory":"Back accessories","Wrist Accessory":"Wrist accessories","Leg Accessory":"Leg accessories","Pendant":"Pendants","Skin Tone":"Skin tones","Eye Shape":"Eye shapes","Iris":"Irises","Eyebrows":"Eyebrows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lipstick","Expression":"Expressions","Action":"Actions","Effects":"Effects"}},
  fr:{sub:"Toutes les tenues de Miliastra Wonderland",sets:"Sets",comp:"Cosmétiques",search:"Chercher un set ou un cosmétique…",both:"Les deux",f:"Manekina",m:"Manekin",
-  sortL:"Trier",download:"Télécharger la carte de tenue Miliadex",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Carte de tenue Miliadex téléchargée · importe-la pour retrouver cette tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNote:"La photo reste sur cet appareil et hors des sauvegardes. Elle ne part que dans l'image que tu télécharges et dans l'image d'aperçu des liens que tu partages (les deux rouvrent la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",autoNone:"Le détourage automatique n’a trouvé aucun personnage dans ce cadre : la photo est utilisée telle quelle (essaie de cadrer ton personnage de plus près)",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
+  sortL:"Trier",download:"Télécharger la carte de tenue Miliadex",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Carte de tenue Miliadex téléchargée · importe-la pour retrouver cette tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNew:"En ajouter une",picAway:"La capture en jeu de cette tenue est restée sur l’appareil où elle a été ajoutée (les photos ne sont pas synchronisées) : ses pièces s’affichent à la place. Tu peux en ajouter une ici.",picNote:"La photo reste sur cet appareil et hors des sauvegardes. Elle ne part que dans l'image que tu télécharges et dans l'image d'aperçu des liens que tu partages (les deux rouvrent la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",autoNone:"Le détourage automatique n’a trouvé aucun personnage dans ce cadre : la photo est utilisée telle quelle (essaie de cadrer ton personnage de plus près)",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
   saveLook:"Enregistrer la tenue",updateLook:"Mettre à jour",share:"Partager le lien",copyCode:"Copier le code",clear:"Vider",myLooks:"Mes tenues",noLooks:"Aucune tenue enregistrée. Compose-en une ci-dessus, puis « Enregistrer la tenue ».",
   ownedOf:(a,b)=>`${a}/${b} pièces obtenues`,pick:n=>`Choisir : ${n}`,pickSet:"Choisir un set",equip:"Équiper",equipped:"Équipé",addPiece:"Ajouter",none:"Retirer",ownedOnly:"Obtenus uniquement",searchPh:"Chercher…",included:"Inclus",
   sharedT:"Tenue partagée avec toi",saveShared:"Ajouter à mes tenues",dismiss:"Fermer",linkCopied:"Lien copié",lookSaved:"Tenue enregistrée",lookDeleted:"Tenue supprimée",del:"Supprimer",
@@ -1792,7 +1862,7 @@ const T = {
   shEdit:"Modifier dans Mes tenues",shEditMine:"Modifier",shSave:"Ajouter à Mes tenues",shSaved:"Dans Mes tenues",shDl:"Télécharger",shLink:"Copier le lien",shAdded:"Ajoutée à Mes tenues",shOpened:"Tenue ouverte dans Mes tenues : modifie-la comme tu veux",
   shNoData:"Cette image ne contient pas de tenue Miliadex : elle peut seulement être téléchargée.",shAllOwned:"Tu possèdes toute la tenue !",shPrev:"Précédente",shNext:"Suivante",shGone:"Cette tenue n'est plus partagée avec la communauté.",
   imgTip:"Ouvre une carte de tenue Miliadex (l’image téléchargée depuis le Miliadex), ou dépose-la sur l’aperçu",imgIn:n=>`Tenue ouverte depuis son image${n?" · avec sa capture en jeu":""}`,imgNone:"Cette image n’est pas une carte de tenue Miliadex (utilise le fichier d’origine téléchargé depuis le Miliadex)",hxMore:"Détails",hxLess:"Masquer les détails",scBtn:"Partager ma collection",scKickMine:"Partager ma collection",scKickTheirs:"Collection partagée avec toi",scOf:"Collection Miliadex",scAnon:"Voyageur anonyme",scDone:"complété",sc5:"Sets 5★",scTop:"Pièces les plus précieuses",scNone:"Rien de collectionné pour l'instant.",
-  scName:"Ton pseudo sur la carte (facultatif)",scNamePh:"Voyageur",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
+  scAs:"Partagée en tant que",scNick:"Changer de pseudo",scSignT:"Connecte-toi pour partager ta collection",scSignP:"Ta carte est partagée sous ton pseudo Miliadex. Se connecter avec Google synchronise aussi ta collection entre tes appareils.",scDiscord:"Copier pour Discord",scCopiedD:"Copié : colle-le dans Discord",scLink:"Copier le lien",scNote:"Le lien contient toute ta collection (seulement les objets obtenus, rien de personnel) : quiconque l'ouvre voit cette carte.",
   scMine:"Voir ma collection",scStart:"Commencer ma collection",scYou:(l,p,v)=>`Toi : niv. ${l} · ${p} complété · ${v} Vivid`,scBad:"Ce lien de collection est abîmé ou incomplet.",scWear:g=>g==="f"?"Manekina seulement":g==="m"?"Manekin seulement":"Manekina + Manekin",
   cardProfile:"Profil de collection",cardDiscordO:n=>`Miliadex - Tenue ${n}`,cardWait:"Préparation de l'image d'aperçu…",
   gdReconnect:"Se reconnecter",gdSyncNow:"Synchroniser",gdDisconnect:"Déconnecter",gdConnect:"Se connecter avec Google",gdPriv:"Confidentialité",
@@ -2406,8 +2476,13 @@ function renderList(){
 let renderToken=0, blockObs=null, revObs=null, listCols=0;
 let rsT=null; window.addEventListener("resize", ()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ if(!isList() || !listCols) return; const g=$("list").querySelector(".blk"); if(!g) return;
   const c=getComputedStyle(g).gridTemplateColumns.split(" ").filter(Boolean).length; if(c!==listCols) renderList(); },220); });
-function renderTab(){ const o=ui.tab==="outfits", sh=ui.tab==="show"; document.body.classList.toggle("tab-outfits",o); document.body.classList.toggle("tab-show",sh);
-  if(o) renderOutfits(); else if(sh) renderShow(); else { renderFilters(); renderList(); } syncUrl("replace"); }
+let tabWas=null;
+function renderTab(){ const o=ui.tab==="outfits", sh=ui.tab==="show", enter=o && tabWas!=="outfits"; tabWas=ui.tab; document.body.classList.toggle("tab-outfits",o); document.body.classList.toggle("tab-show",sh);
+  if(o){ renderOutfits(); if(enter) outfitsEnter(); } else if(sh) renderShow(); else { renderFilters(); renderList(); } syncUrl("replace"); }
+// My Outfits opening: its parts rise in one after the other, the card's pieces pop in (like the other tabs' cards)
+function outfitsEnter(){ const box=$("outfits"); if(!box || reduce()) return;
+  let k=0; box.querySelectorAll(".b-preview > *, .b-head, .quick, .slots > *, .board > h3, .mk, .b-foot, .lk-head, .looks > *").forEach(el=>el.style.setProperty("--e", k++));
+  box.classList.remove("enter"); void box.offsetWidth; box.classList.add("enter"); clearTimeout(box._en); box._en=setTimeout(()=>box.classList.remove("enter"),1600); }
 function renderAll(){ renderChrome(); renderHeader(); renderTab(); }
 
 /* ---------- catching ---------- */
@@ -2871,9 +2946,11 @@ function lookCard(L){
   const m=slotMap(L), its=lookItems(L), own=its.filter(it=>has(it,"x")).length;
   const pics=[]; for(const s of ["Top","Bottom","Hairstyle","Footwear","Headwear"]) if(m[s] && m[s].primary && !pics.includes(m[s].it)) pics.push(m[s].it);
   for(const it of its) if(pics.length<4 && !pics.includes(it)) pics.push(it);
-  const mos = L.pic ? `<span><img data-pic="${esc(L.pic)}" alt=""></span>` : pics.slice(0,4).map(it=>`<span class="r${it.r}">${it.img?imgTag(it.img,160,nm(it),it.id):""}</span>`).join("");
+  const tiles = pics.slice(0,4).map(it=>`<span class="r${it.r}">${it.img?imgTag(it.img,160,nm(it),it.id):""}</span>`).join("");
+  // the in-game screenshot lives on the device where it was added: elsewhere (an outfit synced from another device) the pieces show instead
+  const mos = L.pic ? `<span><img data-pic="${esc(L.pic)}" alt=""></span><template>${tiles}</template>` : tiles;
   const editing = look.id===L.id;
-  return `<article class="look${editing?" editing":""}" data-id="${esc(L.id)}"><button type="button" class="lk-open" data-lview="${esc(L.id)}"><span class="mosaic ${L.pic?"n1 has-pic":"n"+Math.min(4,pics.length)}">${mos}</span>
+  return `<article class="look${editing?" editing":""}" data-id="${esc(L.id)}"><button type="button" class="lk-open" data-lview="${esc(L.id)}"><span class="mosaic ${L.pic?"n1 has-pic":"n"+Math.min(4,pics.length)}" data-n="${Math.min(4,pics.length)}">${mos}</span>
     <span class="lk-meta">${editing?`<span class="lk-ed">${ICON_PEN} ${esc(t("lkEditing"))}</span>`:""}<b>${esc(L.n||t("untitled"))}${L.pub?` <span class="lk-pub" title="${esc(t("pubIn"))}">✦ ${esc(t("pubBadge"))}</span>`:""}</b><small>${L.g==="f"?"♀ "+esc(t("f")):"♂ "+esc(t("m"))} · ${esc(t("ownedOf")(own,its.length))}</small></span></button>
     <div class="lk-act"><button type="button" class="mini" data-lshare="${esc(L.id)}" aria-label="${esc(t("share"))}" title="${esc(t("share"))}">${ICON_LINK}</button><button type="button" class="mini danger" data-ldel="${esc(L.id)}" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div></article>`;
 }
@@ -2883,11 +2960,11 @@ const ICON_UP=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke
 const ICON_INFO=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5"/><circle cx="10" cy="6.3" r=".6" fill="currentColor"/></svg>`;
 function renderOutfits(){
   const box=$("outfits");
-  if(box.dataset.lang!==ui.lang || !$("lkCv")){
+  if(box.dataset.lang!==ui.lang || !$("lkCard")){
     box.dataset.lang=ui.lang;
     box.innerHTML=`<div id="lkShared"></div>
       <div class="builder">
-        <div class="b-preview" id="lkPrev"><div class="cv-wrap"><canvas id="lkCv" width="1080" height="1350" role="img" aria-label="${esc(t("lookPreview"))}"></canvas></div>
+        <div class="b-preview" id="lkPrev"><div class="cv-wrap lc" id="lkCard" role="img" aria-label="${esc(t("lookPreview"))}">${lcShell()}</div>
           <div id="lkPic"></div>
           <div class="oc-box"><button type="button" class="btn" data-act="download">${ICON_DL} ${esc(t("download"))}</button>
             <button type="button" class="btn ghost" data-act="imgImp" title="${esc(t("imgTip"))}">${ICON_UP} ${esc(t("ocImp"))}</button>
@@ -2923,6 +3000,7 @@ function renderOutfits(){
   $("lkList").innerHTML = `<div class="lk-head"><h2>${esc(t("myLooks"))} <small>${looks.length}</small></h2><form class="lk-imp" id="lkImp"><input id="lkCode" autocomplete="off" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importLook"))}"><button class="btn ghost" type="submit">${esc(t("importLook"))}</button></form></div>
     <div class="looks">${looks.length ? looks.slice().reverse().map(lookCard).join("") : `<p class="empty-l">${esc(t("noLooks"))}</p>`}</div>`;
   hydratePics(box);
+  lcFit($("lkCard"));
   scheduleDraw();
 }
 
@@ -2943,7 +3021,7 @@ function loadImg(url){
   return IMGC.get(url);
 }
 let drawT=null, drawTok=0;
-const scheduleDraw = () => { clearTimeout(drawT); drawT=setTimeout(drawLook,140); };
+const scheduleDraw = () => { clearTimeout(drawT); drawT=setTimeout(drawLook,30); };
 const RCOL={5:["#9a6326","#e0aa52"],4:["#5b479c","#a383e6"],3:["#2f5a8c","#62a0d6"],2:["#356b52","#68aa86"],0:["#5e5b74","#a5a2bb"]};
 function rrect(ctx,x,y,w,h,r){ ctx.beginPath(); if(ctx.roundRect) ctx.roundRect(x,y,w,h,r); else { ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); } }
 function wrapText(ctx,txt,maxW,maxLines){
@@ -3060,26 +3138,116 @@ function paintLook(ctx, main, small, imgOf, mainSlot, pic, L=look){
   ctx.font='500 19px Figtree, system-ui, sans-serif'; ctx.fillStyle="rgba(207,198,255,.7)"; ctx.fillText("· Miliastra Wonderland",64+mw+12,H-44);
   ctx.font='500 16px Figtree, system-ui, sans-serif'; ctx.fillStyle="rgba(207,198,255,.65)"; ctx.textAlign="right"; ctx.fillText(t("cvCredit"),W-64,H-46); ctx.textAlign="left";
 }
-async function drawLook(){
-  const cv=$("lkCv"); if(!cv) return; const tok=++drawTok;
+/* the outfit card shown in the builder: the same composition as the downloaded picture, made of page elements (nothing there
+   to save as an image), laid out at the picture's size (1080 × 1350) and scaled to the column, so the page can't bend it.
+   Pieces slide to their new place, new ones pop in, removed ones fade out. */
+const LC_W=1080, LC_H=1350, LC_FOOT=LC_H-92;
+const LC_STARS=(()=>{ let seed=11, c=""; const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+  for(let i=0;i<90;i++){ const o=.25+rnd()*.6, x=rnd()*LC_W, y=rnd()*LC_H, r=.6+rnd()*1.8; c+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill-opacity="${o.toFixed(2)}"/>`; }
+  return `<svg class="lc-stars" viewBox="0 0 ${LC_W} ${LC_H}" aria-hidden="true"><g fill="#fff">${c}</g></svg>`; })();
+function lcShell(){
+  return `<div class="lc-st">${LC_STARS}<span class="lc-brand">MILIADEX</span><span class="lc-g"></span>
+    <div class="lc-top"><h3 class="lc-ti"></h3><p class="lc-sub"></p></div><div class="lc-body"></div>
+    <div class="lc-ft"><span><b>miliadex.com</b><i>· Miliastra Wonderland</i></span><small>${esc(t("cvCredit"))}</small></div></div>`;
+}
+let lcRO=null;
+function lcFit(w){ if(!w) return; const f=()=>{ const x=w.clientWidth; if(x) w.style.setProperty("--s",(x/LC_W).toFixed(5)); }; f();
+  if(!lcRO && "ResizeObserver" in window) lcRO=new ResizeObserver(es=>{ for(const e of es){ const x=e.contentRect.width; if(x) e.target.style.setProperty("--s",(x/LC_W).toFixed(5)); } });
+  if(lcRO && !w._ro){ w._ro=1; lcRO.observe(w); } }
+// where everything goes: the same rules as paintLook / paintPortrait
+function lcLayout(main, small, top, pic){
+  const T=[], out={tiles:T, acc:null, pic:null, empty:null}, all=main.length+small.length;
+  if(!pic){
+    let y=top; if(!all) out.empty={x:0, w:LC_W, y:LC_H/2-14, fs:30};
+    const rows = main.length<=3 ? [main] : main.length===4 ? [main.slice(0,2),main.slice(2)] : [main.slice(0,3),main.slice(3)];
+    const smallRowsEst = small.length ? Math.ceil(small.length/6) : 0;
+    let L=300; const gap=28, need=rows.filter(r=>r.length).length*(L+gap) + (smallRowsEst ? 60+smallRowsEst*(150+18) : 0);
+    if(y+need>LC_FOOT) L=Math.max(200, Math.floor(L-(y+need-LC_FOOT)/Math.max(1,rows.length)));
+    for(const row of rows){ if(!row.length) continue; const tot=row.length*L+(row.length-1)*gap; let x=(LC_W-tot)/2;
+      for(const it of row){ T.push({it,x,y,S:L,big:true}); x+=L+gap; } y+=L+gap; }
+    if(small.length){ y+=10; out.acc={x:64, w:LC_W-128, y}; y+=36;
+      const per=Math.min(6,small.length), sg=18, srows=Math.ceil(small.length/per); let S=150;
+      if(y+srows*(S+sg)>LC_FOOT) S=Math.max(96, Math.floor((LC_FOOT-y)/srows-sg));
+      for(let r=0;r<srows;r++){ const row=small.slice(r*per,(r+1)*per), tot=row.length*S+(row.length-1)*sg; let x=(LC_W-tot)/2;
+        for(const it of row){ T.push({it,x,y,S,big:false}); x+=S+sg; } y+=S+sg; } }
+    return out;
+  }
+  const t0=top-14, bot=LC_FOOT-6; let PH=bot-t0, PW=Math.round(PH*9/16); if(PW>560){ PW=560; PH=Math.round(PW*16/9); }
+  const PX=40, PY=bot-PH; out.pic={x:PX, y:PY, w:PW, h:PH};
+  const RX=PX+PW+32, RW=LC_W-56-RX, AH=bot-t0;
+  if(!all){ out.empty={x:RX, w:RW, y:t0+AH/2-40, fs:28}; return out; }
+  const g=18, sg=12, rowsM=Math.ceil(main.length/2); let Lm=Math.floor((RW-g)/2), per=4, Ls=0, rowsS=0, need=0;
+  for(per of [4,5,6]){ Ls=Math.floor((RW-(per-1)*sg)/per); rowsS=small.length?Math.ceil(small.length/per):0;
+    need=(rowsM?rowsM*(Lm+g)-g:0)+(rowsS?(rowsM?30:0)+40+rowsS*(Ls+sg)-sg:0); if(need<=AH) break; }
+  const f=Math.min(1,AH/need); Lm=Math.floor(Lm*f); Ls=Math.floor(Ls*f);
+  let y=t0+Math.max(0,(AH-need*f)/2);
+  for(let r=0;r<rowsM;r++){ const row=main.slice(r*2,r*2+2), tot=row.length*Lm+(row.length-1)*g; let x=RX+(RW-tot)/2;
+    for(const it of row){ T.push({it,x,y,S:Lm,big:true}); x+=Lm+g; } y+=Lm+g; }
+  if(rowsS){ y+= rowsM ? 30-g : 0; out.acc={x:RX, w:RW, y}; y+=40;
+    for(let r=0;r<rowsS;r++){ const row=small.slice(r*per,(r+1)*per), tot=row.length*Ls+(row.length-1)*sg; let x=RX+(RW-tot)/2;
+      for(const it of row){ T.push({it,x,y,S:Ls,big:false}); x+=Ls+sg; } y+=Ls+sg; } }
+  return out;
+}
+function lcTile(T){
+  const it=T.it, slot=slotsOf(it)[0], own=has(it,"x");
+  return `<div class="lc-c">${it.img?`<img src="${esc(wurl(it.img, T.big?600:200))}" alt="" loading="eager" decoding="async" referrerpolicy="no-referrer" draggable="false" onload="this.classList.add('ok')" onerror="this.remove()">`:""}
+    <span class="lc-tx">${T.big?`<small>${esc((t("slotN")[slot]||slot).toUpperCase())}</small>`:""}<b>${esc(nm(it))}</b></span>
+    ${it.r?`<span class="lc-r">${"★".repeat(it.r)}</span>`:""}${own?`<span class="lc-ok">${ICON_CHECK}</span>`:""}</div>`;
+}
+// one element of the body (portrait, label, message): created once, then moved
+function lcPart(body, cls, want, html, place, anim){
+  let el=body.querySelector(":scope > ."+cls+":not(.lc-out)");
+  if(!want){ if(el){ if(anim){ el.classList.add("lc-out"); el._rm=setTimeout(()=>el.remove(),400); } else el.remove(); } return null; }
+  const fresh=!el; if(fresh){ el=document.createElement("div"); el.className=cls; }
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+  place(el); if(fresh){ body.appendChild(el); if(anim) el.classList.add("lc-in"); }
+  return el;
+}
+let lcPicTok=0;
+function drawLook(){
+  const wrap=$("lkCard"); if(!wrap) return Promise.resolve(false);
+  const st=wrap.querySelector(".lc-st"), body=st.querySelector(".lc-body"), anim=!reduce() && body.dataset.ready==="1";
   const order=it=>ALL_SLOTS.indexOf(slotsOf(it)[0]);
   const its=lookItems(look).slice().sort((a,b)=>order(a)-order(b));
   const main=its.filter(it=>SLOT_MAIN.includes(slotsOf(it)[0])).slice(0,5), small=its.filter(it=>!main.includes(it));
-  const urls=its.map(it=>it.img?wurl(it.img, main.includes(it)?600:200):"");
-  const ctx=cv.getContext("2d"), slotOf=it=>slotsOf(it)[0];
-  const picId = look.pic && look.picOn!==false ? look.pic : null, picNow = picId ? PICR.get(picId)||null : null;
-  const pending=urls.some(u=>u && !IMGR.has(u)) || (picId && !picNow);
-  // paint right away with what is already cached, then again once everything has arrived
-  if(!picId || picNow) paintLook(ctx, main, small, it=>IMGR.get(urls[its.indexOf(it)])||null, slotOf, picNow);
-  if(!pending) return true;
-  cv.parentElement && cv.parentElement.classList.add("loading");
-  const [imgs, pic]=await Promise.all([Promise.all(urls.map(loadImg)), picImage(picId)]);
-  try{ if(document.fonts && document.fonts.ready) await document.fonts.ready; }catch(e){}
-  if(tok!==drawTok) return;
-  cv.parentElement && cv.parentElement.classList.remove("loading");
-  const map=new Map(its.map((it,i)=>[it,imgs[i]]));
-  paintLook(ctx, main, small, it=>map.get(it)||null, slotOf, pic);
-  return true;
+  // the in-game screenshot, when this device has it (an outfit synced from another device may not: laid out without it)
+  const picId = look.pic && look.picOn!==false ? look.pic : null, pic = picId ? PICR.get(picId)||null : null;
+  if(picId && !pic){ const tok=++lcPicTok; picImage(picId).then(p=>{ if(p && tok===lcPicTok) drawLook(); }); }
+  st.querySelector(".lc-g").textContent=(look.g==="f"?"♀ ":"♂ ")+t(look.g).toUpperCase();
+  st.querySelector(".lc-ti").textContent=(look.n||"").trim()||t("untitled");
+  const all=main.concat(small); st.querySelector(".lc-sub").textContent=t("cvSub")(all.length, all.filter(it=>has(it,"x")).length, lookViv(all));
+  const tp=st.querySelector(".lc-top"), top=tp.offsetTop+tp.offsetHeight+43, Lo=lcLayout(main, small, top, pic);
+  // pieces
+  const seen=new Set(); let k=0;
+  for(const T of Lo.tiles){ const key=T.it.id+(T.big?":b":":s"), sig=[T.it.r, has(T.it,"x"), ui.lang].join("|"); seen.add(key);
+    let el=[...body.querySelectorAll(":scope > .lc-t")].find(x=>x.dataset.k===key);
+    const fresh=!el;
+    if(fresh){ el=document.createElement("div"); el.className="lc-t "+(T.big?"big":"sm")+" r"+(T.it.r||0); el.dataset.k=key; }
+    else if(el.classList.contains("lc-out")){ clearTimeout(el._rm); el.classList.remove("lc-out"); }
+    if(el.dataset.sig!==sig){ const had=el.dataset.sig && el.dataset.sig.split("|")[1]==="true"; el.dataset.sig=sig; el.innerHTML=lcTile(T);
+      const ok=el.querySelector(".lc-ok"); if(ok && !fresh && !had && anim) ok.classList.add("pop"); }
+    // text and badges sized like drawTile does (they don't shrink below a floor on small tiles), in the tile's unscaled units
+    const z=T.S/(T.big?300:150), kk=T.big?Math.max(.62,z):Math.max(.58,z), K=v=>Math.round(v*kk), q=v=>(v/z).toFixed(2)+"px";
+    const rs=Math.max(9,K(T.big?20:13)), cr=K(T.big?17:12);
+    const V={"--f":(kk/z).toFixed(3), "--pd":q(Math.max(7,K(T.big?18:11))), "--fs":q(Math.max(T.big?15:10,K(T.big?22:14))), "--fl":q(Math.max(11,K(14))),
+      "--rs":q(rs), "--rt":q(Math.max(14,K(T.big?32:22))-rs*.86), "--ck":q(cr*2), "--co":q(K(T.big?12:8)), "--i":k++};
+    el.style.left=T.x+"px"; el.style.top=T.y+"px"; el.style.transform=`scale(${z.toFixed(4)})`; for(const n in V) el.style.setProperty(n, V[n]);
+    if(fresh){ body.appendChild(el); if(anim) el.classList.add("lc-in"); }
+  }
+  for(const el of body.querySelectorAll(":scope > .lc-t")) if(!seen.has(el.dataset.k) && !el.classList.contains("lc-out")){
+    if(anim){ el.classList.add("lc-out"); el._rm=setTimeout(()=>el.remove(),400); } else el.remove(); }
+  // the screenshot, the accessories label, the empty message
+  const P=Lo.pic;
+  lcPart(body, "lc-pic", P, P ? `<img src="${esc(pic._url)}" alt="" draggable="false">` : "", el=>{ el.classList.toggle("clear", !!pic._clear); el.classList.toggle("frame", !pic._clear);
+    Object.assign(el.style, {left:P.x+"px", top:P.y+"px", width:P.w+"px", height:P.h+"px"}); }, anim);
+  const A=Lo.acc;
+  lcPart(body, "lc-acc", A, `<span>${esc(t("cvAcc").toUpperCase())}</span>`, el=>Object.assign(el.style, {left:A.x+"px", top:(A.y-8)+"px", width:A.w+"px"}), anim);
+  const E=Lo.empty;
+  lcPart(body, "lc-empty", E, esc(t("cvEmpty")), el=>Object.assign(el.style, {left:E.x+"px", top:E.y+"px", width:E.w+"px", fontSize:E.fs+"px"}), anim);
+  body.dataset.ready="1";
+  // the pictures the download and the share link will need, fetched ahead
+  setTimeout(()=>its.forEach(it=>{ if(it.img) loadImg(wurl(it.img, main.includes(it)?600:200)); }), 600);
+  return Promise.resolve(true);
 }
 // an outfit's Vivid: standalone cosmetics count fully, a set piece brings its share of its set's rating
 function lookViv(its){ let v=0;
@@ -3100,8 +3268,7 @@ async function lookCanvas(L){
 }
 async function downloadLook(){
   if(!nameGuard(look.n)) return;
-  await drawLook();
-  const out=await lookImage(look, $("lkCv")); if(!out){ toast(t("dlFail")); return; }
+  const out=await lookImage(look); if(!out){ toast(t("dlFail")); return; }
   const a=document.createElement("a"); a.href=URL.createObjectURL(out); a.download=(slug(look.n||"")||"miliadex-outfit")+".jpg";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast("✓ "+t("dlDone"));
 }
@@ -4028,24 +4195,30 @@ function shCard(st,name,cur){
 const ICON_CHAT=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 3.5h12A1.5 1.5 0 0 1 17.5 5v7.5A1.5 1.5 0 0 1 16 14H9.5l-4 3.2V14H4a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z"/><path d="M6.5 7.5h7M6.5 10.5h4.5" stroke-linecap="round"/></svg>`;
 const colUrl = code => shareUrl("c", code);
 let shReady=null, shTok=0;
+// the name on a shared collection is the account's pseudo: sharing needs to be signed in
+const shWho = () => signedIn() ? SHARE.clean(ACCT.n||"") : "";
 async function shPrepare(){
-  if(!nameOk(ui.shName)) return null;   // nothing is sent with a name that isn't allowed
-  const tok=++shTok, code=await SHARE.make(state.owned, ui.g, ui.shName, showMoney());
+  const who=shWho(); if(!who || !nameOk(who)) return null;   // signed in, with a name that's allowed
+  const tok=++shTok, code=await SHARE.make(state.owned, ui.g, who, showMoney());
   if(tok!==shTok) return shReady;
-  const url=colUrl(code), key=shortKeyOf("c", code, ui.lang==="fr"?"fr":"en", ""), nm=SHARE.clean(ui.shName).replace(/[\\\[\]]/g,"\\$&");
+  const url=colUrl(code), key=shortKeyOf("c", code, ui.lang==="fr"?"fr":"en", ""), nm=who.replace(/[\\\[\]]/g,"\\$&");
   // Discord masked link: the message shows "Miliadex - Name Profile" instead of the long link
-  const st=collStats(state.owned, ui.g), who=SHARE.clean(ui.shName);
+  const st=collStats(state.owned, ui.g);
   const card=pushCard("c", code, ()=>shareCardCol(st, who, showMoney()), {short:true});   // the setting is in the code: its own link and picture
   return shReady={url, key, code, card, md:u=>`[${nm?`Miliadex - ${nm} Profile`:"Miliadex Profile"}](${u})`};
 }
-function openShare(theirs){
-  const d=$("shc"), mine=!theirs, name = mine ? SHARE.clean(ui.shName) : theirs.name;
+function openShare(theirs, failed){
+  const d=$("shc"), mine=!theirs, name = mine ? shWho() : theirs.name;
   const st = mine ? collStats(state.owned, ui.g) : collStats(theirs.owned, theirs.g);
-  let foot;
-  if(mine){ shReady=null; shPrepare(); setTimeout(()=>{ const i=$("scName"); if(i) nameMark(i); });
-    foot=`<label class="sc-name"><span>${esc(t("scName"))}</span><input id="scName" type="text" maxlength="24" autocomplete="nickname" spellcheck="false" placeholder="${esc(t("scNamePh"))}" value="${esc(name)}"></label>
+  let foot; d.dataset.mine=mine?"1":"";
+  if(mine && signedIn()){ shReady=null; shPrepare();
+    foot=`<p class="sc-as">${esc(t("scAs"))} <b>${esc(name)}</b> · <button type="button" class="linkbtn" data-sc="nick">${esc(t("scNick"))}</button></p>
       <div class="sc-act"><button type="button" class="btn" data-sc="discord">${ICON_CHAT} ${esc(t("scDiscord"))}</button><button type="button" class="btn ghost" data-sc="link">${ICON_LINK} ${esc(t("scLink"))}</button></div>
       <p class="sc-note">${esc(t("scNote"))}</p>`; }
+  else if(mine){ const wait=GD.on() && !failed;   // Drive connected, the site's session on its way
+    if(wait) acctEnsure(true).then(ok=>{ if(!ok && d.open && d.dataset.mine==="1" && !signedIn()) openShare(null, true); });
+    foot=`<div class="sc-lock"><p><b>${esc(t("scSignT"))}</b><span>${esc(t("scSignP"))}</span></p>
+      ${wait ? `<p class="sc-wait"><span class="spin" aria-hidden="true"></span>${esc(t("amWait"))}</p>` : `<div class="sc-act"><button class="gbtn" type="button" data-sc="in"${GD.info().usable?"":" disabled"}>${ICON_G}<span>${esc(t("gdConnect"))}</span></button></div>`}</div>`; }
   else { const me=collStats(state.owned, ui.g), any=me.got>0;
     foot=`${any?`<p class="sc-vs">${esc(t("scYou")(me.lv, pctTxt(me), fmtN(me.vg)))}</p>`:""}<div class="sc-act"><button type="button" class="btn" data-close>${esc(t(any?"scMine":"scStart"))}</button></div>`; }
   d.innerHTML=`<div class="vp-sky" aria-hidden="true"><i class="aur a1"></i><i class="aur a2"></i><i class="aur a3"></i><i class="starfield"></i><i class="vp-shoot" style="top:7%;left:92%"></i></div>
@@ -4056,20 +4229,19 @@ function openShare(theirs){
 $("shBtn").addEventListener("click", ()=>openShare(null));
 $("shc").addEventListener("click", async e=>{ const d=$("shc");
   if(e.target===d || e.target.closest("[data-close]")){ d.close ? d.close() : d.removeAttribute("open"); return; }
-  const b=e.target.closest("[data-sc]"); if(!b) return;
-  if(!nameGuard(ui.shName)){ const i=$("scName"); if(i) i.focus(); return; }
+  const b=e.target.closest("[data-sc]"); if(!b || b.disabled) return;
+  if(b.dataset.sc==="in"){ GD.connect(); return; }
+  if(b.dataset.sc==="nick"){ acctOpen(true); return; }
+  if(!signedIn()){ openShare(null); return; }
+  if(!nameGuard(shWho())){ acctOpen(true); return; }
   const r=shReady||await shPrepare(); if(!r) return;
   const dc=b.dataset.sc==="discord", txt=async ok=>{ const k=ok && await r.key, u=k ? SITE+"/c/"+k : r.url; return dc ? r.md(u) : u; };   // short link once the site has the card
   copyLater(txt, r.card, t(dc?"scCopiedD":"linkCopied"), txt=>{ // no clipboard access: show the text ready to copy by hand
     let ta=d.querySelector(".sc-raw"); if(!ta){ ta=document.createElement("textarea"); ta.className="sc-raw"; ta.readOnly=true; ta.rows=4; d.querySelector(".sc-act").after(ta); }
     ta.value=txt; ta.focus(); ta.select(); });
 });
-let shNameT=0;
-$("shc").addEventListener("input", e=>{ if(e.target.id!=="scName") return;
-  ui.shName=SHARE.clean(e.target.value); saveUI(); const w=$("scWho"); if(w) w.textContent=ui.shName||t("scAnon"); nameMark(e.target);
-  shReady=null; clearTimeout(shNameT); shNameT=setTimeout(shPrepare,200); });
 /* ---------- share pictures: the card Discord shows for a /c/ or /o/ link — drawn here with the site's own look, kept by the site's Worker ---------- */
-const CARD_V=2;   // same as CARD_V in worker/index.js: bump both when the card design changes
+const CARD_V=3;   // same as CARD_V in worker/index.js: bump both when the card design changes
 const cardJobs=new Map();   // link → the picture on its way (true once the site has it)
 // pictures this browser already sent: not sent again for 2 days (same link, same picture, same showcase choice)
 const SENT_KEY="miliadex-sent", SENT_TTL=2*864e5;
@@ -4503,7 +4675,11 @@ async function gcPics(){
   const keep=new Set(["bg", look.pic, IMP.L && IMP.L.pic, ...(state.looks||[]).map(L=>L.pic)].filter(Boolean));
   for(const k of await PicDB.keys()) if(!keep.has(k)){ await PicDB.del(k); const im=PICR.get(k); if(im) URL.revokeObjectURL(im._url); PICR.delete(k); PICC.delete(k); }
 }
-function hydratePics(root){ (root||document).querySelectorAll("img[data-pic]").forEach(async im=>{ const p=await picImage(im.dataset.pic); if(p) im.src=p._url; else im.remove(); }); }
+function hydratePics(root){ (root||document).querySelectorAll("img[data-pic]").forEach(async im=>{ const p=await picImage(im.dataset.pic); if(p){ im.src=p._url; return; }
+  const mo=im.closest(".mosaic.has-pic"), tp=mo && mo.querySelector("template");
+  if(tp){ mo.className="mosaic n"+(mo.dataset.n||0); mo.innerHTML=tp.innerHTML; return; }   // not on this device: the pieces
+  const row=im.closest(".pic-row"); if(row) row.classList.add("away");
+  im.remove(); }); }
 const ICON_G=`<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
 const ICON_DRIVE=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.4 9.6 4.5 4.5 0 0 0 7 18.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v5"/></svg>`;
 const ICON_EDIT=`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z"/><path d="M11.5 5.5l3 3"/></svg>`;
@@ -4511,10 +4687,10 @@ const ICON_IMG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const ICON_CAM=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.4" r="3.6"/></svg>`;
 function picRow(){
   if(!look.pic) return `<button type="button" class="pic-add" data-act="pic-add">${ICON_CAM}<span><b>${esc(t("picAdd"))}</b><small>${esc(t("picHint"))}</small></span></button>`;
-  return `<div class="pic-row"><span class="pic-th"><img data-pic="${esc(look.pic)}" alt=""></span>
+  return `<div class="pic-row"><span class="pic-th">${ICON_CAM}<img data-pic="${esc(look.pic)}" alt=""></span>
     <div class="pic-ctl"><label class="sw"><input type="checkbox" id="picOn"${look.picOn!==false?" checked":""}><span>${esc(t("picShow"))}</span></label>
-      <div class="row"><button type="button" class="btn ghost sm" data-act="pic-edit">${esc(t("picEdit"))}</button><button type="button" class="btn ghost sm" data-act="pic-del">${esc(t("picDel"))}</button></div></div>
-    <p class="pic-note">${esc(t("picNote"))}</p></div>`;
+      <div class="row"><button type="button" class="btn ghost sm" data-act="pic-edit">${esc(t("picEdit"))}</button><button type="button" class="btn ghost sm pic-new" data-act="pic-add">${esc(t("picNew"))}</button><button type="button" class="btn ghost sm" data-act="pic-del">${esc(t("picDel"))}</button></div></div>
+    <p class="pic-note">${esc(t("picNote"))}</p><p class="pic-away">${esc(t("picAway"))}</p></div>`;
 }
 const loadImgEl = src => new Promise(res=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>res(null); i.src=src; });
 const toBlobP = (c,type,q) => new Promise(res=>{ try{ c.toBlob(b=>res(b),type,q); }catch(e){ res(null); } });
@@ -5169,6 +5345,7 @@ function acctChanged(){
   renderMe(); const ad=$("acctDlg"); if(ad && ad.open) acctRender(true);
   if(ui.tab==="show") renderShowGrid(); else if(ui.tab==="outfits") renderOutfits();
   const d=$("shv"); if(d && d.open) paintView(true);
+  const sc=$("shc"); if(sc && sc.open && sc.dataset.mine==="1") openShare(null);   // signed in (or out) from the share window
 }
 // names people choose (pseudo, showcase outfit names): a short list of insults, slurs and sexual words in English and French,
 // read through common disguises (accents, l33t, s.p.a.c.e.s, CamelCase, repeated letters). Base64 so the source doesn't spell them out

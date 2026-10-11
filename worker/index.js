@@ -178,7 +178,7 @@ function fit(lines, listLine, at = lines.length) {
   return lines.join("\n");
 }
 
-const CARD_V = 2;   // same as CARD_V in index.html: bump both when the card design changes
+const CARD_V = 3;   // same as CARD_V in index.html: bump both when the card design changes
 const pctOf = st => st.tot && st.got === st.tot ? 100 : Math.floor(st.pct * 100);
 async function cardKey(k, code, lang) {
   const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${k}|${code}|${lang}|${CARD_V}`));
