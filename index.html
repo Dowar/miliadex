@@ -885,8 +885,7 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 .pic-th img{max-width:100%;max-height:100%;object-fit:contain;display:block;grid-area:1/1}
 .pic-th > svg{grid-area:1/1;width:26px;height:26px;color:rgba(255,255,255,.55);display:none}
 .pic-row.away .pic-th > svg{display:block}
-.pic-new,.pic-away,.pic-row.away .sw,.pic-row.away [data-act=pic-edit],.pic-row.away .pic-note{display:none}
-.pic-row.away .pic-new{display:inline-flex}
+.pic-away,.pic-row.away .sw,.pic-row.away [data-act=pic-edit],.pic-row.away .pic-note{display:none}
 .pic-row.away .pic-away{display:block;grid-column:1/-1;margin:0;font-size:12px;color:var(--muted)}
 .pic-ctl{display:grid;gap:8px;min-width:0}
 .sw{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;cursor:pointer}
@@ -918,6 +917,13 @@ textarea{width:100%;min-height:64px;border-radius:12px;border:2px solid var(--li
 .auto-sw b{display:block;font-size:14px}
 .auto-sw small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
 .cut-fit .btn{flex:1}
+.cut-rv{display:none;gap:10px}
+#cut.reviewing .cut-rv{display:grid}
+#cut.reviewing .auto-sw,#cut.reviewing .cut-fit,#cut.reviewing .cut-tips,#cut.reviewing [data-cut="replace"]{display:none}
+.cut-rv h3{margin:0;font-size:14px}
+.cut-rv p{margin:0;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.str-l{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);margin-top:-4px}
+.cut-rv .btn{justify-self:start}
 .cut-side{border-left:1px solid var(--line);padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:16px;background:var(--raise)}
 .cut-g{display:grid;gap:8px}
 .cut-g > span{font-family:var(--tech);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -1330,15 +1336,19 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sh-sort select option{background:var(--card);color:var(--text)}
 .sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
 .sh-grid.has-spot{grid-auto-flow:dense}
-@media (min-width:900px){ .sh-grid.has-spot .sh-card.spot{grid-column:span 2;grid-row:span 2} .sh-card.spot .sh-frame{aspect-ratio:auto;flex:1 1 auto;min-height:0} .sh-card.spot .sh-info{flex:none;padding:14px 10px 8px} .spot .sh-name{font-size:26px} .spot .sh-meta{font-size:14px} }
+@media (min-width:900px){ .sh-grid.has-spot .sh-cell.spot{grid-column:span 2;grid-row:span 2} .sh-card.spot .sh-frame{aspect-ratio:auto;flex:1 1 auto;min-height:0} .sh-card.spot .sh-info{flex:none;padding:14px 10px 8px} .spot .sh-name{font-size:26px} .spot .sh-meta{font-size:14px} }
 .sh-grid{grid-auto-rows:1fr}
 .sh-card{position:relative;display:flex;flex-direction:column;gap:0;border:0;padding:7px;border-radius:22px;cursor:pointer;color:#f3efff;text-align:left;font:inherit;isolation:isolate;
   background:linear-gradient(165deg,#2a2063 0%,#1a1342 55%,#120c30 100%);
   box-shadow:0 10px 26px rgba(20,10,60,.22),inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.07);
-  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;animation:shIn .6s cubic-bezier(.2,.8,.2,1) var(--d,0ms) backwards}
+  transition:box-shadow .35s}
+.sh-cell{position:relative;display:flex;min-width:0;transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .35s cubic-bezier(.2,.8,.2,1);animation:shIn .6s cubic-bezier(.2,.8,.2,1) var(--d,0ms) backwards}
+.sh-cell > .sh-card{flex:1 1 auto;min-width:0}
+.sh-cell:hover,.sh-cell:focus-within{--ty:-6px}
+.sh-card.sk{animation:shIn .6s cubic-bezier(.2,.8,.2,1) var(--d,0ms) backwards}
 .sh-card::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;padding:1.5px;background:linear-gradient(135deg,#ffe08a,#c58cff 45%,#5fd3ff);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);opacity:0;transition:opacity .35s}
-.sh-card[data-sh]:hover,.sh-card[data-sh]:focus-visible{--ty:-6px;box-shadow:0 24px 46px rgba(40,20,110,.4),0 0 30px rgba(197,140,255,.25),inset 0 1px 0 rgba(255,255,255,.14);outline:none}
-.sh-card[data-sh]:hover::before,.sh-card[data-sh]:focus-visible::before{opacity:1}
+.sh-cell:hover > .sh-card[data-sh],.sh-card[data-sh]:focus-visible{box-shadow:0 24px 46px rgba(40,20,110,.4),0 0 30px rgba(197,140,255,.25),inset 0 1px 0 rgba(255,255,255,.14);outline:none}
+.sh-cell:hover > .sh-card[data-sh]::before,.sh-card[data-sh]:focus-visible::before{opacity:1}
 .sh-card.full::after{content:"✦";position:absolute;top:14px;right:16px;z-index:2;font-size:15px;color:#ffe08a;text-shadow:0 0 10px rgba(255,210,122,.9);pointer-events:none}
 @keyframes shIn{from{opacity:0;transform:translateY(18px) scale(.97)}}
 .sh-frame{position:relative;display:block;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#140d33;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
@@ -1348,10 +1358,10 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sh-img.ok img{opacity:1}
 .sh-img.bad img{display:none}
 .sh-card.raw .sh-img img{object-position:center}
-.sh-card:hover .sh-img img{transform:scale(1.05)}
+.sh-cell:hover .sh-img img{transform:scale(1.05)}
 @keyframes shSk{to{background-position:-120% 0}}
 .sh-glare{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.3),transparent 46%);opacity:0;transition:opacity .3s;mix-blend-mode:soft-light}
-.sh-card:hover .sh-glare{opacity:1}
+.sh-cell:hover .sh-glare{opacity:1}
 .sh-info{flex:1 1 auto;display:flex;flex-direction:column;gap:7px;padding:11px 7px 5px}
 .sh-l2{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
 .sh-name{min-width:0;font-family:var(--serif);font-weight:650;font-size:18px;line-height:1.15;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -1390,6 +1400,16 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sh-r{flex:none;display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
 .sh-lk{display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:13px;color:#ffc1d9}
 .sh-lk.on{color:#ff6fa8}
+.sh-cell.has-like .sh-meta{padding-right:66px}
+.sh-cell.has-like .sh-sk{margin-right:66px}
+.sh-like{position:absolute;z-index:3;right:12px;bottom:10px;display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;border-radius:99px;border:1px solid rgba(255,160,205,.4);
+  background:rgba(40,20,70,.75);color:#ffc1d9;font:700 13px/1 var(--body);font-variant-numeric:tabular-nums;cursor:pointer;backdrop-filter:blur(6px);transition:transform .25s cubic-bezier(.3,1.6,.5,1),background .2s,box-shadow .2s,color .2s}
+.sh-like svg{width:15px;height:15px}
+.sh-like:hover,.sh-like:focus-visible{transform:scale(1.08);background:rgba(255,111,168,.22);box-shadow:0 0 16px rgba(255,111,168,.45);outline:none}
+.sh-like.on{background:linear-gradient(135deg,#ff8fbf,#ff5c9d);border-color:rgba(255,255,255,.35);color:#fff;box-shadow:0 0 16px rgba(255,92,157,.55)}
+.sh-like.pop svg{animation:likePop .6s cubic-bezier(.3,1.7,.5,1)}
+@keyframes likePop{0%{transform:scale(.4)}45%{transform:scale(1.45)}100%{transform:scale(1)}}
+@media (max-width:560px){ .sh-like{right:8px;bottom:7px;height:24px;padding:0 8px 0 6px;font-size:11.5px} .sh-like svg{width:13px;height:13px} .sh-cell.has-like .sh-meta{padding-right:54px} }
 .sh-acct{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:-2px 0 4px;font-size:14px;color:var(--muted)}
 .gbtn.sm{height:34px;padding:0 14px 0 10px;gap:8px;font-size:13.5px}
 .gbtn.sm .g-logo{width:16px;height:16px}
@@ -1680,7 +1700,7 @@ html.x404 body, html.xadm body{background:var(--screen)}
   .sh-mine > span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sh-sort select{width:100%;font-size:13px;padding:9px 8px}
 }
-@media (prefers-reduced-motion:reduce){ .sh-card,.sh-img,.sv-img,.sv-bar i{animation:none!important} .sh-card{transform:none!important} }
+@media (prefers-reduced-motion:reduce){ .sh-card,.sh-cell,.sh-img,.sv-img,.sv-bar i{animation:none!important} .sh-cell{transform:none!important} }
 /* save & backup: folded by default */
 .tools{gap:0}
 .tools-h{margin:0;min-width:0}
@@ -1809,7 +1829,7 @@ const ODEB=[["Candlelit Revelry",["Fervent Fighter","Mystic Forest","Sonic Ruins
 /* ---------- i18n ---------- */
 const T = {
  en:{sub:"Miliastra Wonderland collection tracker",sets:"Sets",comp:"Cosmetics",search:"Search a set or cosmetic…",both:"Both",f:"Manekina",m:"Manekin",
-  sortL:"Sort by",download:"Download Miliadex outfit card",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Miliadex outfit card downloaded · import it again to get this outfit back",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNew:"Add one",picAway:"This outfit’s in-game screenshot stayed on the device where it was added (photos aren’t synced): its pieces show instead. Add one here if you like.",picNote:"The photo stays on this device and out of backups. It only leaves inside the image you download and the preview picture of links you share (both reopen the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"An AI removes the scenery behind your character, right in your browser. The first time it downloads its model (60 to 110 MB), then it takes a few seconds.",autoLoad:"Preparing the automatic cut-out…",autoDl:p=>`Downloading the AI model (first time only)… ${p}%`,autoRun:"Removing the background…",autoFail:"The automatic cut-out didn't work (offline?): the photo is used as is",autoNone:"The automatic cut-out found no character in this frame: the photo is used as is (try framing your character more closely)",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (hold Shift for fine steps) or pinch to resize it: the format stays fixed so the photo fits the image.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
+  sortL:"Sort by",download:"Download Miliadex outfit card",lookPreview:"Outfit preview",cvEmpty:"Add pieces to see your outfit here",cvAcc:"Accessories & makeup",cvSub:(n,o,s)=>`${n} piece${n===1?"":"s"} · ${o}/${n} owned · ${s} Vivid`,cvCredit:"Images: Genshin Impact Wiki · © HoYoverse",dlDone:"Miliadex outfit card downloaded · import it again to get this outfit back",dlFail:"The image couldn't be created",cacheAll:"Make images load faster",cacheTxt:"Download every image once so the Miliadex shows them instantly afterwards (about 60 MB, kept by your browser for a year).",caching:(a,b)=>`Caching… ${a}/${b}`,cached:"All images cached",picAdd:"Add an in-game screenshot",picHint:"Click, drop an image here or paste it (Ctrl+V), then frame your character",picShow:"Show on the image",picEdit:"Edit framing",picDel:"Remove",picNew:"Change image",picAway:"This outfit’s in-game screenshot stayed on the device where it was added (photos aren’t synced): its pieces show instead. Add one here if you like.",picNote:"The photo stays on this device and out of backups. It only leaves inside the image you download and the preview picture of links you share (both reopen the outfit with its photo).",picBad:"This file isn't a readable image",picSaved:"Photo added to your outfit",picNoStore:"Your browser can't store the photo: it will be lost when you close the page",cutTitle:"Frame your character",cutReset:"Center",cropFull:"Full height",autoCut:"Remove the background automatically",autoCutTxt:"Keeps only your character, without the scenery.",autoLoad:"Removing the background…",autoDl:p=>`Removing the background… ${p}%`,autoRun:"Removing the background…",autoFail:"The background couldn't be removed: the photo is used as is",autoNone:"The automatic cut-out found no character in this frame: the photo is used as is (try framing your character more closely)",cropTips:["Drag the frame to place your character inside.","Drag a corner, scroll (Shift for fine steps) or pinch to resize it. It can go past the screenshot’s edges to fit your whole character.","Click elsewhere on the screenshot to move the frame there."],cutReplace:"Change image",cutCancel:"Cancel",cutApply:"Use this photo",cutUse:"Use this image",rvTitle:"Check the cut-out",cutBack:"Back to framing",strT:"Background removal",strLo:"Gentle",strHi:"Strong",strTip:"Part of your character erased? Slide towards Gentle. Scenery left around it? Towards Strong.",outfits:"My Outfits",untitled:"Untitled outfit",namePh:"Name your outfit",acc:"Accessories",makeupT:"Makeup",fromSet:"Start from a set",surprise:"Surprise me",
   saveLook:"Save outfit",updateLook:"Update outfit",share:"Share link",copyCode:"Copy code",clear:"Clear",myLooks:"My outfits",noLooks:"No saved outfits yet. Build one above, then press “Save outfit”.",
   ownedOf:(a,b)=>`${a}/${b} pieces owned`,pick:n=>`Choose: ${n}`,pickSet:"Choose a set",equip:"Equip",equipped:"Equipped",addPiece:"Add",none:"Remove",ownedOnly:"Owned only",searchPh:"Search…",included:"Included",
   sharedT:"Outfit shared with you",saveShared:"Save to my outfits",dismiss:"Dismiss",linkCopied:"Link copied",lookSaved:"Outfit saved",lookDeleted:"Outfit deleted",del:"Delete",
@@ -1862,7 +1882,7 @@ const T = {
   typeN:{o:"Outfit",k:"Makeup & hair",i:"Interactions"},
   catN:{"Hairstyle":"Hairstyles","Headwear":"Headwear","Top":"Tops","Bottom":"Bottoms","Top;Bottom":"One-piece outfits","Multi":"Multi-part outfits","Eye Accessory":"Eyewear","Face Accessory":"Face accessories","Tail Accessory":"Tails","Footwear":"Footwear","Earrings":"Earrings","Neck Accessory":"Neck accessories","Back Accessory":"Back accessories","Wrist Accessory":"Wrist accessories","Leg Accessory":"Leg accessories","Pendant":"Pendants","Skin Tone":"Skin tones","Eye Shape":"Eye shapes","Iris":"Irises","Eyebrows":"Eyebrows","Eye Makeup":"Eye makeup","Facial Makeup":"Face makeup","Lipstick":"Lipstick","Expression":"Expressions","Action":"Actions","Effects":"Effects"}},
  fr:{sub:"Toutes les tenues de Miliastra Wonderland",sets:"Sets",comp:"Cosmétiques",search:"Chercher un set ou un cosmétique…",both:"Les deux",f:"Manekina",m:"Manekin",
-  sortL:"Trier",download:"Télécharger la carte de tenue Miliadex",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Carte de tenue Miliadex téléchargée · importe-la pour retrouver cette tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNew:"En ajouter une",picAway:"La capture en jeu de cette tenue est restée sur l’appareil où elle a été ajoutée (les photos ne sont pas synchronisées) : ses pièces s’affichent à la place. Tu peux en ajouter une ici.",picNote:"La photo reste sur cet appareil et hors des sauvegardes. Elle ne part que dans l'image que tu télécharges et dans l'image d'aperçu des liens que tu partages (les deux rouvrent la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Une IA retire le décor derrière ton personnage, directement dans ton navigateur. La première fois, elle télécharge son modèle (60 à 110 Mo), ensuite ça prend quelques secondes.",autoLoad:"Préparation du détourage automatique…",autoDl:p=>`Téléchargement du modèle IA (première fois seulement)… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le détourage automatique n'a pas marché (hors ligne ?) : la photo est utilisée telle quelle",autoNone:"Le détourage automatique n’a trouvé aucun personnage dans ce cadre : la photo est utilisée telle quelle (essaie de cadrer ton personnage de plus près)",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (avec Maj pour plus de précision) ou pince pour le redimensionner : le format reste fixe pour bien rentrer dans l'image.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
+  sortL:"Trier",download:"Télécharger la carte de tenue Miliadex",lookPreview:"Aperçu de la tenue",cvEmpty:"Ajoute des pièces pour voir ta tenue ici",cvAcc:"Accessoires & maquillage",cvSub:(n,o,s)=>`${n} pièce${n>1?"s":""} · ${o}/${n} obtenue${n>1?"s":""} · ${s} Vivid`,cvCredit:"Images : Genshin Impact Wiki · © HoYoverse",dlDone:"Carte de tenue Miliadex téléchargée · importe-la pour retrouver cette tenue",dlFail:"L'image n'a pas pu être créée",cacheAll:"Accélérer les images",cacheTxt:"Télécharge toutes les images une fois pour que le Miliadex les affiche instantanément ensuite (environ 60 Mo, gardés par ton navigateur pendant un an).",caching:(a,b)=>`Mise en cache… ${a}/${b}`,cached:"Toutes les images sont en cache",picAdd:"Ajouter une capture du jeu",picHint:"Clique, glisse une image ici ou colle-la (Ctrl+V), puis cadre ton personnage",picShow:"Afficher sur l'image",picEdit:"Modifier le cadrage",picDel:"Retirer",picNew:"Changer l’image",picAway:"La capture en jeu de cette tenue est restée sur l’appareil où elle a été ajoutée (les photos ne sont pas synchronisées) : ses pièces s’affichent à la place. Tu peux en ajouter une ici.",picNote:"La photo reste sur cet appareil et hors des sauvegardes. Elle ne part que dans l'image que tu télécharges et dans l'image d'aperçu des liens que tu partages (les deux rouvrent la tenue avec sa photo).",picBad:"Ce fichier n'est pas une image lisible",picSaved:"Photo ajoutée à ta tenue",picNoStore:"Ton navigateur ne peut pas stocker la photo : elle sera perdue en fermant la page",cutTitle:"Cadre ton personnage",cutReset:"Centrer",cropFull:"Toute la hauteur",autoCut:"Détourer automatiquement",autoCutTxt:"Garde seulement ton personnage, sans le décor.",autoLoad:"Suppression du décor…",autoDl:p=>`Suppression du décor… ${p} %`,autoRun:"Suppression du décor…",autoFail:"Le décor n’a pas pu être retiré : la photo est utilisée telle quelle",autoNone:"Le détourage automatique n’a trouvé aucun personnage dans ce cadre : la photo est utilisée telle quelle (essaie de cadrer ton personnage de plus près)",cropTips:["Fais glisser le cadre pour y placer ton personnage.","Tire un coin, utilise la molette (Maj pour plus de précision) ou pince pour le redimensionner. Il peut dépasser les bords de la capture pour englober tout ton personnage.","Clique ailleurs sur la capture pour y déplacer le cadre."],cutReplace:"Changer d'image",cutCancel:"Annuler",cutApply:"Utiliser cette photo",cutUse:"Utiliser cette image",rvTitle:"Vérifie le détourage",cutBack:"Revenir au cadrage",strT:"Retrait du décor",strLo:"Doux",strHi:"Fort",strTip:"Une partie de ton personnage a disparu\u00a0? Glisse vers Doux. Il reste du décor autour\u00a0? Vers Fort.",outfits:"Mes tenues",untitled:"Tenue sans nom",namePh:"Nomme ta tenue",acc:"Accessoires",makeupT:"Maquillage",fromSet:"Partir d'un set",surprise:"Surprends-moi",
   saveLook:"Enregistrer la tenue",updateLook:"Mettre à jour",share:"Partager le lien",copyCode:"Copier le code",clear:"Vider",myLooks:"Mes tenues",noLooks:"Aucune tenue enregistrée. Compose-en une ci-dessus, puis « Enregistrer la tenue ».",
   ownedOf:(a,b)=>`${a}/${b} pièces obtenues`,pick:n=>`Choisir : ${n}`,pickSet:"Choisir un set",equip:"Équiper",equipped:"Équipé",addPiece:"Ajouter",none:"Retirer",ownedOnly:"Obtenus uniquement",searchPh:"Chercher…",included:"Inclus",
   sharedT:"Tenue partagée avec toi",saveShared:"Ajouter à mes tenues",dismiss:"Fermer",linkCopied:"Lien copié",lookSaved:"Tenue enregistrée",lookDeleted:"Tenue supprimée",del:"Supprimer",
@@ -3798,7 +3818,7 @@ function likeLocal(it, on){
 }
 async function likeToggle(it){
   if(!signedIn()){ toast(t("likeNeed")); GD.connect(); return; }
-  const on=!likedSet().has(it.k); likeLocal(it, on); showArrived(it);
+  const on=!likedSet().has(it.k); likeLocal(it, on); if(on) it._pop=Date.now(); showArrived(it);
   try{ const r=await fetch(ROOT+"api/like", {method:"POST", headers:{"content-type":"application/json","x-session":ACCT.s}, body:JSON.stringify({k:it.k, on})});
     const j=r.ok ? await r.json() : null; if(!j || !j.ok) throw new Error(r.status===401 ? "session" : "like");
     it.lk=j.likes; showArrived(it);
@@ -3825,7 +3845,7 @@ let showRT=0;
 function showArrived(it){
   if(ui.tab==="show"){ const F=SHOW.f;
     if(F.q || F.g || F.mine || F.sort!=="repo"){ clearTimeout(showRT); showRT=setTimeout(renderShowGrid,180); }
-    else { const el=$("showcase").querySelector(`.sh-card[data-sh="${CSS.escape(it.name)}"]`); if(el) el.outerHTML=showCard(it,+el.dataset.k); } }
+    else { const el=$("showcase").querySelector(`.sh-card[data-sh="${CSS.escape(it.name)}"]`); if(el) (el.closest(".sh-cell")||el).outerHTML=showCard(it,+el.dataset.k); } }
   const d=$("shv"); if(d.open && VW.src==="show" && VW.keys[VW.i]===it.name) paintView(true);
 }
 function showList(){
@@ -3848,14 +3868,16 @@ function showList(){
 function showCard(it,k){
   const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot && !it.user, full=st && st.n && st.own===st.n;
   const tags = (it.bn ? `<span class="sh-tag ban">${esc(t("pubBanned"))}</span>` : "") + (m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.pic?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "");
-  const lk = it.user ? `<span class="sh-lk${signedIn() && likedSet().has(it.k)?" on":""}" title="${esc(t("likeL"))}">♥ ${fmtN(it.lk||0)}</span>` : "", vg = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
-  const vv = lk || vg ? `<span class="sh-r">${lk}${vg}</span>` : "";
+  const vg = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
+  const vv = vg ? `<span class="sh-r">${vg}</span>` : "";
+  const on = it.user && signedIn() && likedSet().has(it.k), pop = it._pop && Date.now()-it._pop<700;
+  const like = it.user ? `<button type="button" class="sh-like${on?" on":""}${pop?" pop":""}" data-like="${esc(it.name)}" aria-pressed="${!!on}" aria-label="${esc(t("likeL"))} · ${fmtN(it.lk||0)}" title="${esc(t("likeL"))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17.2s-6.8-4.1-6.8-9A3.8 3.8 0 0 1 10 5.9a3.8 3.8 0 0 1 6.8 2.3c0 4.9-6.8 9-6.8 9z" fill="currentColor"/></svg><span>${fmtN(it.lk||0)}</span></button>` : "";
   const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-bar" aria-hidden="true"><i style="width:${st.n?(st.own/st.n*100).toFixed(1):0}%"></i></span>`
     : m===undefined ? `<span class="sh-sk" aria-hidden="true"><i></i><i></i></span>` : "";
-  return `<button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" style="--d:${Math.min(k,14)*45}ms" aria-label="${esc(title)}">
+  return `<div class="sh-cell${spot?" spot":""}${like?" has-like":""}" style="--d:${Math.min(k,14)*45}ms"><button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" aria-label="${esc(title)}">
     <span class="sh-frame"><span class="sh-img"><img src="${esc(spot?showView(it):showThumb(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span><span class="sh-glare" aria-hidden="true"></span></span>
     <span class="sh-info"><b class="sh-name">${esc(title)}</b>${it.user && it.nick ? `<span class="sh-by">${esc(t("shBy")(it.nick))}</span>` : ""}${tags||vv?`<span class="sh-l2"><span class="sh-tags">${tags}</span>${vv}</span>`:""}${meta?`<span class="sh-meta">${meta}</span>`:""}</span>
-  </button>`;
+  </button>${like}</div>`;
 }
 function renderShow(){
   const box=$("showcase"), key=ui.lang+(signedIn()?"|in":"");
@@ -4003,6 +4025,7 @@ async function showAct(a){
     closeV(); goBuilder(); toast("✓ "+t("shOpened")); }
 }
 $("showcase").addEventListener("click", e=>{
+  const lb=e.target.closest("[data-like]"); if(lb){ const it=showFind(lb.dataset.like); if(it) likeToggle(it); return; }
   const c=e.target.closest(".sh-card[data-sh]"); if(c){ openShowView(c.dataset.sh); return; }
   const g=e.target.closest("[data-shg]"); if(g){ SHOW.f.g=g.dataset.shg; $("showcase").querySelectorAll("[data-shg]").forEach(x=>x.setAttribute("aria-pressed", x===g)); renderShowGrid(); return; }
   if(e.target.closest("[data-shretry]")){ SHOW.state="loading"; renderShowGrid(); showLoad(true); return; }
@@ -4014,7 +4037,7 @@ $("showcase").addEventListener("input", e=>{ if(e.target.id==="shQ"){ SHOW.f.q=e
 $("showcase").addEventListener("change", e=>{ if(e.target.id==="shMine"){ SHOW.f.mine=e.target.checked; renderShowGrid(); } else if(e.target.id==="shSort"){ SHOW.f.sort=e.target.value; if(SHOW.ustate!=="off" && usersSort()!==SHOW.usort) usersLoad(false); renderShowGrid(); } });
 // cards lean toward the pointer and catch the light
 let shTiltEl=null, shTiltRAF=0;
-$("showcase").addEventListener("pointermove", e=>{ if(e.pointerType!=="mouse" || reduce()) return; const c=e.target.closest(".sh-card[data-sh]");
+$("showcase").addEventListener("pointermove", e=>{ if(e.pointerType!=="mouse" || reduce()) return; const c=e.target.closest(".sh-cell");
   if(shTiltEl && shTiltEl!==c){ shTiltEl.style.removeProperty("--rx"); shTiltEl.style.removeProperty("--ry"); }
   shTiltEl=c; if(!c) return; const r=c.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
   cancelAnimationFrame(shTiltRAF); shTiltRAF=requestAnimationFrame(()=>{ c.style.setProperty("--rx",((.5-y)*7).toFixed(2)+"deg"); c.style.setProperty("--ry",((x-.5)*9).toFixed(2)+"deg"); c.style.setProperty("--mx",(x*100).toFixed(1)+"%"); c.style.setProperty("--my",(y*100).toFixed(1)+"%"); }); });
@@ -4753,6 +4776,12 @@ async function takeFile(file){
 /* ---------- photo framing (fixed 9:16 frame) + optional automatic cut-out ---------- */
 const RATIO=9/16;
 const CR={on:false};
+const CR_PAD=.2;   // how far past the screenshot's edges the frame may go (share of its width / height)
+const crB=()=>({x0:-CR.w*CR_PAD, y0:-CR.h*CR_PAD, x1:CR.w*(1+CR_PAD), y1:CR.h*(1+CR_PAD)});
+const crMaxW=()=>{ const B=crB(); return Math.min(B.x1-B.x0, (B.y1-B.y0)*RATIO); };
+// the frame stays in that margin, its middle on the screenshot
+function crPlace(r){ const B=crB();
+  r.x=clamp(r.x, Math.max(B.x0,-r.w/2), Math.min(B.x1-r.w, CR.w-r.w/2)); r.y=clamp(r.y, Math.max(B.y0,-r.h/2), Math.min(B.y1-r.h, CR.h-r.h/2)); return r; }
 const AUTO_KEY="miliadex-autocut";
 const autoPref=()=>{ try{ return localStorage.getItem(AUTO_KEY)!=="0"; }catch(e){ return true; } };
 function defaultCrop(w,h){ let ch=h, cw=ch*RATIO; if(cw>w){ cw=w; ch=cw/RATIO; } return {x:(w-cw)/2,y:(h-ch)/2,w:cw,h:ch}; }
@@ -4760,7 +4789,8 @@ const mkCanvas=(w,h)=>{ const c=document.createElement("canvas"); c.width=w; c.h
 let crRO=null;
 function openCut(src, rec){ NSFW.warm();   // the image check loads while the screenshot is framed
   const d=$("cut");
-  Object.assign(CR,{on:true,src,w:src.width,h:src.height,rec:rec||null,
+  d.classList.remove("reviewing");
+  Object.assign(CR,{on:true,src,w:src.width,h:src.height,rec:rec||null,rv:null,strV:NaN,
     r: rec&&rec.crop ? Object.assign({},rec.crop) : defaultCrop(src.width,src.height),
     auto: rec ? !!rec.auto : autoPref(), act:null, ptrs:new Map(), busy:false, viewSet:false, hot:null});
   d.innerHTML=`<div class="ph"><h2 id="cTitle">${esc(t("cutTitle"))}</h2><button type="button" class="dx" data-close aria-label="${esc(t("close"))}">✕</button></div>
@@ -4770,6 +4800,9 @@ function openCut(src, rec){ NSFW.warm();   // the image check loads while the sc
         <label class="auto-sw"><input type="checkbox" id="autoCut"${CR.auto?" checked":""}><span class="tg" aria-hidden="true"></span><span><b>${esc(t("autoCut"))}</b><small>${esc(t("autoCutTxt"))}</small></span></label>
         <div class="row cut-fit"><button type="button" class="btn ghost sm" data-cut="full">${esc(t("cropFull"))}</button><button type="button" class="btn ghost sm" data-cut="reset">${esc(t("cutReset"))}</button></div>
         <ul class="cut-tips">${t("cropTips").map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+        <div class="cut-rv"><h3>${esc(t("strT"))}</h3><input type="range" id="cutStr" min="-100" max="100" step="5" value="0" aria-label="${esc(t("strT"))}">
+          <div class="str-l"><span>${esc(t("strLo"))}</span><span>${esc(t("strHi"))}</span></div><p>${esc(t("strTip"))}</p>
+          <button type="button" class="btn ghost sm" data-cut="back">← ${esc(t("cutBack"))}</button></div>
       </aside>
     </div>
     <div class="cut-foot"><button type="button" class="btn ghost" data-cut="replace">${ICON_CAM} ${esc(t("cutReplace"))}</button><span class="sp"></span>
@@ -4782,12 +4815,12 @@ function openCut(src, rec){ NSFW.warm();   // the image check loads while the sc
   cv.addEventListener("wheel",crWheel,{passive:false});
   crResize();
 }
-function closeCut(){ const d=$("cut"); CR.on=false; if(crRO){ crRO.disconnect(); crRO=null; } if(d.open) d.close ? d.close() : d.removeAttribute("open"); }
+function closeCut(){ const d=$("cut"); CR.on=false; CR.rv=null; d.classList.remove("reviewing"); if(crRO){ crRO.disconnect(); crRO=null; } if(d.open) d.close ? d.close() : d.removeAttribute("open"); }
 function crResize(){
   const st=$("cutStage"), cv=$("cutCv"); if(!st||!cv||!CR.on) return;
   const b=st.getBoundingClientRect(), dp=window.devicePixelRatio||1; if(b.width<2||b.height<2) return;
   cv.width=Math.round(b.width*dp); cv.height=Math.round(b.height*dp); CR.sw=b.width; CR.sh=b.height; CR.dpr=dp;
-  const s=Math.min(b.width/CR.w,b.height/CR.h)*.94; CR.s=s; CR.ox=(b.width-CR.w*s)/2; CR.oy=(b.height-CR.h*s)/2;
+  const B=crB(), bw=B.x1-B.x0, bh=B.y1-B.y0, s=Math.min(b.width/bw,b.height/bh)*.96; CR.s=s; CR.ox=(b.width-bw*s)/2-B.x0*s; CR.oy=(b.height-bh*s)/2-B.y0*s;
   crPaint();
 }
 let crRAF=0; const crDraw=()=>{ if(!crRAF) crRAF=requestAnimationFrame(()=>{ crRAF=0; crPaint(); }); };
@@ -4795,9 +4828,13 @@ const scr=(x,y)=>[x*CR.s+CR.ox, y*CR.s+CR.oy];
 function crPaint(){
   const cv=$("cutCv"); if(!cv||!CR.on) return; const g=cv.getContext("2d"), dp=CR.dpr||1;
   g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,cv.width,cv.height); g.setTransform(dp,0,0,dp,0,0);
+  if(CR.rv){ crPaintReview(g); return; }
+  const B=crB(), [bx,by]=scr(B.x0,B.y0), bw=(B.x1-B.x0)*CR.s, bh=(B.y1-B.y0)*CR.s;
+  g.fillStyle=checker(g); g.fillRect(bx,by,bw,bh);   // past the edges: nothing (see-through)
   const iw=CR.w*CR.s, ih=CR.h*CR.s; g.imageSmoothingQuality="high"; g.drawImage(CR.src,CR.ox,CR.oy,iw,ih);
+  g.strokeStyle="rgba(255,255,255,.35)"; g.setLineDash([5,5]); g.lineWidth=1; g.strokeRect(CR.ox+.5,CR.oy+.5,iw-1,ih-1); g.setLineDash([]);
   const [x,y]=scr(CR.r.x,CR.r.y), w=CR.r.w*CR.s, h=CR.r.h*CR.s;
-  g.fillStyle="rgba(8,5,22,.66)"; g.beginPath(); g.rect(CR.ox,CR.oy,iw,ih); g.rect(x+w,y,-w,h); g.fill("evenodd");
+  g.fillStyle="rgba(8,5,22,.66)"; g.beginPath(); g.rect(bx,by,bw,bh); g.rect(x+w,y,-w,h); g.fill("evenodd");
   g.strokeStyle="rgba(255,255,255,.28)"; g.lineWidth=1; g.beginPath();
   for(let i=1;i<3;i++){ g.moveTo(x+w*i/3,y); g.lineTo(x+w*i/3,y+h); g.moveTo(x,y+h*i/3); g.lineTo(x+w,y+h*i/3); } g.stroke();
   g.lineWidth=2; g.strokeStyle="#fff"; g.strokeRect(x,y,w,h);
@@ -4808,17 +4845,19 @@ function crPaint(){
     g.beginPath(); g.moveTo(cx,cy+sy*L); g.lineTo(cx,cy); g.lineTo(cx+sx*L,cy); g.stroke(); }
 }
 const CR_HIT = matchMedia("(pointer: coarse)").matches ? 26 : 16;
+let checkP=null;
+function checker(g){ if(!checkP){ const c=mkCanvas(16,16), x=c.getContext("2d"); x.fillStyle="#1b1440"; x.fillRect(0,0,16,16); x.fillStyle="#2a2160"; x.fillRect(0,0,8,8); x.fillRect(8,8,8,8); checkP=c; } return g.createPattern(checkP,"repeat"); }
 function crCorner(sx,sy){ const [x,y]=scr(CR.r.x,CR.r.y), w=CR.r.w*CR.s, h=CR.r.h*CR.s;
   for(const [cx,cy,dx,dy] of [[x,y,-1,-1],[x+w,y,1,-1],[x,y+h,-1,1],[x+w,y+h,1,1]]) if(Math.hypot(sx-cx,sy-cy)<CR_HIT) return [dx,dy];
   return null; }
 const crInside=(sx,sy)=>{ const [x,y]=scr(CR.r.x,CR.r.y); return sx>=x && sx<=x+CR.r.w*CR.s && sy>=y && sy<=y+CR.r.h*CR.s; };
 const crXY=e=>{ const b=$("cutCv").getBoundingClientRect(); return [e.clientX-b.left,e.clientY-b.top]; };
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-function crFitIn(r){ r.w=Math.min(r.w,CR.w,CR.h*RATIO); r.h=r.w/RATIO; r.x=clamp(r.x,0,CR.w-r.w); r.y=clamp(r.y,0,CR.h-r.h); return r; }
-function crScale(f){ const r=CR.r, cx=r.x+r.w/2, cy=r.y+r.h/2; const w=clamp(r.w*f,60,Math.min(CR.w,CR.h*RATIO));
+function crFitIn(r){ r.w=Math.min(r.w,crMaxW()); r.h=r.w/RATIO; return crPlace(r); }
+function crScale(f){ const r=CR.r, cx=r.x+r.w/2, cy=r.y+r.h/2; const w=clamp(r.w*f,60,crMaxW());
   CR.r=crFitIn({x:cx-w/2,y:cy-w/RATIO/2,w,h:w/RATIO}); crDraw(); }
 function crDown(e){
-  if(CR.busy) return; const cv=$("cutCv"); try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  if(CR.busy || CR.rv) return; const cv=$("cutCv"); try{ cv.setPointerCapture(e.pointerId); }catch(_){}
   const [sx,sy]=crXY(e); CR.ptrs.set(e.pointerId,[sx,sy]);
   if(CR.ptrs.size===2){ const [a,b]=[...CR.ptrs.values()]; CR.act={type:"pinch",d0:Math.hypot(a[0]-b[0],a[1]-b[1])||1,r0:Object.assign({},CR.r)}; return; }
   e.preventDefault();
@@ -4829,19 +4868,19 @@ function crDown(e){
 }
 function crMove(e){
   const [sx,sy]=crXY(e); if(CR.ptrs.has(e.pointerId)) CR.ptrs.set(e.pointerId,[sx,sy]);
-  const a=CR.act, cv=$("cutCv");
+  const a=CR.act, cv=$("cutCv"); if(CR.rv){ cv.dataset.cur=""; return; }
   if(!a){ const c=crCorner(sx,sy); const hk=c?c.join():""; if(hk!==(CR.hot?CR.hot.join():"")){ CR.hot=c; crDraw(); }
     cv.dataset.cur = c ? (c[0]*c[1]>0?"nwse":"nesw") : crInside(sx,sy) ? "move" : "pointer"; return; }
   if(a.type==="pinch"){ if(CR.ptrs.size<2) return; const [p,q]=[...CR.ptrs.values()]; const f=Math.hypot(p[0]-q[0],p[1]-q[1])/a.d0;
-    const r=a.r0, cx=r.x+r.w/2, cy=r.y+r.h/2, w=clamp(r.w*f,60,Math.min(CR.w,CR.h*RATIO)); CR.r=crFitIn({x:cx-w/2,y:cy-w/RATIO/2,w,h:w/RATIO}); crDraw(); return; }
-  if(a.type==="move"){ CR.r.x=clamp(a.x0+(sx-a.sx)/CR.s,0,CR.w-CR.r.w); CR.r.y=clamp(a.y0+(sy-a.sy)/CR.s,0,CR.h-CR.r.h); crDraw(); return; }
-  if(a.type==="size"){ const ix=(sx-CR.ox)/CR.s, iy=(sy-CR.oy)/CR.s;
-    const maxW=Math.min(a.dx>0?CR.w-a.ax:a.ax, (a.dy>0?CR.h-a.ay:a.ay)*RATIO);
+    const r=a.r0, cx=r.x+r.w/2, cy=r.y+r.h/2, w=clamp(r.w*f,60,crMaxW()); CR.r=crFitIn({x:cx-w/2,y:cy-w/RATIO/2,w,h:w/RATIO}); crDraw(); return; }
+  if(a.type==="move"){ CR.r=crPlace(Object.assign(CR.r,{x:a.x0+(sx-a.sx)/CR.s, y:a.y0+(sy-a.sy)/CR.s})); crDraw(); return; }
+  if(a.type==="size"){ const ix=(sx-CR.ox)/CR.s, iy=(sy-CR.oy)/CR.s, B=crB();
+    const maxW=Math.min(a.dx>0?B.x1-a.ax:a.ax-B.x0, (a.dy>0?B.y1-a.ay:a.ay-B.y0)*RATIO);
     const w=clamp(Math.max(Math.abs(ix-a.ax),Math.abs(iy-a.ay)*RATIO),60,maxW), h=w/RATIO;
-    CR.r={x:a.dx>0?a.ax:a.ax-w, y:a.dy>0?a.ay:a.ay-h, w, h}; crDraw(); }
+    CR.r=crPlace({x:a.dx>0?a.ax:a.ax-w, y:a.dy>0?a.ay:a.ay-h, w, h}); crDraw(); }
 }
 function crUp(e){ CR.ptrs.delete(e.pointerId); if(CR.act && CR.act.type==="pinch" && CR.ptrs.size>=1){ CR.act=null; return; } CR.act=null; crMove(e); }
-function crWheel(e){ e.preventDefault(); if(CR.busy) return;
+function crWheel(e){ e.preventDefault(); if(CR.busy || CR.rv) return;
   const raw=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX;   // Shift+wheel turns into a sideways scroll in some browsers
   const dy=raw*(e.deltaMode===1?33:e.deltaMode===2?400:1), k=e.shiftKey?0.0001:0.0004;
   crScale(Math.exp(Math.max(-150,Math.min(150,dy))*k)); }
@@ -4878,26 +4917,71 @@ async function autoCut(canvas, say){
 }
 function busy(on,msg){ CR.busy=on; const b=$("cutBusy"); if(!b) return; b.hidden=!on; if(msg) $("cutBusyT").textContent=msg;
   $("cut").querySelectorAll(".cut-foot button,.cut-side button,.cut-side input").forEach(x=>{ if(!x.matches("[data-close]")) x.disabled=on; }); }
+// what the frame holds; past the screenshot's edges it's filled with the picture's own colours (blurred) so the cut-out
+// sees scenery there (made see-through again afterwards) and a photo used as it is has no black band
+function crFrame(){
+  const {x,y,w,h}=CR.r, k=Math.min(1,1600/h), W=Math.max(1,Math.round(w*k)), H=Math.max(1,Math.round(h*k));
+  const out=mkCanvas(W,H), o=out.getContext("2d"); o.imageSmoothingQuality="high";
+  const ix0=Math.max(0,x), iy0=Math.max(0,y), ix1=Math.min(CR.w,x+w), iy1=Math.min(CR.h,y+h);
+  const inr={x:(ix0-x)*k, y:(iy0-y)*k, w:(ix1-ix0)*k, h:(iy1-iy0)*k}, pad=ix0>x+.5 || iy0>y+.5 || ix1<x+w-.5 || iy1<y+h-.5;
+  if(pad){ const t=mkCanvas(16,16), tg=t.getContext("2d"); tg.imageSmoothingQuality="high"; tg.drawImage(CR.src,0,0,16,16);
+    const px=tg.getImageData(0,0,16,16).data, c=[0,0,0]; for(let i=0;i<px.length;i+=4){ c[0]+=px[i]; c[1]+=px[i+1]; c[2]+=px[i+2]; }
+    o.fillStyle=`rgb(${c.map(v=>Math.round(v/256)).join(",")})`; o.fillRect(0,0,W,H);   // the picture's average colour
+    if("filter" in o){ o.save(); o.filter="blur(32px)"; o.globalAlpha=.9; o.drawImage(t,-48,-48,W+96,H+96); o.restore(); } }   // its colours, blurred
+  if(inr.w>0 && inr.h>0) o.drawImage(CR.src, ix0, iy0, ix1-ix0, iy1-iy0, inr.x, inr.y, inr.w, inr.h);
+  return {out, inr, pad};
+}
+const STR_KEY="miliadex-autocut-str";
+const strPref=()=>{ try{ const v=+localStorage.getItem(STR_KEY); return isFinite(v) ? clamp(v,-100,100) : 0; }catch(e){ return 0; } };
 async function cutApply(){
   if(CR.busy) return;
-  const {x,y,w,h}=CR.r, k=Math.min(1,1600/h);
-  const out=mkCanvas(Math.max(1,Math.round(w*k)),Math.max(1,Math.round(h*k))); const o=out.getContext("2d"); o.imageSmoothingQuality="high";
-  o.drawImage(CR.src,x,y,w,h,0,0,out.width,out.height);
-  let cut=null, auto=CR.auto;
-  if(auto){ busy(true,t("autoLoad"));
-    try{ cut=await autoCut(out, m=>busy(true,m)); }
+  if(CR.rv) return cutKeep(CR.rv.cv, true);
+  const F=crFrame(); let raw=null, auto=CR.auto;
+  if(auto){ busy(true,t("autoRun"));
+    try{ raw=await autoCut(F.out, m=>busy(true,m)); }
     catch(e){ console.warn("Miliadex: automatic cut-out failed", e); auto=false; toast(t(e && e.empty ? "autoNone" : "autoFail")); }
     if(!CR.on) return; }
-  if(cut){ const im=await blobToCanvas(cut); if(im){ const wb=await toBlobP(im,"image/webp",.9); if(wb && wb.type==="image/webp" && wb.size<cut.size) cut=wb; } }
-  if(!cut) cut=await toBlobP(out,"image/jpeg",.9);
+  if(raw){ const rc=await blobToCanvas(raw); if(rc){ cutReview(F, rc); busy(false); return; } }
+  busy(false); cutKeep(F.out, false);
+}
+// the cut-out shown on its own, with how strongly the background is removed: the model's mask stays as it came, the setting
+// only reshapes it (gentler keeps faint parts, stronger drops leftovers), the colours always come from the photo itself
+function cutReview(F, rc){
+  const W=F.out.width, H=F.out.height, m=mkCanvas(W,H), mg=m.getContext("2d"); mg.drawImage(rc,0,0,W,H);
+  const md=mg.getImageData(0,0,W,H).data, a0=new Uint8ClampedArray(W*H);
+  const x0=Math.floor(F.inr.x), y0=Math.floor(F.inr.y), x1=Math.ceil(F.inr.x+F.inr.w), y1=Math.ceil(F.inr.y+F.inr.h);
+  for(let y=y0;y<y1;y++) for(let x=x0;x<x1;x++){ const i=y*W+x; a0[i]=md[i*4+3]; }   // past the screenshot: nothing
+  const img=F.out.getContext("2d").getImageData(0,0,W,H), cv=mkCanvas(W,H);
+  CR.rv={F, a0, img, cv, v:isFinite(CR.strV) ? CR.strV : CR.rec && isFinite(CR.rec.str) ? CR.rec.str : strPref()};
+  cutStrength(CR.rv.v);
+  const d=$("cut"); d.classList.add("reviewing"); const r=$("cutStr"); if(r) r.value=CR.rv.v;
+  const ap=d.querySelector('[data-cut="apply"]'); if(ap) ap.textContent=t("cutUse"); const ti=$("cTitle"); if(ti) ti.textContent=t("rvTitle");
+  crDraw();
+}
+function cutStrength(v){
+  const R=CR.rv; if(!R) return; R.v=v; CR.strV=v; const d=R.img.data, a0=R.a0, n=a0.length;
+  if(v<0){ const hi=1-.95*(-v/100); for(let i=0;i<n;i++) d[i*4+3]=Math.min(255,a0[i]/hi); }
+  else { const lo=.75*(v/100)*255, sc=255/(255-lo); for(let i=0;i<n;i++){ const a=a0[i]; d[i*4+3]=a<=lo?0:(a-lo)*sc; } }
+  R.cv.getContext("2d").putImageData(R.img,0,0); crDraw();
+}
+function cutBack(){ const d=$("cut"); CR.rv=null; d.classList.remove("reviewing"); const ap=d.querySelector('[data-cut="apply"]'); if(ap) ap.textContent=t("cutApply"); const ti=$("cTitle"); if(ti) ti.textContent=t("cutTitle"); crDraw(); }
+function crPaintReview(g){
+  const c=CR.rv.cv, sw=CR.sw, sh=CR.sh; g.fillStyle=checker(g); g.fillRect(0,0,sw,sh);
+  const s=Math.min(sw/c.width, sh/c.height)*.94, w=c.width*s, h=c.height*s; g.imageSmoothingQuality="high"; g.drawImage(c,(sw-w)/2,(sh-h)/2,w,h);
+}
+async function cutKeep(img, auto){
+  let cut;
+  if(auto){ cut=await toBlobP(img,"image/png"); const wb=await toBlobP(img,"image/webp",.9); if(wb && wb.type==="image/webp" && wb.size<cut.size) cut=wb; }
+  else cut=await toBlobP(img,"image/jpeg",.9);
   const src = CR.rec && CR.rec.src ? CR.rec.src : await toBlobP(CR.src,"image/jpeg",.92);
   // checked here, as it's added, so nothing unchecked ever reaches a link preview or the showcase
   busy(true, t("chkRun")); const chk={v:1, ok:null};
   try{ chk.ok=(await NSFW.verdict([cut, src])).ok; }catch(e){ console.warn("Miliadex: image check unavailable, checked again before sharing", e); }
   if(!CR.on) return;
-  if(chk.ok===false){ busy(false); toast(t("chkBad")); return; }   // the framing window stays: another image can be chosen
-  const id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  const ok=await PicDB.put({id,src,cut,crop:Object.assign({},CR.r),auto,w:CR.w,h:CR.h,t:Date.now(),chk});
+  if(chk.ok===false){ busy(false); if(CR.rv) cutBack(); toast(t("chkBad")); return; }   // the framing window stays: another image can be chosen
+  const id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6), rec={id,src,cut,crop:Object.assign({},CR.r),auto,w:CR.w,h:CR.h,t:Date.now(),chk};
+  if(auto && CR.rv){ rec.str=CR.rv.v; try{ localStorage.setItem(STR_KEY, String(CR.rv.v)); }catch(e){} }
+  const ok=await PicDB.put(rec);
   busy(false); look.pic=id; look.picOn=true; saveDraft(); closeCut(); renderOutfits(); gcPics();
   toast(ok?"✓ "+t("picSaved"):t("picNoStore"));
 }
@@ -4913,10 +4997,12 @@ $("cut").addEventListener("click", e=>{
   else if(a==="reset"){ CR.r=defaultCrop(CR.w,CR.h); crDraw(); }
   else if(a==="replace") $("picFile").click();
   else if(a==="apply") cutApply();
+  else if(a==="back") cutBack();
 });
+$("cut").addEventListener("input", e=>{ if(e.target.id==="cutStr" && CR.rv){ const v=+e.target.value; cancelAnimationFrame(CR.strRAF); CR.strRAF=requestAnimationFrame(()=>cutStrength(v)); } });
 $("cut").addEventListener("change", e=>{ if(e.target.id==="autoCut"){ CR.auto=e.target.checked; try{ localStorage.setItem(AUTO_KEY,CR.auto?"1":"0"); }catch(_){} } });
 $("cut").addEventListener("cancel", e=>{ if(CR.busy) e.preventDefault(); });
-$("cut").addEventListener("close", ()=>{ CR.on=false; if(crRO){ crRO.disconnect(); crRO=null; } });
+$("cut").addEventListener("close", ()=>{ CR.on=false; CR.rv=null; $("cut").classList.remove("reviewing"); if(crRO){ crRO.disconnect(); crRO=null; } });
 $("lookImgFile").addEventListener("change", async e=>{ const f=e.target.files && e.target.files[0]; e.target.value=""; if(f && !(await openLookImage(f))) toast(t("imgNone")); });
 $("outfits").addEventListener("dragover", e=>{ const f=e.target.closest(".lk-imp"); if(!f || !e.dataTransfer || ![...e.dataTransfer.types].includes("Files")) return; e.preventDefault(); f.classList.add("drag"); });
 $("outfits").addEventListener("dragleave", e=>{ const f=e.target.closest(".lk-imp"); if(f && !f.contains(e.relatedTarget)) f.classList.remove("drag"); });
