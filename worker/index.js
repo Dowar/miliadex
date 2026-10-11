@@ -10,7 +10,8 @@
 //   link get "/#look=…&card=<key>", and the site reads the screenshot back from that picture.
 // Outfits Showcase: signed-in people share their saved outfits there (POST /api/show/publish, its own picture, updatable
 //   once a minute, removable by its owner); GET /api/showcase lists them (most liked or newest, small pictures inside the same
-//   response). Featured: the repo's images (showcase/) and the copies the admin makes of community outfits (frozen, never cleared).
+//   response). Featured: the repo's images (showcase/) and the community outfits the admin stars (still their owner's: updated or
+//   taken out by them; copies made before that are turned into stars).
 // Accounts: the Google account connected for Drive sync, checked with Google once (POST /api/auth), then a signed session;
 //   a pseudo (random at first) is shown on the outfits one shares; one like per account and outfit.
 // Admin: /a/<secret> is a 404 page, except for the site owner's Google account, checked with Google on every admin call.
@@ -259,7 +260,7 @@ async function showItem(env, origin, file) {
 // Showcase entries (kind "s") are counted apart: MAX_SHOW per object, PER_USER per account, never expired, cleared last.
 const MAX_LINKS = 50000;   // short links per object (a few hundred bytes each): past that, the ones opened least recently go
 const SHARDS = 4, MAX_CARDS = 1250, MAX_SHOW = 800, PER_USER = 30, COOLDOWN = 60e3, BUDGET = 850 * 2 ** 20, KEEP = 183 * 864e5, PART = 1536 * 1024, PAGE = 36;
-const COLS = "k, code, lang, pt, pic, likes, nick, feat, th, thty";   // a showcase entry, with its small picture
+const COLS = "k, code, lang, pt, pic, likes, nick, feat, star, th, thty";   // a showcase entry, with its small picture
 const NICK_A = ["Starry", "Lunar", "Velvet", "Crimson", "Azure", "Golden", "Misty", "Frosty", "Blooming", "Silent", "Radiant", "Moonlit", "Stellar", "Wild", "Gentle", "Amber"];
 const NICK_B = ["Manekin", "Manekina", "Stylist", "Wanderer", "Dreamer", "Seeker", "Muse", "Comet", "Petal", "Lantern", "Traveler", "Tailor", "Sparrow", "Ribbon", "Fable", "Nova"];
 const randomNick = long => NICK_A[Math.random() * 16 | 0] + NICK_B[Math.random() * 16 | 0] + (Math.random() * (long ? 9000 : 90) + (long ? 1000 : 10) | 0);
@@ -306,6 +307,11 @@ export class CardStore extends DurableObject {
       sql.exec("CREATE INDEX IF NOT EXISTS link_t ON link (t)");
       this.setMeta("lcount", sql.exec("SELECT COUNT(*) AS c FROM link").toArray()[0].c); this.setMeta("schema", 7);
     }
+    if (v < 8) {                              // v8: featured by the admin = a star on the player's own entry (no copy)
+      addCol("star INTEGER NOT NULL DEFAULT 0");
+      sql.exec("CREATE INDEX IF NOT EXISTS card_star ON card (star)");
+      this.setMeta("schema", 8);
+    }
   }
   meta(k) { const r = this.sql.exec("SELECT v FROM meta WHERE k = ?", k).toArray()[0]; return r ? r.v : 0; }
   setMeta(k, v) { this.sql.exec("INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, v); }
@@ -320,7 +326,7 @@ export class CardStore extends DurableObject {
   // link pictures, or showcase entries (show)
   evict(total, count, room, most, show) {
     while (total > room || count > most) {
-      const old = this.sql.exec(`SELECT k, z FROM card WHERE feat = 0 AND kind IS ${show ? "'s'" : "NULL"} ORDER BY t LIMIT 32`).toArray();
+      const old = this.sql.exec(`SELECT k, z FROM card WHERE feat = 0 AND star = 0 AND kind IS ${show ? "'s'" : "NULL"} ORDER BY t LIMIT 32`).toArray();
       if (!old.length) break;
       for (const r of old) { this.drop(r.k); total -= r.z; count--; if (total <= room && count <= most) break; }
     }
@@ -379,14 +385,14 @@ export class CardStore extends DurableObject {
     }
     this.ctx.storage.transactionSync(() => {
       let n = 0; for (let x = 0; x < b.byteLength; x += PART, n++) this.sql.exec("INSERT INTO card_part (k, i, b) VALUES (?, ?, ?)", k, n, b.slice(x, x + PART));
-      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pub, ban, pt, pic, th, thty, uid, nick, likes, feat, kind, ut, src) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 0, ?, ?, ?, ?, ?, ?, ?, ?, 's', ?, ?)",
+      this.sql.exec("INSERT INTO card (k, t, ty, n, z, code, lang, pub, ban, pt, pic, th, thty, uid, nick, likes, feat, kind, ut, src, star) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 0, ?, ?, ?, ?, ?, ?, ?, ?, 's', ?, ?, ?)",
         k, now, ty, n, size, e.code, e.lang || "en", prev ? prev.pt || now : now, e.pic ? 1 : 0, th, th ? e.thty || "image/jpeg" : null, e.uid || null, e.nick || null,
-        prev ? prev.likes : 0, e.feat ? 1 : 0, now, e.src || null);
+        prev ? prev.likes : 0, e.feat ? 1 : 0, now, e.src || null, prev && prev.star ? 1 : 0);   // updated by its owner: still featured
     });
     this.setMeta("bytes", total + size); this.setMeta("scount", scount + 1);
   }
   publish(k, ty, b, e) {
-    const prev = this.sql.exec("SELECT z, uid, ban, likes, pt, ut, kind, feat FROM card WHERE k = ?", k).toArray()[0];
+    const prev = this.sql.exec("SELECT z, uid, ban, likes, pt, ut, kind, feat, star FROM card WHERE k = ?", k).toArray()[0];
     if (prev && (prev.kind !== "s" || prev.feat || (prev.uid && prev.uid !== e.uid))) return { error: "owner" };
     if (prev && prev.ban) return { error: "ban" };
     const since = prev ? Date.now() - prev.ut : Infinity;
@@ -403,13 +409,13 @@ export class CardStore extends DurableObject {
   }
   mine(u) { return this.sql.exec(`SELECT ${COLS}, ban, ut FROM card WHERE uid = ? AND kind = 's' AND feat = 0`, u).toArray(); }
   countBy(u) { return this.sql.exec("SELECT COUNT(*) AS c FROM card WHERE uid = ? AND kind = 's' AND feat = 0", u).toArray()[0].c; }
-  // the admin features a community outfit: a frozen copy (the original stays in the community, still its owner's)
-  exportEntry(k) {
-    const r = this.sql.exec("SELECT ty, code, lang, pic, nick, uid, th, thty FROM card WHERE k = ? AND kind = 's'", k).toArray()[0];
-    if (!r || !r.code) return null;
-    const g = this.get(k); return g ? { ...r, b: g.b } : null;
+  // the admin features a community outfit: a star on it (it stays its owner's, who can update it or take it out)
+  star(k, on) {
+    const r = this.sql.exec("SELECT kind, code, pub, ban FROM card WHERE k = ?", k).toArray()[0];
+    if (!r || r.kind !== "s" || !r.code || (on && (r.ban || !r.pub))) return false;
+    this.sql.exec("UPDATE card SET star = ? WHERE k = ?", on ? 1 : 0, k); return true;
   }
-  putFeatured(k, x, src) { this.entryWrite(k, x.ty, x.b, { code: x.code, lang: x.lang, pic: x.pic, uid: x.uid, nick: x.nick, th: x.th, thty: x.thty, feat: 1, src }, null); return true; }
+  legacyFeat() { return this.sql.exec("SELECT k, src FROM card WHERE feat = 1 AND src IS NOT NULL").toArray(); }   // copies made before stars
   has(k) {
     return this.sql.exec("SELECT 1 AS x FROM card WHERE k = ?", k).toArray().length > 0;
   }
@@ -427,7 +433,7 @@ export class CardStore extends DurableObject {
     const rows = sort === "new"
       ? this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND feat = 0 AND pt < ? ORDER BY pt DESC LIMIT ?`, cur.t, n).toArray()
       : this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND feat = 0 AND (likes < ? OR (likes = ? AND pt < ?)) ORDER BY likes DESC, pt DESC LIMIT ?`, cur.l, cur.l, cur.t, n).toArray();
-    const feat = withFeat ? this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND feat = 1 ORDER BY likes DESC, pt DESC LIMIT 200`).toArray() : [];
+    const feat = withFeat ? this.sql.exec(`SELECT ${COLS} FROM card WHERE pub = 1 AND ban = 0 AND (feat = 1 OR star = 1) ORDER BY likes DESC, pt DESC LIMIT 200`).toArray() : [];
     return { rows, feat };
   }
   item(k) { return this.sql.exec(`SELECT ${COLS} FROM card WHERE k = ? AND pub = 1`, k).toArray()[0] || null; }
@@ -479,20 +485,23 @@ export class CardStore extends DurableObject {
     this.sql.exec("INSERT INTO kv (k, v) VALUES ('session', ?)", v); return v;
   }
   // admin
-  stats() { return this.sql.exec("SELECT COALESCE(SUM(kind IS NULL), 0) AS c, COALESCE(SUM(kind = 's'), 0) AS s, COALESCE(SUM(z), 0) AS z, COALESCE(SUM(pub = 1 AND feat = 0), 0) AS p, COALESCE(SUM(ban), 0) AS b, COALESCE(SUM(feat), 0) AS f FROM card").toArray()[0]; }
+  stats() { return this.sql.exec("SELECT COALESCE(SUM(kind IS NULL), 0) AS c, COALESCE(SUM(kind = 's'), 0) AS s, COALESCE(SUM(z), 0) AS z, COALESCE(SUM(pub = 1 AND feat = 0), 0) AS p, COALESCE(SUM(ban), 0) AS b, COALESCE(SUM(feat = 1 OR star = 1), 0) AS f FROM card").toArray()[0]; }
+  kvGet(k) { const r = this.sql.exec("SELECT v FROM kv WHERE k = ?", k).toArray()[0]; return r ? r.v : null; }
+  kvSet(k, v) { this.sql.exec("INSERT OR REPLACE INTO kv (k, v) VALUES (?, ?)", k, v); }
   adminList(which, before, n) {
-    const q = "SELECT k, code, lang, %AT% AS at, pic, z, ban, pub, feat, likes, nick FROM card WHERE %W% AND %AT% < ? ORDER BY %AT% DESC LIMIT ?";
-    const [at, w] = which === "ban" ? ["t", "ban = 1"] : which === "feat" ? ["pt", "feat = 1"] : ["pt", "kind = 's' AND pub = 1 AND feat = 0"];
+    const q = "SELECT k, code, lang, %AT% AS at, pic, z, ban, pub, feat, star, likes, nick FROM card WHERE %W% AND %AT% < ? ORDER BY %AT% DESC LIMIT ?";
+    const [at, w] = which === "ban" ? ["t", "ban = 1"] : which === "feat" ? ["pt", "(feat = 1 OR star = 1)"] : ["pt", "kind = 's' AND pub = 1 AND feat = 0"];
     return this.sql.exec(q.replace(/%AT%/g, at).replace("%W%", w), before, n).toArray();
   }
-  // hide / show an entry · unfeature (a featured copy: deleted) · delete (the picture, whatever it is)
+  // hide / show an entry · feature / unfeature (its star; an old featured copy: deleted) · delete (the picture, whatever it is)
   moderate(k, op) {
-    const r = this.sql.exec("SELECT z, code, kind, feat FROM card WHERE k = ?", k).toArray()[0];
+    const r = this.sql.exec("SELECT z, code, kind, feat, star FROM card WHERE k = ?", k).toArray()[0];
     if (!r) return false;
     const now = Date.now(), gone = () => { this.drop(k); this.setMeta("bytes", Math.max(0, this.meta("bytes") - r.z)); const m = r.kind === "s" ? "scount" : "count"; this.setMeta(m, Math.max(0, this.meta(m) - 1)); };
-    if (op === "hide") { if (r.feat) gone(); else this.sql.exec("UPDATE card SET pub = 0, ban = 1, kind = 's' WHERE k = ?", k); }
+    if (op === "hide") { if (r.feat) gone(); else this.sql.exec("UPDATE card SET pub = 0, ban = 1, star = 0, kind = 's' WHERE k = ?", k); }
     else if (op === "show") { if (!r.code || r.kind !== "s") return false; this.sql.exec("UPDATE card SET ban = 0, pub = 1, pt = CASE WHEN pt > 0 THEN pt ELSE ? END WHERE k = ?", now, k); }
-    else if (op === "unfeature") { if (!r.feat) return false; gone(); }
+    else if (op === "feature") return this.star(k, true);
+    else if (op === "unfeature") { if (r.feat) gone(); else if (r.star) this.sql.exec("UPDATE card SET star = 0 WHERE k = ?", k); else return false; }
     else if (op === "delete") gone();
     else return false;
     return true;
@@ -585,8 +594,9 @@ async function accountApi(request, env, url, ctx) {
   const op = url.pathname.slice(5);
   if (op === "auth") {
     const g = await googleUser(bearer(request)); if (!g) return json({ error: "google" }, 0, 401);
-    const n = await users(env).login(g.uid), likes = (await each(env, s => s.myLikes(g.uid), [])).flat();
-    return json({ ...await makeSession(env, g.uid, n), likes });
+    const n = await users(env).login(g.uid), likes = (await each(env, s => s.myLikes(g.uid), [])).flat(), out = { ...await makeSession(env, g.uid, n), likes };
+    if (g.email && await sha256(g.email) === ADMIN_EMAIL) { let seg = ""; try { seg = await users(env).kvGet("adminSeg") || ""; } catch (e) {} out.adm = seg ? "/a/" + seg : ""; }
+    return json(out);
   }
   const me = await readSession(env, request); if (!me) return json({ error: "session" }, 0, 401);
   if (op === "show/publish") {               // card = the outfit image · thumb = its small picture · code · lang · lid (the saved outfit) · pic
@@ -722,7 +732,8 @@ async function sendCard(env, origin, key, small) {
 function bundle(o, age) {
   const parts = []; let off = 0;
   const out = x => {
-    const r = { k: x.k, c: x.code, l: x.lang || "en", t: x.pt, p: x.pic ? 1 : 0, lk: x.likes || 0, n: x.nick || "", f: x.feat ? 1 : 0 };
+    const r = { k: x.k, c: x.code, l: x.lang || "en", t: x.pt, p: x.pic ? 1 : 0, lk: x.likes || 0, n: x.nick || "", f: x.feat || x.star ? 1 : 0 };
+    if (x.star) r.s = 1;   // featured, still its owner's
     if (x.ban) r.b = 1; if (x.ut) r.u = x.ut;
     if (x.th) { const b = new Uint8Array(x.th); r.th = [off, b.length, x.thty || "image/jpeg"]; parts.push(b); off += b.length; }
     return r;
@@ -741,7 +752,8 @@ async function showcaseList(env, url, ctx) {
   const one = url.searchParams.get("k");
   if (one != null) {
     let r = null; if (/^[0-9a-f]{32}$/.test(one)) try { const s = store(env, one); r = s && await s.item(one); } catch (e) {}
-    return bundle({ items: r && !r.feat ? [r] : [], feat: r && r.feat ? [r] : [] }, 60);
+    const f = r && (r.feat || r.star);
+    return bundle({ items: r && !f ? [r] : [], feat: f ? [r] : [] }, 60);
   }
   const sort = url.searchParams.get("sort") === "new" ? "new" : "top", after = (url.searchParams.get("after") || "").slice(0, 60);
   const q = "sort=" + sort + (after ? "&after=" + encodeURIComponent(after) : ""), ck = showCacheKey(url.origin, q);
@@ -773,7 +785,8 @@ async function adminApi(request, env, url, ctx) {
   if (!body || !await isAdmin(request, body.seg)) return notFound();
   const op = url.pathname.slice("/api/admin/".length);
   if (op === "me") {
-    let people = 0; try { people = await users(env).userCount(); } catch (e) {}
+    let people = 0; try { const u = users(env); people = await u.userCount(); if (await u.kvGet("adminSeg") !== body.seg) await u.kvSet("adminSeg", body.seg); } catch (e) {}
+    try { if (await featMigrate(env)) dropShowCache(url.origin, ctx); } catch (e) {}
     return json({ ok: true, max: SHARDS * MAX_CARDS, maxShow: SHARDS * MAX_SHOW, budget: SHARDS * BUDGET, people, stats: await each(env, s => s.stats(), null) });
   }
   if (op === "list") {
@@ -785,14 +798,17 @@ async function adminApi(request, env, url, ctx) {
     const k = String(body.k || "");
     if (!/^[0-9a-f]{32}$/.test(k) || !["hide", "show", "delete", "feature", "unfeature"].includes(body.op)) return json({ ok: false }, 0, 400);
     let ok = false;
-    if (body.op === "feature") {             // a frozen copy in Featured; the original stays in the community
-      const x = await store(env, k).exportEntry(k);
-      if (x) { const fk = (await sha256(`f|${k}|${Date.now()}`)).slice(0, 32); ok = await store(env, fk).putFeatured(fk, x, k); }
-    } else ok = await store(env, k).moderate(k, body.op);
+    ok = await store(env, k).moderate(k, body.op);   // feature: a star on the player's own entry
     dropShowCache(url.origin, ctx);
     return json({ ok });
   }
   return notFound();
+}
+// featured copies made before stars: the original gets the star, the copy goes (an original its owner took out: gone too)
+async function featMigrate(env) {
+  const old = (await each(env, s => s.legacyFeat(), [])).flat(); let n = 0;
+  for (const x of old) { try { await store(env, x.src).star(x.src, true); await store(env, x.k).moderate(x.k, "delete"); n++; } catch (e) {} }
+  return n;
 }
 // /a/<anything>: the site's page with a 404 status; the page itself shows "page not found" unless the owner is signed in
 async function adminPage(env, origin) {
