@@ -1400,16 +1400,17 @@ dialog[open]::backdrop{animation:vpfade .35s ease;-webkit-backdrop-filter:blur(4
 .sh-r{flex:none;display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
 .sh-lk{display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:13px;color:#ffc1d9}
 .sh-lk.on{color:#ff6fa8}
-.sh-cell.has-like .sh-meta{padding-right:66px}
+.sh-cell.still{animation:none}
+.sh-cell.has-like .sh-meta{padding-right:66px;min-height:39px}
 .sh-cell.has-like .sh-sk{margin-right:66px}
-.sh-like{position:absolute;z-index:3;right:12px;bottom:10px;display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;border-radius:99px;border:1px solid rgba(255,160,205,.4);
+.sh-like{position:absolute;z-index:3;right:12px;bottom:12px;display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px 0 8px;border-radius:99px;border:1px solid rgba(255,160,205,.4);
   background:rgba(40,20,70,.75);color:#ffc1d9;font:700 13px/1 var(--body);font-variant-numeric:tabular-nums;cursor:pointer;backdrop-filter:blur(6px);transition:transform .25s cubic-bezier(.3,1.6,.5,1),background .2s,box-shadow .2s,color .2s}
 .sh-like svg{width:15px;height:15px}
 .sh-like:hover,.sh-like:focus-visible{transform:scale(1.08);background:rgba(255,111,168,.22);box-shadow:0 0 16px rgba(255,111,168,.45);outline:none}
 .sh-like.on{background:linear-gradient(135deg,#ff8fbf,#ff5c9d);border-color:rgba(255,255,255,.35);color:#fff;box-shadow:0 0 16px rgba(255,92,157,.55)}
 .sh-like.pop svg{animation:likePop .6s cubic-bezier(.3,1.7,.5,1)}
 @keyframes likePop{0%{transform:scale(.4)}45%{transform:scale(1.45)}100%{transform:scale(1)}}
-@media (max-width:560px){ .sh-like{right:8px;bottom:7px;height:24px;padding:0 8px 0 6px;font-size:11.5px} .sh-like svg{width:13px;height:13px} .sh-cell.has-like .sh-meta{padding-right:54px} }
+@media (max-width:560px){ .sh-like{right:8px;bottom:8px;height:24px;padding:0 8px 0 6px;font-size:11.5px} .sh-like svg{width:13px;height:13px} .sh-cell.has-like .sh-meta{padding-right:54px;min-height:32px} }
 .sh-acct{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:-2px 0 4px;font-size:14px;color:var(--muted)}
 .gbtn.sm{height:34px;padding:0 14px 0 10px;gap:8px;font-size:13.5px}
 .gbtn.sm .g-logo{width:16px;height:16px}
@@ -3812,17 +3813,24 @@ async function mineLoad(){
   if(ui.tab==="show") renderShowGrid();
 }
 // likes: the page shows its own like at once, the server keeps the count (one like per account)
+function likePaint(it){
+  const on=signedIn() && likedSet().has(it.k), n=fmtN(it.lk||0);
+  $("showcase").querySelectorAll(`.sh-like[data-like="${CSS.escape(it.name)}"]`).forEach(b=>{ b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on));
+    b.setAttribute("aria-label",`${t("likeL")} · ${n}`); const c=b.querySelector("span"); if(c) c.textContent=n;
+    if(on && it._pop && Date.now()-it._pop<300){ b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); } });
+  const d=$("shv"); if(d.open && VW.src==="show" && VW.keys[VW.i]===it.name) paintView(true);
+}
 function likeLocal(it, on){
   const L=new Set(ACCT.likes||[]); if(on) L.add(it.k); else L.delete(it.k); ACCT.likes=[...L]; saveAcct();
   it.lk=Math.max(0,(it.lk||0)+(on?1:-1));
 }
 async function likeToggle(it){
   if(!signedIn()){ toast(t("likeNeed")); GD.connect(); return; }
-  const on=!likedSet().has(it.k); likeLocal(it, on); if(on) it._pop=Date.now(); showArrived(it);
+  const on=!likedSet().has(it.k); likeLocal(it, on); it._pop=on?Date.now():0; likePaint(it);
   try{ const r=await fetch(ROOT+"api/like", {method:"POST", headers:{"content-type":"application/json","x-session":ACCT.s}, body:JSON.stringify({k:it.k, on})});
     const j=r.ok ? await r.json() : null; if(!j || !j.ok) throw new Error(r.status===401 ? "session" : "like");
-    it.lk=j.likes; showArrived(it);
-  }catch(e){ likeLocal(it, !on); showArrived(it); toast(t("likeFail")); if(String(e.message)==="session") acctEnsure(true); }
+    it.lk=j.likes; likePaint(it);
+  }catch(e){ likeLocal(it, !on); likePaint(it); toast(t("likeFail")); if(String(e.message)==="session") acctEnsure(true); }
 }
 function showOpenName(n){
   const it=showFind(n); if(it){ openShowView(it.name); return; }
@@ -3845,7 +3853,7 @@ let showRT=0;
 function showArrived(it){
   if(ui.tab==="show"){ const F=SHOW.f;
     if(F.q || F.g || F.mine || F.sort!=="repo"){ clearTimeout(showRT); showRT=setTimeout(renderShowGrid,180); }
-    else { const el=$("showcase").querySelector(`.sh-card[data-sh="${CSS.escape(it.name)}"]`); if(el) (el.closest(".sh-cell")||el).outerHTML=showCard(it,+el.dataset.k); } }
+    else { const el=$("showcase").querySelector(`.sh-card[data-sh="${CSS.escape(it.name)}"]`); if(el){ const cell=el.closest(".sh-cell")||el, done=!cell.getAnimations || !cell.getAnimations().some(a=>a.playState==="running"); cell.outerHTML=showCard(it,+el.dataset.k,done); } } }
   const d=$("shv"); if(d.open && VW.src==="show" && VW.keys[VW.i]===it.name) paintView(true);
 }
 function showList(){
@@ -3865,16 +3873,16 @@ function showList(){
   if(F.own) return order((SHOW.mine||[]).filter(keep));   // my shared outfits only
   return order((SHOW.items||[]).concat(SHOW.ufeat||[]).filter(keep)).concat(order((SHOW.users||[]).filter(keep)));
 }
-function showCard(it,k){
+function showCard(it,k,still){
   const m=it.meta, st=m?showStats(m):null, title=showName(it), spot=k===0 && SHOW.spot && !it.user, full=st && st.n && st.own===st.n;
   const tags = (it.bn ? `<span class="sh-tag ban">${esc(t("pubBanned"))}</span>` : "") + (m ? `<span class="sh-tag g-${m.L.g}">${m.L.g==="f"?"♀":"♂"} ${esc(t(m.L.g))}</span>${m.pic?`<span class="sh-tag ic" title="${esc(t("shPhoto"))}">${ICON_CAM}<span class="sr">${esc(t("shPhoto"))}</span></span>`:""}` : "");
   const vg = st ? `<span class="sh-vv" title="Vivid">${vivIcon()}${fmtN(st.viv)}</span>` : "";
   const vv = vg ? `<span class="sh-r">${vg}</span>` : "";
-  const on = it.user && signedIn() && likedSet().has(it.k), pop = it._pop && Date.now()-it._pop<700;
+  const on = it.user && signedIn() && likedSet().has(it.k), pop = false;
   const like = it.user ? `<button type="button" class="sh-like${on?" on":""}${pop?" pop":""}" data-like="${esc(it.name)}" aria-pressed="${!!on}" aria-label="${esc(t("likeL"))} · ${fmtN(it.lk||0)}" title="${esc(t("likeL"))}"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17.2s-6.8-4.1-6.8-9A3.8 3.8 0 0 1 10 5.9a3.8 3.8 0 0 1 6.8 2.3c0 4.9-6.8 9-6.8 9z" fill="currentColor"/></svg><span>${fmtN(it.lk||0)}</span></button>` : "";
-  const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span><span class="sh-bar" aria-hidden="true"><i style="width:${st.n?(st.own/st.n*100).toFixed(1):0}%"></i></span>`
+  const meta = st ? `<span class="sh-own${full?" full":""}" style="--p:${st.n?(st.own/st.n).toFixed(3):0}"><i aria-hidden="true"></i>${esc(t("shOwned")(st.own,st.n))}</span>`
     : m===undefined ? `<span class="sh-sk" aria-hidden="true"><i></i><i></i></span>` : "";
-  return `<div class="sh-cell${spot?" spot":""}${like?" has-like":""}" style="--d:${Math.min(k,14)*45}ms"><button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" aria-label="${esc(title)}">
+  return `<div class="sh-cell${spot?" spot":""}${like?" has-like":""}${still?" still":""}" style="--d:${Math.min(k,14)*45}ms"><button type="button" class="sh-card${m===undefined?" ld":""}${m===null?" raw":""}${spot?" spot":""}${full?" full":""}" data-sh="${esc(it.name)}" data-k="${k}" aria-label="${esc(title)}">
     <span class="sh-frame"><span class="sh-img"><img src="${esc(spot?showView(it):showThumb(it))}" alt="" loading="${k<8?"eager":"lazy"}" decoding="async" onload="this.parentNode.classList.add('ok')" onerror="this.parentNode.classList.add('bad')"></span><span class="sh-glare" aria-hidden="true"></span></span>
     <span class="sh-info"><b class="sh-name">${esc(title)}</b>${it.user && it.nick ? `<span class="sh-by">${esc(t("shBy")(it.nick))}</span>` : ""}${tags||vv?`<span class="sh-l2"><span class="sh-tags">${tags}</span>${vv}</span>`:""}${meta?`<span class="sh-meta">${meta}</span>`:""}</span>
   </button>${like}</div>`;
